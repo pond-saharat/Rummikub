@@ -6,7 +6,8 @@ class Board:
 
     def add_group(self,player,card):
         if Checker.check():
-    
+            pass
+        
     def remove_group(self,player,card):
         pass
     

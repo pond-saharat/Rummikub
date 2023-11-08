@@ -1,7 +1,7 @@
 class Checker:
     @classmethod
     def check(cls,board,player,move):
-        for 
+        pass
     @staticmethod
     def move_check(board,player,move):
         if IllegalMoveChecker.check(board,player,move):

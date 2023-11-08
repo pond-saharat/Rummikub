@@ -4,7 +4,7 @@ import sys
 
 joker_number = 2
 card_number = 13
-colours =["black","yellow","red","green"]
+colours =["red","blue","yellow","green"]
 
 os.system("rm ./src/*.png")
 for number in range(1,card_number+1):
