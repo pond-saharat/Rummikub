@@ -22,9 +22,16 @@ class Card:
     def __str__(self):
         return f"({self.colour},{self.number})"
 
+    def __card__(self,another_card):
+        return  self.number == another_card.number and self.colour == another.colour
+
+
 class ColourCard(Card):
     def __init__(self,colour,number):
         super().__init__(colour,number)
+    
+    def penalty():
+        return -self.number
 
     @classmethod
     def generate(cls):
@@ -33,6 +40,9 @@ class ColourCard(Card):
 class Wildcard(Card):
     def __init__(self):
         super().__init__(None,"Wildcard")
+
+    def penalty():
+        return -30
 
     @classmethod
     def generate(cls):
