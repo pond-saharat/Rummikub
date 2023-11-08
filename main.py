@@ -1,6 +1,6 @@
 import pygame
 import random
-import card
+
 import sys
 
 from pygame.locals import *
@@ -15,9 +15,6 @@ pygame.init()
 displaysurface  = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Rummikub")
 FramePerSec = pygame.time.Clock()
-
-# Game constants and variables
-pool = card.CardPool()
 
 # Add elements
 card_test = CardSurface()
