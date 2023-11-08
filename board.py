@@ -10,4 +10,12 @@ class Board:
         
     def remove_group(self,player,card):
         pass
-    
+
+class Group:
+    pass
+
+class Set(Group):
+    pass
+
+class Run(Group):
+    pass

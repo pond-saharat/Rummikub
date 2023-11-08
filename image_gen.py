@@ -1,3 +1,4 @@
+# This file is for generating a card picture in *.png in ./src/*.png
 import matplotlib.pyplot as plt
 import os
 import sys
