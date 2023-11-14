@@ -1,53 +1,20 @@
-# Rummikub Coursework
-## For team members
-### Installation
-**Step 1: Make sure you have install Python and PyGame on your local machine. If you have more than one version of Python on your local machine, please make sure you are using Python3.**<br>
-Windows<br>
-`python -m pip install --upgrade pip`<br>
-`py -m pip install -U pygame` or `pip3 install pygame`<br> 
-MacOS<br>
-`python3 -m pip install -U pygame`<br>
-Debain-based OS<br>
-`sudo apt-get install python3-pygame`<br><br>
-
-**Step 2: Make sure you have install Git on your local machine.**<br>
--> If not, [download Git](https://git-scm.com/downloads).<br>
-Do not forget to set your name and email in Git.<br>
-`git config --global user.name "firstname lastname"`
-`git config --global user.email "youremail"`
-<br><br>
+Rummikub
 
 
-**Step 3: Locate your directory.**<br>
-`cd your-directory`<br>
-`git clone https://github.com/pondsaharat/rummikub-coursework.git`<br><br>
+- main.py: 
+This is the entry point of your game. It will initialize Pygame, create a game window, and contain the main game loop where the game's state is updated and rendered repeatedly.
 
-### Useful commands
-1. Retrive updates from the online repository <br>
-`git fetch origin main` to your local repository<br>
-`git pull origin main` to your workspace<br>
+- settings.py: 
+This file holds various configuration settings for your game, such as screen dimensions, color constants, font settings, and any other configurable parameters. Keeping these separate from your main game logic makes it easier to adjust settings without digging through your main code.
 
-> [!IMPORTANT]
-> Make sure you have fetched or pulled from the online repository every time you are working. Otherwise, you will be working on the outdated repo.<br>
+- game.py: This module contains the Game class. The Game class manages the game state, including starting a new game, handling player turns, checking for win conditions, and transitioning between different states of the game (like game start, in-play, game over).
 
-2. Add or remove the files to be tracked by Git<br>
-`git add yourfile` or `git add -A` to add all files<br>
-`git rm yourfile`<br>
-3. Commit changes to your local repository<br>
-`git commit`<br>
-### Naming conventions<br>
-1. snake_case for naming functions, variables and filenames<br>
-2. PascalCase for naming classes<br>
-Read [PEP8 Python naming conventions](https://peps.python.org/pep-0008/#prescriptive-naming-conventions)<br>
-### Guidelines<br>
-You may need to create a branch to work on then create a pull request.<br>
-`git branch` -> show how many branches are there right now.<br>
-`git checkout -b yourbranch` -> create a new branch<br>
-`git fetch origin main` -> fetch changes from a main branch to a local repository and `git merge` to merge<br>
-`git pull origin main` -> fetch changes from a main branch to a workspace<br>
-`git add -A` -> add all files you have<br>
-`git push origin yourbranch` -> update your branch<br>
-`git push origin main` -> create a pull request<br>
+- player.py: Here, you define a Player class. Each instance of this class represents a player in the game. It should store information specific to each player, such as their hand (the tiles they currently hold), their name or ID, and possibly their score.
 
-> [!WARNING]
-> Make sure your code can run perfectly before creating a pull request<br>
+- tile.py: The Tile class represents an individual tile. Each tile will have attributes like its number and color. You might also include methods for drawing the tile on the screen.
+
+- board.py: This manages the game board. It should handle the layout of the tiles as they are played during the game, check for valid placements, and possibly store the current state of the game board.
+
+- hand.py: Manages the tiles each player is holding. This could be a part of the Player class, or you could make it a separate class to handle the logic of selecting, sorting, and playing tiles from a player's hand.
+
+- ui.py: Handles the user interface and graphical rendering. This includes drawing the game board, tiles, player hands, and other UI elements like buttons, menus, or scoreboards.

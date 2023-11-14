@@ -1,21 +1,15 @@
-from checker import Checker
-
 class Board:
-    def __init__(self):
+    def __init__(self) -> None:
         self.board = []
-
-    def add_group(self,player,card):
-        if Checker.check():
-            pass
+    
+    def __str__(self) -> str:
+        return str(self.board)
+    
+    def __repr__(self) -> str:
+        return self.__str__()
+    
+    def add_card_set(self, card_set):
+        self.board.append(card_set)
         
-    def remove_group(self,player,card):
-        pass
-
-class Group:
-    pass
-
-class Set(Group):
-    pass
-
-class Run(Group):
-    pass
+    
+    # Other board methods

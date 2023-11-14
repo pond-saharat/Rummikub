@@ -1,18 +1,33 @@
 class Player:
-    def __init__(self):
-        self.hand = []
-        self.turn = None
-        self.score = 0
-    def is_human(self):
-        return isinstance(self,HumanPlayer)
+    def __init__(self, name) -> None:
+        self.name = name
+        self.hands = []
     
-    def is_ai(self):
-        return isinstance(self,AIPlayer)
+    def draw_cards(self, deck):
+        for _ in range(14):
+            card = deck.cards_pool.pop()
+            self.hands.append(card)
+    
+    def draw_one_card(self, deck):
+        card = deck.cards_pool.pop()
+        self.hands.append(card)
+        
+    def __str__(self) -> str:
+        return self.name
+    
+    def __repr__(self):
+        return self.__str__()
+    
 
-class HumanPlayer(Player):
-    def __init__(self):
-        super().__init__()
+    # Other player methods
 
-class AIPlayer(Player):
+
+
+class Hand:
     def __init__(self):
-        super().__init__()
+        self.tiles = []
+
+    def add_tile(self, tile):
+        self.tiles.append(tile)
+
+    # Other hand methods
