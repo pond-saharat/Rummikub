@@ -1,5 +1,3 @@
-import config
-
 class Card:
     def __init__(self, colour, number):
         self.colour = colour
@@ -11,6 +9,4 @@ class Card:
     @classmethod
     @property
     def wildcard(cls):
-        cls.wildcard = Card("Joker", 15)
-
-    # Methods to render the card, etc.
+        cls.wildcard = Card("Joker", 30)

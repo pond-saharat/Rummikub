@@ -18,16 +18,3 @@ class Player:
     def __repr__(self):
         return self.__str__()
     
-
-    # Other player methods
-
-
-
-class Hand:
-    def __init__(self):
-        self.tiles = []
-
-    def add_tile(self, tile):
-        self.tiles.append(tile)
-
-    # Other hand methods
