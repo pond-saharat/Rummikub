@@ -11,5 +11,3 @@ class Board:
     def add_card_set(self, card_set):
         self.board.append(card_set)
         
-    
-    # Other board methods
