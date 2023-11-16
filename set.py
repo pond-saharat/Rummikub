@@ -39,7 +39,7 @@ class Set:
         if len(cards) < 3:
             return False
         # Need comments
-        colour_cards = Card.get_colour_cards(cards)
+        colour_cards = card.Card.get_colour_cards(cards)
         joker_cards_count = len(card.Card.get_joker_cards(cards)) #len([card for card in cards if card.number == 30]) 
         # Need comments
         if len(set([card.colour for card in colour_cards])) != 1:

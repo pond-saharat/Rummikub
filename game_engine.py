@@ -2,6 +2,7 @@ import itertools
 import deck
 import board
 import player
+import card
 
 from config import *
 
@@ -78,10 +79,10 @@ class GameEngine:
         return [list(map(self._convert_to_tile, comb)) for comb in valid_combinations]
 
     def _convert_from_hashable(self, hashable_combination):
-        return [[Card(color, int(number)) for number, color in (tile_str.split() for tile_str in group)] for group in hashable_combination]
+        return [[card.Card(color, int(number)) for number, color in (tile_str.split() for tile_str in group)] for group in hashable_combination]
 
     def _convert_to_tile(self, group):
-        return [Card(color, int(number)) for number, color in (tile_str.split() for tile_str in group)]
+        return [card.Card(color, int(number)) for number, color in (tile_str.split() for tile_str in group)]
     
     def _convert_combination_to_hashable(self, combination):
         return tuple(tuple(f"{tile.number} {tile.colour}" for tile in sorted(group, key=lambda t: (t.number, t.colour))) for group in combination)
