@@ -18,7 +18,7 @@ class GameUI:
         pygame.mouse.set_visible(1)
         # Create a blank screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-        self.screen.fill(white)
+        self.screen.fill("white")
         # Add all sprites
         self.add_all_sprites()
         # Infinite loop
@@ -27,14 +27,14 @@ class GameUI:
             for event in pygame.event.get():
                 self.check_event(event)
             # Clear the screen
-            screen.fill(white)
+            self.screen.fill("white")
             # Draw all of the sprites
             self.sprites.draw(self.screen)
             pygame.display.flip()
 
     def add_all_sprites(self):
         for obj in self.engine.objects:
-            all_sprites.add(obj)
+            self.sprites.add(obj)
 
     def check_event(self,event):
         # Quit the game if the event is QUIT

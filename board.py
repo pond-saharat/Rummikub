@@ -1,3 +1,5 @@
+import card
+
 class Board:
     def __init__(self) -> None:
         self.board = []
@@ -13,7 +15,7 @@ class Board:
     def add_cards(self, cards):
         if isinstance(cards, list):
             self.board.extend(cards)
-        elif isinstance(cards, Card):
+        elif isinstance(cards, card.Card):
             self.board.append(cards)
         else:
             raise TypeError("Argument cards must be a list or a Card instance")

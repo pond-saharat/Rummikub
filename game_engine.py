@@ -1,7 +1,9 @@
 import itertools
-
 import deck
 import board
+import player
+
+from config import *
 
 class GameEngine:
     def __init__(self,game_ui) -> None:
@@ -10,7 +12,7 @@ class GameEngine:
         self.board = board.Board()
         self.game_ui = game_ui
         # List of players
-        self.players = [HumanPlayer() for _ in NUM_OF_HUMAN_PLAYERS] + [AIPlayer() for _ in NUM_OF_AI_PLAYERS]
+        self.players = [player.HumanPlayer() for _ in NUM_OF_HUMAN_PLAYERS] + [player.AIPlayer() for _ in NUM_OF_AI_PLAYERS]
         # Using itertools.cycle() to infinitely loop over the player list
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)
