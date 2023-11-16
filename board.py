@@ -8,6 +8,16 @@ class Board:
     def __repr__(self) -> str:
         return self.__str__()
     
+    # Add a card or cards to the board
+    # List[Card] or Card -> None
+    def add_cards(self, cards):
+        if isinstance(cards, list):
+            self.board.extend(cards)
+        elif isinstance(cards, Card):
+            self.board.append(cards)
+        else:
+            raise TypeError("Argument cards must be a list or a Card instance")
+
     def add_one_card_set(self, card_set):
         self.board.append(card_set)
         

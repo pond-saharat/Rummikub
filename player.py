@@ -2,6 +2,7 @@ class Player:
     def __init__(self, name) -> None:
         self.name = name
         self.hands = []
+        self.selected_cards = []
     
     def draw_cards(self, deck):
         for _ in range(14):
@@ -17,4 +18,11 @@ class Player:
     
     def __repr__(self):
         return self.__str__()
-    
+
+class HumanPlayer(Player):
+    def __init__(self):
+        super().__init__()
+
+class AIPlayer(Player):
+    def __init__(self):
+        super().__init__()

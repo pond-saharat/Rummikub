@@ -1,49 +1,12 @@
+import deck
+import board
 class GameEngine:
-    def __init__(self) -> None:
-        self.deck = Deck()
-        self.board = Board()
-        
-    def is_group(self, cards):
-        if len(cards) < 3:
-            return False
-        
-        regular_cards = [card for card in cards if card.number != 30]     
-         
-        if len(set([card.number for card in regular_cards])) != 1:
-            return False
-        else:
-            return len(set([card.colour for card in regular_cards])) == len(regular_cards)
-        
-    def is_run(self, cards):
-        if len(cards) < 3:
-            return False
+    def __init__(self,ui_engine) -> None:
+        self.deck = deck.Deck()
+        self.board = board.Board()
+        self.ui_engine = ui_engine
 
-        regular_cards = [card for card in cards if card.number != 30] 
-        wild_cards_count = len([card for card in cards if card.number == 30]) 
-
-        if len(set([card.colour for card in regular_cards])) != 1:
-            return False
-        else:
-            cards_number = [card.number for card in regular_cards]
-            cards_number.sort()
-            for i in range(1, len(cards_number)):
-                if cards_number[i] != cards_number[i-1] + 1:
-                    if wild_cards_count == 0:
-                        return False
-                    wild_cards_count -= 1
-            return True 
-    
-    def is_valid(self, cards):
-        return self.is_group(cards) or self.is_run(cards)              
-    
-    def is_first_move_valid(self, cards):
-        if self.is_valid(cards):                
-            total_points = sum(card.number for card in cards)
-            if total_points >= 30:
-                return True
-        else:
-            return False
-        
+    # Need comments
     def find_combinations(self, cards):
         combinations = []
         cards.sort(key=lambda card: card.number)
@@ -55,12 +18,8 @@ class GameEngine:
                 if self.is_valid(cards_temp) and self.is_valid(cards_left):
                     combinations.append(cards_temp)
                     combinations.append(cards_left)
-                    
-                    # if self.find_combinations(cards_left):
-                    #     combinations.append(cards_left)
         return combinations        
-    
-    
+    # Need comments
     def check_combinations(self, tiles):
         tiles.sort(key=lambda tile: (tile.number, tile.colour))
         print(tiles)
@@ -71,8 +30,7 @@ class GameEngine:
                 if not remaining_tiles or self.check_combinations(remaining_tiles):
                     return 1 + (self.check_combinations(remaining_tiles) if remaining_tiles else 0)
         return 0
-    
-    
+    # Need comments
     def check_all_combinations(self, tiles, combination=[], remaining=None):
         if remaining is None:
             remaining = tiles.copy()
@@ -94,9 +52,7 @@ class GameEngine:
             combination.pop()
             remaining.append(next_tile)
         return False
-    
-    
-    
+    # Need comments
     def find_all_combinations(self, tiles):
         valid_combinations = set()
         self._find_combinations_recursive(tiles, [], tiles.copy(), valid_combinations)
