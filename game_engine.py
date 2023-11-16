@@ -4,11 +4,11 @@ import deck
 import board
 
 class GameEngine:
-    def __init__(self,ui_engine) -> None:
+    def __init__(self,game_ui) -> None:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
         self.board = board.Board()
-        self.ui_engine = ui_engine
+        self.game_ui = game_ui
         # List of players
         self.players = [HumanPlayer() for _ in NUM_OF_HUMAN_PLAYERS] + [AIPlayer() for _ in NUM_OF_AI_PLAYERS]
         # Using itertools.cycle() to infinitely loop over the player list
