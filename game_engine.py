@@ -1,11 +1,27 @@
+import itertools
+
 import deck
 import board
+
 class GameEngine:
     def __init__(self,ui_engine) -> None:
+        # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
         self.board = board.Board()
         self.ui_engine = ui_engine
-
+        # List of players
+        self.players = [HumanPlayer() for _ in NUM_OF_HUMAN_PLAYERS] + [AIPlayer() for _ in NUM_OF_AI_PLAYERS]
+        # Using itertools.cycle() to infinitely loop over the player list
+        # Go to the next turn by calling self.next_turn()
+        self._player_iterator = itertools.cycle(self.players)
+        self.turn = next(self._player_iterator)
+    
+    # Go to the next turn
+    # None -> Player
+    def next_turn(self):
+        self.turn = next(self._player_iterator)
+        return self.turn
+    
     # Need comments
     def find_combinations(self, cards):
         combinations = []
