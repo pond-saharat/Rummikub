@@ -31,11 +31,11 @@ class Card(pygame.sprite.Sprite):
     def get_colour_cards(cards):
         return [colour_card for colour_card in cards if isinstance(colour_card, ColourCard)]
 
-    # Get only the colour cards for a pack of cards
+    # Get only the Joker cards for a pack of cards
     # None -> List[JokerCard]
     @staticmethod
     def get_joker_cards(cards):
-        return [colour_card for colour_card in cards if isinstance(colour_card, ColourCard)]
+        return [joker_card for joker_card in cards if isinstance(joker_card, JokerCard)]
     
 
 class ColourCard(Card):
