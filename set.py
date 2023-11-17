@@ -2,7 +2,7 @@ import card
 
 from config import *
 
-class Set:
+class CardSet:
     def __init__(self,cards):
         self.cards = cards
 
@@ -62,7 +62,7 @@ class Set:
                     joker_cards_count -= 1
             return True
     
-    # Check if the set is either a valid Group or a valid Run
+    # Check if the CardSet is either a valid Group or a valid Run
     # None -> bool
     def is_valid(self, cards):
         return self.is_group(cards) or self.is_run(cards)              
@@ -75,13 +75,13 @@ class Set:
         else:
             return False
 
-class Group(Set):
+class Group(CardSet):
     def __init__(self,cards):
         super().__init__(cards)
         self.group = True
         self.run = False
 
-class Run(Set):
+class Run(CardSet):
     def __init__(self,cards):
         super().__init__(cards)
         self.group = False
