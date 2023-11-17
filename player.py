@@ -3,6 +3,7 @@ class Player:
         self.name = name
         self.hands = []
         self.selected_cards = []
+        self.first_moved = False
     
     def draw_cards(self, deck):
         for _ in range(14):
