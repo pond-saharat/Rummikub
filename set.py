@@ -16,40 +16,49 @@ class Set:
             return Run(cards)
         else:
             return False
+    
     # Check if the cards are valid for being classified as Group
     # List[Card] -> bool
     @staticmethod
     def is_group(cards):
-        # Need comments
-        if len(cards) < 3:
+        # a valid group needs at least 3 cards and there are only 4 different colours
+        if len(cards) < 3 or len(cards) > NUM_OF_COLOURS:
             return False
-        # Get the colour cards from a pack of cards
+        
+        # Get the colour cards (regular cards) from a pack of cards
         colour_cards = card.Card.get_colour_cards(cards)   
-        # Need comments
-        if len(set([card.number for card in colour_cards])) != 1:
+        # a group is cards with the same number but different colours, 
+        # Joker is wildcard, so only consider colour cards here
+        same_num_in_hand = len(set([card.number for card in colour_cards]))
+        same_clr_in_hand = len(set([card.colour for card in colour_cards]))
+        if same_num_in_hand != 1:
             return False
         else:
-            return len(set([card.colour for card in colour_cards])) == len(colour_cards)
+            return same_clr_in_hand == len(colour_cards)
 
     # Check if the cards are valid for being classified as Run
     # List[Card] -> bool
     @staticmethod
     def is_run(cards):
-        # Need comments
-        if len(cards) < 3:
+        # a valid run needs at least 3 cards and there are only 13 different numbers each colour
+        if len(cards) < 3 or len(cards) > NUM_OF_CARDS_EACH_COLOUR:
             return False
-        # Need comments
+        
+        # Get the colour cards (regular cards) from a pack of cards
         colour_cards = card.Card.get_colour_cards(cards)
+        # Get the count of Joker cards from a pack of cards
         joker_cards_count = len(card.Card.get_joker_cards(cards)) #len([card for card in cards if card.number == 30]) 
-        # Need comments
+        # a run needs same colour for colour/regular cards
         if len(set([card.colour for card in colour_cards])) != 1:
             return False
         else:
             list_of_numbers = sorted([card.number for card in colour_cards])
+            # numbers should be sequence unless there are enough Joker cards in hands
             for i in range(1, len(list_of_numbers)):
                 if list_of_numbers[i] != list_of_numbers[i-1] + 1:
                     if joker_cards_count == 0:
                         return False
+                    # each time there is a gap between adjacent numbers, the count of Joker cards will decrease by 1
                     joker_cards_count -= 1
             return True
     
@@ -65,6 +74,7 @@ class Set:
                 return True
         else:
             return False
+
 class Group(Set):
     def __init__(self,cards):
         super().__init__(cards)

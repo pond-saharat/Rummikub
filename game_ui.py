@@ -11,7 +11,7 @@ class GameUI:
         self.sprites = pygame.sprite.Group()
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
         self.game_engine = game_engine.GameEngine(self)
-        
+    
     # Run the game loop
     def run(self):
         pygame.init()
@@ -31,11 +31,11 @@ class GameUI:
             # Draw all of the sprites
             self.sprites.draw(self.screen)
             pygame.display.flip()
-
+    
     def add_all_sprites(self):
         for obj in self.engine.objects:
             self.sprites.add(obj)
-
+    
     def check_event(self,event):
         # Quit the game if the event is QUIT
         if event.type == pygame.QUIT:
