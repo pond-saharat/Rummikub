@@ -9,7 +9,7 @@
 - **game_ui.py**: This module contains the `GameUI` class. The `GameUI` class will handle the event provided by the `HumanPlayer` and pass them to `GameEngine`.
 
 - **player.py**: Here, you define a `Player` class. Each instance of this class represents a player in the game. It should store information specific to each player, such as their hand (the cards they currently hold), their name or ID, and possibly their score.
-    Class `Player` should track how many cards they are holding;
+    class `Player` should track how many cards they are holding;
     class `HumanPlayer(Player)` is a typical player;
     class `BotPlayer(Player)` should have a method that can think and return a move.
 
@@ -23,3 +23,7 @@
 - **deck.py**: should initialise the card pool and contain the remaining cards after distributing.
 
 - **board.py**: should track which groups/runs are currently on the board.
+
+- **cardset.py**: should define a collections of cards.
+    class `Group(CardSet)` is a collection with the same number, but their colours are different.
+    class `Run(CardSet)` is a collection with consecutive numbers.
