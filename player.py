@@ -6,11 +6,11 @@ class Player:
     
     def draw_cards(self, deck):
         for _ in range(14):
-            card = deck.cards_pool.pop()
+            card = deck.deck.pop()
             self.hands.append(card)
     
     def draw_one_card(self, deck):
-        card = deck.cards_pool.pop()
+        card = deck.deck.pop()
         self.hands.append(card)
         
     def __str__(self) -> str:
