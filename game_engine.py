@@ -13,7 +13,8 @@ class GameEngine:
         self.board = board.Board()
         self.game_ui = game_ui
         # List of players
-        self.players = [player.HumanPlayer() for _ in NUM_OF_HUMAN_PLAYERS] + [player.AIPlayer() for _ in NUM_OF_AI_PLAYERS]
+        self.players = [player.HumanPlayer(f"Human_player_{_}") for _ in NUM_OF_HUMAN_PLAYERS] \
+            + [player.AIPlayer("AI_player_{_}") for _ in NUM_OF_AI_PLAYERS]
         # Using itertools.cycle() to infinitely loop over the player list
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)

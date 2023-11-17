@@ -21,9 +21,9 @@ class Player:
         return self.__str__()
 
 class HumanPlayer(Player):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
 
 class AIPlayer(Player):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
