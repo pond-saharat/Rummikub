@@ -2,7 +2,7 @@ import itertools
 import deck
 import board
 import player
-import card
+import cardset
 
 from config import *
 
@@ -43,12 +43,15 @@ class GameEngine:
                     combinations.append(cards_left)
         return combinations        
     
+    ''' 
+    need to modify the function with Cardset() 
+    '''
     # check is_first_move_valid here, every player has to make the valid first move before regular move
     def first_move(self, player, card_sets) -> bool:
         # check input cards are in this player's hands and the card sets are valid combinations
         if all(card in player.hands for card_set in card_sets for card in card_set) \
             and all(self.is_first_move_valid(card_set) for card_set in card_sets):
-                player.hands = [card for card in player.hands if card not in card_set for card_set in card_sets]
+                player.hands = [card for card in player.hands if not any(card in card_set for card_set in card_sets)]
                 self.board.add_all_card_sets(card_sets)
                 # mark for player has made the first move
                 player.first_moved = True
@@ -59,15 +62,24 @@ class GameEngine:
             print("move failed")
             return False
     
+    ''' 
+    need to modify the function with Cardset() 
+    '''
     # card sets, corresponding nums in board
     def regular_move(self, player, card_sets, sets_nums_in_board) -> bool:
+        if player.first_moved == False:
+            print("Please make the first move")
+            return False
+        # check input cards are in this player's hands and the card sets are valid combinations
         if all(card in player.hands for card_set in card_sets for card in card_set) \
             and len(card_sets) == len(sets_nums_in_board):
             if all(self.is_valid(self.board.board[i].extend(card_sets[i])) for i in range(len(card_sets))):
                 for i in range(len(card_sets)):
+                    player.hands = [card for card in player.hands if not any(card in card_set for card_set in card_sets)]
                     self.board.add_card_set_with_num(card_sets[i], sets_nums_in_board[i])
-                
+                print('move success')
                 return True
             else:
+                print("move failed")
                 return False
         return False
