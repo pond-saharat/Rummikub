@@ -1,5 +1,7 @@
 import pygame
 
+from config import *
+
 class Card(pygame.sprite.Sprite):
     def __init__(self, colour, number):
         super().__init__()
@@ -11,27 +13,29 @@ class Card(pygame.sprite.Sprite):
     def __repr__(self):
         return f"Card({self.colour} {self.number})"
         
-    # Draw a card
+    # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None
-    def draw(self,screen,pos):
+    def draw(self,game_engine):
         if self.is_selected:
-            pygame.draw.rect(screen, (0, 255, 0), self.rect)
+            border = pygame.draw.rect(game_engine.screen, (0, 255, 255), self.rect, width=500, border_radius=1)
+            game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
+            print("something1")
         else:
-            screen.blit(self.image, pos)
-    
+            game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
+            print("something2")
+        pygame.display.update()
     # Perfome actions when the card is clicked
     # Game engine instance -> None
     def left_click_action(self,game_engine):
         current_player = game_engine.turn
         # Actions if the card belongs to a set
         if self.parent_set:
-            current_player.selected += self.parent_set
-            self.parent_set.highlight()
+            current_player.selected.append(self.parent_set) 
+            self.parent_set.highlight(game_engine)
         # Add itself to the list of selected cards
         else:
-            current_player.selected += self
-            self.highlight()
- 
+            current_player.selected.append(self)
+            self.highlight(game_engine)
 
     # Perfome actions when the card is clicked
     # Game engine instance -> None
@@ -39,15 +43,16 @@ class Card(pygame.sprite.Sprite):
         current_player = game_engine.turn
         # Move to a set
         if self.parent_set:
-            current_player.selected += self.parent_set
+            current_player.selected.append(self.parent_set) 
             current_player.make_move(game_engine)
         else:
-            current_player.selected += self
+            current_player.selected.append(self)
             current_player.make_move(game_engine)
 
     # Highlight the card or unhighlight the card
-    def highlight(self):
+    def highlight(self,game_engine):
         self.is_selected = not self.is_selected
+        self.draw(game_engine)
 
     # Get only the colour cards for a pack of cards
     # None -> List[ColourCard]
@@ -66,7 +71,7 @@ class ColourCard(Card):
     def __init__(self, colour, number):
         super().__init__(colour, number)
         self.joker = False
-        self.image = pygame.image.load(f"./src/{self.colour.lower()}{self.number}.png")
+        self.image = pygame.transform.smoothscale(pygame.image.load(f"./src/{self.colour.lower()}{self.number}.png"), (90,120))
         self.rect = self.image.get_rect()
 
     # Get the penalty for this card 
@@ -79,7 +84,7 @@ class JokerCard(Card):
     def __init__(self):
         super().__init__(None, None)
         self.joker = True
-        self.image = pygame.image.load(f"./src/joker.png")
+        self.image = pygame.transform.smoothscale(pygame.image.load(f"./src/joker.png"), (90,120))
         self.rect = self.image.get_rect()
     
     # Get the penalty for this card 

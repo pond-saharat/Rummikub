@@ -11,14 +11,16 @@ class GameUI:
         self.sprites = pygame.sprite.Group()
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
         self.game_engine = game_engine.GameEngine(self)
-    
-    # Run the game loop
-    def run(self):
         pygame.init()
         pygame.mouse.set_visible(1)
         # Create a blank screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-        self.screen.fill("white")
+        self.game_engine.screen = self.screen
+    
+    # Run the game loop
+    def run(self):
+
+        self.screen.fill("black")
         # Add all sprites
         self.add_all_sprites()
         # Infinite loop
@@ -27,13 +29,13 @@ class GameUI:
             for event in pygame.event.get():
                 self.check_event(event)
             # Clear the screen
-            self.screen.fill("white")
+            self.screen.fill("black")
             # Draw all of the sprites
             self.sprites.draw(self.screen)
             pygame.display.flip()
     
     def add_all_sprites(self):
-        for obj in self.engine.objects:
+        for obj in self.game_engine.objects:
             self.sprites.add(obj)
     
     def check_event(self,event):
@@ -46,13 +48,13 @@ class GameUI:
             # Get the mouse position
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if event.button == 1:
-                for obj in self.objects:
+                for obj in self.sprites:
                     # Check if the mouse click is within sprites' boundaries
                     if obj.rect.collidepoint(mouse_x, mouse_y):
                         # Do the actions for the left click
                         obj.left_click_action(self.game_engine)
             elif event.button == 3:
-                for obj in self.objects:
+                for obj in self.sprites:
                     # Check if the mouse click is within sprites' boundaries
                     if obj.rect.collidepoint(mouse_x, mouse_y):
                         # Do the actions for the right click
