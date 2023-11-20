@@ -42,11 +42,20 @@ class GameUI:
             self.running = False
             return
         # Check for mouse click events
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get the mouse position
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            for obj in self.objects:
-                # Check if the mouse click is within sprites' boundaries
-                if obj.rect.collidepoint(mouse_x, mouse_y):
-                    # Do the actions
-                    obj.perform_action()
+            if event.button == 1:
+                for obj in self.objects:
+                    # Check if the mouse click is within sprites' boundaries
+                    if obj.rect.collidepoint(mouse_x, mouse_y):
+                        # Do the actions for the left click
+                        obj.left_click_action(self.game_engine)
+            elif event.button == 3:
+                for obj in self.objects:
+                    # Check if the mouse click is within sprites' boundaries
+                    if obj.rect.collidepoint(mouse_x, mouse_y):
+                        # Do the actions for the right click
+                        obj.right_click_action(self.game_engine)
+            else:
+                pass

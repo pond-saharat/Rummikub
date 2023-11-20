@@ -6,6 +6,7 @@ class Card(pygame.sprite.Sprite):
         self.colour = colour
         self.number = number
         self.is_selected = False
+        self.parent_set = None
 
     def __repr__(self):
         return f"Card({self.colour} {self.number})"
@@ -19,11 +20,34 @@ class Card(pygame.sprite.Sprite):
             screen.blit(self.image, pos)
     
     # Perfome actions when the card is clicked
-    # None -> None
-    def perform_action(self,game_engine):
+    # Game engine instance -> None
+    def left_click_action(self,game_engine):
+        current_player = game_engine.current_turn
+        # Actions if the card belongs to a set
+        if self.parent_set:
+            current_player.selected += self.parent_set
+            self.parent_set.highlight()
         # Add itself to the list of selected cards
-        game_engine.current_turn.selected_cards += self
-        self.is_highlighted = not self.is_highlighted
+        else:
+            current_player.selected += self
+            self.highlight()
+ 
+
+    # Perfome actions when the card is clicked
+    # Game engine instance -> None
+    def right_click_action(self,game_engine):
+        current_player = game_engine.current_turn
+        # Move to a set
+        if self.parent_set:
+            current_player.selected += self.parent_set
+            current_player.make_move(game_engine)
+        else:
+            current_player.selected += self
+            current_player.make_move(game_engine)
+
+    # Highlight the card or unhighlight the card
+    def highlight(self):
+        self.is_selected = not self.is_selected
 
     # Get only the colour cards for a pack of cards
     # None -> List[ColourCard]
