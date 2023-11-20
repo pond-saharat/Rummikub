@@ -22,7 +22,7 @@ class Card(pygame.sprite.Sprite):
     # Perfome actions when the card is clicked
     # Game engine instance -> None
     def left_click_action(self,game_engine):
-        current_player = game_engine.current_turn
+        current_player = game_engine.turn
         # Actions if the card belongs to a set
         if self.parent_set:
             current_player.selected += self.parent_set
@@ -36,7 +36,7 @@ class Card(pygame.sprite.Sprite):
     # Perfome actions when the card is clicked
     # Game engine instance -> None
     def right_click_action(self,game_engine):
-        current_player = game_engine.current_turn
+        current_player = game_engine.turn
         # Move to a set
         if self.parent_set:
             current_player.selected += self.parent_set
