@@ -5,7 +5,7 @@ from config import *
 class CardSet:
     def __init__(self, cards):
         self.cards = cards
-        is_selected = False
+        self.is_selected = False
 
     def highlight(self):
         self.is_selected = not self.is_selected
