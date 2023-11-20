@@ -39,6 +39,11 @@ class Player:
             # User intend to create a new set of cards -> check if the new
             if len(source) > 1 and valid_source \
                 and not valid_source_and_destination:
+                if self.first_moved == False: 
+                    if not self.make_first_move(source):
+                        self.cancel_move("First move is invalid")
+                        return False
+                    
                 created_set = cardset.CardSet.create(source)
                 # Add the created set to the board
                 game_engine.board.board.append(created_set)
@@ -65,7 +70,16 @@ class Player:
             # Don't know user's intention
             self.cancel_move("Don't know user's intention")
             pass
-            
+
+    # Make first move
+    # None -> None
+    def make_first_move(self, source):
+        sum_of_cards = 0
+        for card in source:
+            if card.number and isinstance(card, card.ColourCard):
+                sum_of_cards += card.number
+        return sunm
+
     # Cancel the current move
     def cancel_move(self,reason=None):   
         print(f"IllegalMove: {reason}")

@@ -33,6 +33,14 @@ class GameEngine:
         self.turn = next(self._player_iterator)
         return self.turn
     
+    # Distribute the cards to all players
+    # None -> None
+    def distribute_cards(self, per_person = 13):
+        for player in self.players:
+            ramdom.shuffle(self.deck.deck)
+            player.hands.extend(self.deck.deck[:per_person])
+            self.deck = self.deck[per_person:]
+    
     # find every possible valid combinations of selected cards, but not effective for every case,
     # actually there can be too many kinds of different combinations given same cards, it is not sensible  
     # to let the program find all combinations, we choose another implementation method.
