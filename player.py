@@ -43,7 +43,7 @@ class Player:
                 # Add the created set to the board
                 game_engine.board.board.append(created_set)
                 # Reference a parent set of each card
-                for card in create_set.cards:
+                for card in created_set.cards:
                     card.parent_set = created_set
 
             # User just intend to add a card to an existing set of cards
