@@ -28,7 +28,7 @@ class GameUI:
         while self.running:
             # Check the game state
             if self.game_state == "main_menu":
-                menu.Menu(self.game_state == "menu",self.screen)
+                menu.Menu(self.screen)
             else:
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
