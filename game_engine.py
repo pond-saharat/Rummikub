@@ -50,7 +50,7 @@ class GameEngine:
     def first_move(self, player, card_sets) -> bool:
         # check input cards are in this player's hands and the card sets are valid combinations
         if all(card in player.hands for card_set in card_sets for card in card_set) \
-            and all(self.is_first_move_valid(card_set) for card_set in card_sets):
+            and all(cardset.CardSet.is_first_move_valid(card_set) for card_set in card_sets):
                 player.hands = [card for card in player.hands if not any(card in card_set for card_set in card_sets)]
                 self.board.add_all_card_sets(card_sets)
                 # mark for player has made the first move
@@ -73,7 +73,7 @@ class GameEngine:
         # check input cards are in this player's hands and the card sets are valid combinations
         if all(card in player.hands for card_set in card_sets for card in card_set) \
             and len(card_sets) == len(sets_nums_in_board):
-            if all(self.is_valid(self.board.board[i] + card_sets[i]) for i in range(len(card_sets))):
+            if all(cardset.CardSet.is_valid(self.board.board[i] + card_sets[i]) for i in range(len(card_sets))):
                 for i in range(len(card_sets)):
                     player.hands = [card for card in player.hands if not any(card in card_set for card_set in card_sets)]
                     self.board.add_card_set_with_num(card_sets[i], sets_nums_in_board[i])
