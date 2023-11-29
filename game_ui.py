@@ -16,6 +16,9 @@ class GameUI:
         # Create a blank screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
         self.game_engine.screen = self.screen
+        
+        pygame.time.delay(100)
+        
     
     # Run the game loop
     def run(self):
@@ -53,6 +56,17 @@ class GameUI:
                     if obj.rect.collidepoint(mouse_x, mouse_y):
                         # Do the actions for the left click
                         obj.left_click_action(self.game_engine)
+                        # print((obj.rect.x+5, obj.rect.y+5))
+                        # obj.rect.x += 10
+                        # obj.rect.y += 10
+                        # pygame.draw.rect(self.screen, (255,0,0), obj.rect, 5) 
+                        # self.screen.blit(obj.image, (obj.rect.x, obj.rect.y))
+                        # pygame.display.update()
+                    # else:
+                    #     obj.rect.x -= 10
+                    #     obj.rect.y -= 10
+                    #     self.screen.blit(obj.image, (obj.rect.x, obj.rect.y))
+            
             elif event.button == 3:
                 for obj in self.sprites:
                     # Check if the mouse click is within sprites' boundaries

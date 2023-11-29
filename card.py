@@ -15,15 +15,19 @@ class Card(pygame.sprite.Sprite):
         
     # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None
-    def draw(self,game_engine):
+    def draw(self, game_engine):
         if self.is_selected:
-            border = pygame.draw.rect(game_engine.screen, (0, 255, 255), self.rect, width=500, border_radius=1)
-            game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
+            # border = pygame.draw.rect(game_engine.screen, (0, 255, 255), self.rect, width=500, border_radius=1)
+            self.rect.x += 10
+            self.rect.y += 10
+            pygame.draw.rect(game_engine.screen, (255, 0, 0), self.rect, 10)
+            game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5)) 
             print("something1")
         else:
             game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
             print("something2")
         pygame.display.update()
+    
     # Perfome actions when the card is clicked
     # Game engine instance -> None
     def left_click_action(self,game_engine):
@@ -31,10 +35,13 @@ class Card(pygame.sprite.Sprite):
         # Actions if the card belongs to a set
         if self.parent_set:
             current_player.selected.append(self.parent_set) 
+            print(current_player.selected)
             self.parent_set.highlight(game_engine)
         # Add itself to the list of selected cards
         else:
             current_player.selected.append(self)
+            print(current_player.selected)
+            
             self.highlight(game_engine)
 
     # Perfome actions when the card is clicked
