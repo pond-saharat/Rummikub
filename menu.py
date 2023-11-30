@@ -23,6 +23,7 @@ class Menu:
     audio_img = pygame.image.load('image/button_audio.png').convert_alpha()
     keys_img = pygame.image.load('image/button_keys.png').convert_alpha()
     back_img = pygame.image.load('image/button_back.png').convert_alpha()
+    image1=pygame.image.load("image/uon.jpg").convert_alpha()
 
     #create button instances
     resume_button = button.Button(304, 125, resume_img, 1)
@@ -36,8 +37,8 @@ class Menu:
     #game loop
     running = True
     while running:
-
-      self.screen.fill((0,0, 255))
+      self.blit(image1,(0,0))
+      # self.screen.fill((0,0, 255))
 
       #check if game is paused
       if self.game_paused == True:
