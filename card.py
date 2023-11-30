@@ -9,6 +9,7 @@ class Card(pygame.sprite.Sprite):
         self.number = number
         self.is_selected = False
         self.parent_set = None
+        self.flipped = False
 
     def __repr__(self):
         return f"Card({self.colour} {self.number})"
@@ -24,6 +25,7 @@ class Card(pygame.sprite.Sprite):
             game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
             print("something2")
         pygame.display.update()
+
     # Perfome actions when the card is clicked
     # Game engine instance -> None
     def left_click_action(self,game_engine):
@@ -66,6 +68,12 @@ class Card(pygame.sprite.Sprite):
     def get_joker_cards(cards):
         return [joker_card for joker_card in cards if isinstance(joker_card, JokerCard)]
     
+    # Flip all cards
+    # List[Card] -> None
+    @staticmethod
+    def flip_all_cards(cards):
+        for card in cards:
+            card.flipped = not card.flipped
 
 class ColourCard(Card):
     def __init__(self, colour, number):
