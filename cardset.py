@@ -1,4 +1,4 @@
-import card
+from card import *
 
 from config import *
 
@@ -9,6 +9,15 @@ class CardSet:
 
     def highlight(self):
         self.is_selected = not self.is_selected
+    
+    def is_first_move_valid(self):
+        if self.is_valid():                
+            total_points = sum(card.number for card in self.cards)
+            if total_points >= 30:
+                return True
+        else:
+            return False
+    
     # Create a new set of cards
     # List[Card] -> Group() or Run() or None (If they are not either Group or Run)
     @classmethod
@@ -29,7 +38,7 @@ class CardSet:
             return False
         
         # Get the colour cards (regular cards) from a pack of cards
-        colour_cards = card.Card.get_colour_cards(cards)   
+        colour_cards = Card.get_colour_cards(cards)   
         # a group is cards with the same number but different colours, 
         # Joker is wildcard, so only consider colour cards here
         same_num_in_hand = len(set([card.number for card in colour_cards]))
@@ -48,9 +57,9 @@ class CardSet:
             return False
         
         # Get the colour cards (regular cards) from a pack of cards
-        colour_cards = sorted(card.Card.get_colour_cards(cards))
+        colour_cards = sorted(Card.get_colour_cards(cards), key=lambda x: x.number)
         # Get the count of Joker cards from a pack of cards
-        joker_cards = card.Card.get_joker_cards(cards)
+        joker_cards = Card.get_joker_cards(cards)
 
         # Check if they are all the same colour
         if not all([card.colour == colour_cards[0].colour for card in colour_cards]):
@@ -76,6 +85,7 @@ class CardSet:
                     run.append(popped_joker_card)
                     previous_number += 2
                 if joker_cards == [] and card.number != previous_number + 2:
+                    print("here3",card.number, previous_number)
                     return False
             else:
                 continue
@@ -86,14 +96,8 @@ class CardSet:
     @classmethod
     def is_valid(cls,cards):
         return cls.is_group(cards) or cls.is_run(cards)              
+    
 
-    def is_first_move_valid(self):
-        if self.is_valid():                
-            total_points = sum(card.number for card in self.cards)
-            if total_points >= 30:
-                return True
-        else:
-            return False
 
 class Group(CardSet):
     def __init__(self,cards):
@@ -106,3 +110,17 @@ class Run(CardSet):
         super().__init__(cards)
         self.group = False
         self.run = True
+
+# For testing
+# is_run
+# True
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",9)] + [JokerCard()]
+print(CardSet.is_run(cards))
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",7)] 
+print(CardSet.is_run(cards))
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+print(CardSet.is_run(cards))
+# False
+cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+print(CardSet.is_run(cards))
+
