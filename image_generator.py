@@ -24,10 +24,14 @@ class ImageGenerator:
                 raise RuntimeError("Image generation failed.")
 
     def generate_colour_card_png(self):
-        for number in range(1,self.number_of_colour_cards+1):
+        for number in range(1,self.number_of_colour_cards + 1):
             for colour in COLOURS:
                 fig = plt.figure()
-                plt.text(1.5,2.0,s=f"{number}",c=f"{colour}",fontsize=60,horizontalalignment='center',verticalalignment='center')
+                fig.patch.set_facecolor(colour)  # background color
+                if colour == "Yellow":
+                    plt.text(1.5,2.0,s=f"{number}",c="black",fontsize=120,horizontalalignment='center',verticalalignment='center')
+                else:
+                    plt.text(1.5,2.0,s=f"{number}",c="white",fontsize=120,horizontalalignment='center',verticalalignment='center')
                 plt.xlim([0,3]) 
                 plt.ylim([0,4]) 
                 plt.axis('off')
@@ -37,7 +41,8 @@ class ImageGenerator:
 
     def generate_joker_card_png(self):
         fig = plt.figure()
-        plt.text(1.5,2.0,s=f"Joker",c="black",fontsize=60,horizontalalignment='center',verticalalignment='center')
+        fig.patch.set_facecolor('black')  # the background color of Joker is black
+        plt.text(1.5,2.0,s=f"J",c="white",fontsize=120,horizontalalignment='center',verticalalignment='center')
         plt.xlim([0,3]) 
         plt.ylim([0,4]) 
         plt.axis('off')
@@ -47,5 +52,5 @@ class ImageGenerator:
 
 image_generator = ImageGenerator(card_number, joker_number)
 image_generator.run(REGENERATE_IMAGE)
-
+# image_generator.run(True)
 

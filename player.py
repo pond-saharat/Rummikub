@@ -11,7 +11,7 @@ class Player:
         # This will keep record of which objects the player is currently selecting. 
         # The last index is the destination 
         # It can be only three formats: [cardset,card] or [card,card,...,card,card,cardset] or [cardset,cardset]
-        self.selected = []
+        self.selected_cards = []
     
     def draw_cards(self, deck):
         for _ in range(14):
@@ -29,8 +29,8 @@ class Player:
         return self.__str__()
 
     def make_move(self,game_engine):
-        source = self.selected[:-1] # This is a list
-        destination = self.selected[-1] # This is an instance
+        source = self.selected_cards[:-1] # This is a list
+        destination = self.selected_cards[-1] # This is an instance
 
         # [card,card,...,card,card,cardset] or [card,cardset]
         # From hand to a board: 

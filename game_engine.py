@@ -18,20 +18,29 @@ class GameEngine:
         # Using itertools.cycle() to infinitely loop over the player list
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)
-        self.turn = next(self._player_iterator)
+        self.current_player = next(self._player_iterator)
         self.objects = self.update_objects()
     
     # Get all objects
     # UI and all cards
     def update_objects(self):
-        self.objects = self.deck.deck[0:1] # NEED TO EDIT THE VALE THIS IS FOR TESTING
+        # self.objects = self.deck.deck[0:] # NEED TO EDIT THE VALUE THIS IS FOR TESTING
+        # self.objects = self.deck.deck + self.board.board + self.current_player.hands
+        self.objects = self.deck.deck
         return self.objects
     
     # Go to the next turn
     # None -> Player
     def next_turn(self):
-        self.turn = next(self._player_iterator)
-        return self.turn
+        self.current_player = next(self._player_iterator)
+        print(f"It's now : {self.current_player}'s turn")
+        print(f"current player hands: {self.current_player.hands}")
+        return self.current_player
+    
+    def deal_cards(self):
+        for player in self.players:
+            player.draw_cards(self.deck)
+    
     
     # find every possible valid combinations of selected cards, but not effective for every case,
     # actually there can be too many kinds of different combinations given same cards, it is not sensible  
