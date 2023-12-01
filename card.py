@@ -12,7 +12,7 @@ class Card(pygame.sprite.Sprite):
         self.parent_set = None
 
     def __repr__(self):
-        return f"Card({self.colour} {self.number})"
+        return f"({self.colour[0]} {self.number})"
 
     # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None

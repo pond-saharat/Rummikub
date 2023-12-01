@@ -34,7 +34,7 @@ class GameUI:
         self.offset_x = 0
         self.offset_y = 0
         self.grid_cards = board.Board().grid_cards  # { (row, col): [card1, card2, ...], ... }
-        self.selected_cards = []
+        self.selected_cards = self.game_engine.current_player.selected_cards
 
     # Run the game loop
     def run(self):
@@ -67,7 +67,7 @@ class GameUI:
 
             self.sprites.draw(self.screen)
             for card in self.selected_cards:
-                pygame.draw.rect(self.screen, 0, card.rect, 2)
+                pygame.draw.rect(self.screen, 0, card.rect, 3)
 
             pygame.display.flip()
 
@@ -108,25 +108,28 @@ class GameUI:
         # handle dropping card
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 and self.dragging:  # left button released
+                for card in self.sprites:
+                    if card.rect.collidepoint(event.pos):
+                        # if the card is in the selected_cards, remove it from the selected_cards
+                        if card in self.selected_cards:
+                            self.selected_cards.remove(card)
+                        else:
+                            self.selected_cards.append(card)
                 self.drop_card()
         # handle dragging
         elif event.type == pygame.MOUSEMOTION and self.dragging:
             if self.card_being_dragged is not None:
                 mouse_x, mouse_y = event.pos
-                new_x = mouse_x + self.offset_x
-                new_y = mouse_y + self.offset_y
-
-                # make sure the card is within the screen region
-                new_x = max(0, new_x)
-                new_y = max(0, new_y)
-                new_x = min(SCREEN_WIDTH - self.card_being_dragged.rect.width, new_x)
-                new_y = min(SCREEN_HEIGHT - self.card_being_dragged.rect.height, new_y)
-
-                # update the card's position
-                self.card_being_dragged.rect.x = new_x
-                self.card_being_dragged.rect.y = new_y
-
-                # self.screen.blit(self.card_being_dragged.surface, self.card_being_dragged.rect)
+                for card in self.cards_being_dragged:
+                    new_x = mouse_x + self.offset_x
+                    new_y = mouse_y + self.offset_y
+                    
+                    # update the card's position
+                    new_x = max(0, min(SCREEN_WIDTH - card.rect.width, new_x))
+                    new_y = max(0, min(SCREEN_HEIGHT - card.rect.height, new_y))
+                    card.rect.x = new_x
+                    card.rect.y = new_y
+                # draw the dragged card
                 self.card_being_dragged.draw(self.game_engine)
 
     def draw_grid(self, screen):
@@ -217,12 +220,21 @@ class GameUI:
         self.card_being_dragged = card
         self.offset_x = card.rect.x - mouse_pos[0]
         self.offset_y = card.rect.y - mouse_pos[1]
-        # record the original position of the card
-        self.original_grid = (self.find_nearest_grid(card.rect.centerx, card.rect.centery))
-        self.original_x, self.original_y = (
-            card.rect.centerx,
-            card.rect.centery,
-        )
+
+        # if the card in selected_cards, drag all the selected cards
+        if card in self.selected_cards:
+            self.cards_being_dragged = list(self.selected_cards)
+        else:
+            self.cards_being_dragged = [card]
+        
+        # record the original position of the cards
+        self.original_positions = {}
+        self.original_xy = {}
+        for selected_card in self.cards_being_dragged:
+            grid_pos = (self.find_nearest_grid(selected_card.rect.centerx, selected_card.rect.centery))
+            self.original_positions[selected_card] = grid_pos
+            self.original_xy[selected_card] = (selected_card.rect.centerx, selected_card.rect.centery)
+        
 
     def drop_card(self):
         self.dragging = False
@@ -231,38 +243,30 @@ class GameUI:
         # add the new grid to the grid_cards if it is not in the grid_cards
         if (row, col) not in self.grid_cards.keys():
             self.grid_cards[(row, col)] = []
-
-
-        ## if this is a valid position, put the card to the grid
-        if self.is_valid_grid_position(row, col):
-            ## if the card is still in the same grid, put it back to the original position of original grid
-            if (row, col) == self.original_grid:
-                self.card_being_dragged.rect.centerx = self.original_x
-                self.card_being_dragged.rect.centery = self.original_y
-                # control selected cards by clicking
-                if self.card_being_dragged in self.selected_cards:
-                    self.selected_cards.remove(self.card_being_dragged)
-                else:
-                    self.selected_cards.append(self.card_being_dragged)
+        
+        for card in self.cards_being_dragged:
+            original_grid = self.original_positions[card]
+            original_xy = self.original_xy[card]
+            ## if this is a valid position, put the card to the grid
+            if self.is_valid_grid_position(row, col):
+                # remove the card from the original grid
+                if original_grid in self.grid_cards and card in self.grid_cards[original_grid]:
+                    self.grid_cards[original_grid].remove(card)
+                # if the card is in the selected_cards, put all the selected cards to the grid
+                self.place_card_to_grid(card, row, col)
+            ## if the card is outside the board, put it back to the original position
             else:
-                # update the card's position
-                self.place_card_to_grid(self.card_being_dragged, row, col)
-
-            # move selected cards to the grid
-            # for i, selected_card in enumerate(selected_cards):
-            #     selected_card.rect.x = grid_x + CARD_WIDTH * len(grid_cards[(row, col)]) + 5*len(grid_cards[(row, col)]) + 5 + CARD_WIDTH * i
-            #     selected_card.rect.y = grid_y
-            
-        ## if the card is outside the board, put it back to the original position
-        else:
-            # row, col = original_row, original_col
-            self.card_being_dragged.rect.centerx = self.original_x
-            self.card_being_dragged.rect.centery = self.original_y
+                self.card_being_dragged.rect.centerx = original_xy[0]
+                self.card_being_dragged.rect.centery = original_xy[1]
         
         self.card_being_dragged = None
+        self.cards_being_dragged = []
+        self.original_positions = {}
+        self.original_xy = {}
         # remove empty keys and sort the cards in each grid
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
+        print(self.selected_cards)
         print(self.grid_cards)
     
     def is_valid_grid_position(self, row, col):
@@ -273,6 +277,6 @@ class GameUI:
         card.rect.centerx = grid_x + CARD_WIDTH * len(self.grid_cards[(row, col)]) + 5 * len(self.grid_cards[(row, col)]) + 5
         card.rect.centery = grid_y
         # remove the card from the original grid if it is in the grid_cards
-        if (self.original_grid in self.grid_cards.keys() and self.card_being_dragged in self.grid_cards[self.original_grid]):
-            self.grid_cards[self.original_grid].remove(self.card_being_dragged)
+        # if (self.original_grid in self.grid_cards.keys() and self.card_being_dragged in self.grid_cards[self.original_grid]):
+        #     self.grid_cards[self.original_grid].remove(self.card_being_dragged)
         self.grid_cards[(row, col)].append(card)
