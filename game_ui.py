@@ -1,7 +1,7 @@
 import pygame
 import game_engine
 import board
-
+import menu
 from pygame.locals import *
 from config import *
 
@@ -36,6 +36,8 @@ class GameUI:
         self.grid_cards = board.Board().grid_cards  # { (row, col): [card1, card2, ...], ... }
         self.selected_cards = self.game_engine.current_player.selected_cards
 
+        self.game_state = "main_menu"
+    
     # Run the game loop
     def run(self):
         self.screen.fill(BACKGROUND_COLOUR)

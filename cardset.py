@@ -1,4 +1,4 @@
-import card
+from card import *
 
 from config import *
 
@@ -9,6 +9,15 @@ class CardSet:
 
     def highlight(self):
         self.is_selected = not self.is_selected
+    
+    def is_first_move_valid(self):
+        if self.is_valid():                
+            total_points = sum(card.number for card in self.cards)
+            if total_points >= 30:
+                return True
+        else:
+            return False
+    
     # Create a new set of cards
     # List[Card] -> Group() or Run() or None (If they are not either Group or Run)
     @classmethod
@@ -29,7 +38,7 @@ class CardSet:
             return False
         
         # Get the colour cards (regular cards) from a pack of cards
-        colour_cards = card.Card.get_colour_cards(cards)   
+        colour_cards = Card.get_colour_cards(cards)   
         # a group is cards with the same number but different colours, 
         # Joker is wildcard, so only consider colour cards here
         same_num_in_hand = len(set([card.number for card in colour_cards]))
@@ -44,69 +53,51 @@ class CardSet:
     @staticmethod
     def is_run(cards):
         # a valid run needs at least 3 cards and there are only 13 different numbers each colour
-        if len(cards) < 3 or len(cards) > NUM_OF_CARDS_EACH_COLOUR:
+        if len(cards) < 3 or len(cards) > NUM_OF_CARDS_EACH_COLOUR // 2:
             return False
         
-        # Run
-        run = []
         # Get the colour cards (regular cards) from a pack of cards
-        colour_cards = sorted(card.Card.get_colour_cards(cards))
+        colour_cards = sorted(Card.get_colour_cards(cards), key=lambda x: x.number)
         # Get the count of Joker cards from a pack of cards
-        joker_cards = card.Card.get_joker_cards(cards)
-        
-        # Iterate through each card in the given colour cards
+        joker_cards = Card.get_joker_cards(cards)
+
+        # Check if they are all the same colour
+        if not all([card.colour == colour_cards[0].colour for card in colour_cards]):
+            return False
+
+        run = []
         previous_number = None
         for card in colour_cards:
             # First iteration
             if previous_number is None:
-                previous_card = card.number
+                previous_number = card.number
                 run.append(card)
                 continue
             # If the current card is the previous card number + 1 -> add the card to the list
-            if card.number == previous_number + 1:
-                previous_card = card.number
+            if card.number == previous_number + 2:
+                previous_number = card.number
                 run.append(card)
                 continue
             # If the current card is not the previous card number + 1 -> add the joker card to the list and increment the previous card number
-            elif card.number != previous_number + 1: 
-                while joker_cards != [] and card.number != previous_number + 1:
+            elif card.number != previous_number + 2: 
+                while joker_cards != [] and card.number != previous_number + 2:
                     popped_joker_card = joker_cards.pop(0)
                     run.append(popped_joker_card)
-                    previous_number += 1
-                if joker_cards == [] and card.number != previous_number + 1:
+                    previous_number += 2
+                if joker_cards == [] and card.number != previous_number + 2:
+                    print("here3",card.number, previous_number)
                     return False
             else:
                 continue
         return True
-
-        # 
-        # # a run needs same colour for colour/regular cards
-        # if len(set([card.colour for card in colour_cards])) != 1:
-        #     return False
-        # else:
-        #     list_of_numbers = sorted([card.number for card in colour_cards])
-        #     # numbers should be sequence unless there are enough Joker cards in hands
-        #     for i in range(1, len(list_of_numbers)):
-        #         if list_of_numbers[i] != list_of_numbers[i-1] + 1:
-        #             if joker_cards_count == 0:
-        #                 return False
-        #             # each time there is a gap between adjacent numbers, the count of Joker cards will decrease by 1
-        #             joker_cards_count -= 1
-        #     return True
     
     # Classmethod: Check if the CardSet is either a valid Group or a valid Run
     # None -> bool
     @classmethod
     def is_valid(cls,cards):
         return cls.is_group(cards) or cls.is_run(cards)              
+    
 
-    def is_first_move_valid(self):
-        if self.is_valid():                
-            total_points = sum(card.number for card in self.cards)
-            if total_points >= 30:
-                return True
-        else:
-            return False
 
 class Group(CardSet):
     def __init__(self,cards):
@@ -119,3 +110,17 @@ class Run(CardSet):
         super().__init__(cards)
         self.group = False
         self.run = True
+
+# For testing
+# is_run
+# True
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",9)] + [JokerCard()]
+print(CardSet.is_run(cards))
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",7)] 
+print(CardSet.is_run(cards))
+cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+print(CardSet.is_run(cards))
+# False
+cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+print(CardSet.is_run(cards))
+
