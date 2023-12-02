@@ -27,15 +27,11 @@ class ImageGenerator:
         for number in range(1,self.number_of_colour_cards + 1):
             for colour in COLOURS:
                 fig = plt.figure()
-<<<<<<< HEAD
                 fig.patch.set_facecolor(colour)  # background color
                 if colour == "Yellow":
                     plt.text(1.5,2.0,s=f"{number}",c="black",fontsize=120,horizontalalignment='center',verticalalignment='center')
                 else:
                     plt.text(1.5,2.0,s=f"{number}",c="white",fontsize=120,horizontalalignment='center',verticalalignment='center')
-=======
-                plt.text(1.5,2.0,s=f"{number}",c=f"{colour}",fontsize=120,horizontalalignment='center',verticalalignment='center')
->>>>>>> 759198a09780b933107918013607d1f65403956c
                 plt.xlim([0,3]) 
                 plt.ylim([0,4]) 
                 plt.axis('off')

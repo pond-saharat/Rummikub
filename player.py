@@ -73,9 +73,6 @@ class Player:
             # Don't know user's intention
             self.cancel_move("Don't know user's intention")
             pass
-<<<<<<< HEAD
-    
-=======
 
     # Make first move
     # None -> None
@@ -86,7 +83,6 @@ class Player:
                 sum_of_cards += card.number
         return sunm
 
->>>>>>> 759198a09780b933107918013607d1f65403956c
     # Cancel the current move
     def cancel_move(self,reason=None):   
         print(f"IllegalMove: {reason}")

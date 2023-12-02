@@ -30,10 +30,10 @@ class GameEngine:
     # Get all objects
     # UI and all cards
     def update_objects(self):
-        # self.objects = self.deck.deck[0:4] # NEED TO EDIT THE VALUE THIS IS FOR TESTING
+        # self.objects = self.deck.deck[-2:0] # NEED TO EDIT THE VALUE THIS IS FOR TESTING
         # self.objects = self.deck.deck + self.board.board + self.current_player.hands
-        print(f"deck: {len(self.deck.deck)}")
-        self.objects = self.deck.deck[-2:0] + self.board.board + self.current_player.hands
+        # print(f"deck: {len(self.deck.deck)}")
+        self.objects = self.deck.deck
         return self.objects
 
     # Go to the next turn
