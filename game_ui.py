@@ -43,7 +43,7 @@ class GameUI:
         self.add_all_sprites()
 
         # deal cards
-        self.game_engine.deal_cards()
+        # self.game_engine.deal_cards()
         self.set_current_player_hands()
 
         # Infinite loop
@@ -252,8 +252,10 @@ class GameUI:
                 # remove the card from the original grid
                 if original_grid in self.grid_cards and card in self.grid_cards[original_grid]:
                     self.grid_cards[original_grid].remove(card)
+                    # self.sort_grid(self.grid_cards)
                 # if the card is in the selected_cards, put all the selected cards to the grid
                 self.place_card_to_grid(card, row, col)
+                
             ## if the card is outside the board, put it back to the original position
             else:
                 self.card_being_dragged.rect.centerx = original_xy[0]
@@ -263,11 +265,14 @@ class GameUI:
         self.cards_being_dragged = []
         self.original_positions = {}
         self.original_xy = {}
+        
+        # if all(card in self.grid_cards[(row, col)] for card in self.selected_cards):
+        #     self.selected_cards = []
         # remove empty keys and sort the cards in each grid
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
-        print(self.selected_cards)
-        print(self.grid_cards)
+        print("selected cards:",self.selected_cards)
+        print("grid:", self.grid_cards)
     
     def is_valid_grid_position(self, row, col):
         return 0 <= row < BOARD_HEIGHT // GRID_HEIGHT and 0 <= col < BOARD_WIDTH // GRID_WIDTH
@@ -276,7 +281,10 @@ class GameUI:
         grid_x, grid_y = self.find_nearest_grid_pos(card.rect.centerx, card.rect.centery)
         card.rect.centerx = grid_x + CARD_WIDTH * len(self.grid_cards[(row, col)]) + 5 * len(self.grid_cards[(row, col)]) + 5
         card.rect.centery = grid_y
-        # remove the card from the original grid if it is in the grid_cards
-        # if (self.original_grid in self.grid_cards.keys() and self.card_being_dragged in self.grid_cards[self.original_grid]):
-        #     self.grid_cards[self.original_grid].remove(self.card_being_dragged)
+        
         self.grid_cards[(row, col)].append(card)
+        # self.selected_cards = []
+
+    def show_players_hands(self):
+        for player in self.game_engine.players:
+            print(player.name, player.hands)

@@ -23,6 +23,6 @@ class Deck:
         return str(self.deck)
 
 
-# For testing purposes
-d = Deck()
-print(d.deck[0].image)
+# # For testing purposes
+# d = Deck()
+# print(d.deck[0].image)
