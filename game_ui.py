@@ -24,16 +24,18 @@ class GameUI:
 
         # button settings
         self.button_font = pygame.font.SysFont(None, 36)
-        self.button_rect = pygame.Rect(300, 100, 150, 50)
+        self.button_rect = pygame.Rect(100, 20, 150, 50)
         self.button_text = self.button_font.render("End Turn", True, 0)
-        # pygame.time.delay(100)
+        pygame.time.delay(10)
 
         # drag and drop settings
         self.dragging = False
         self.card_being_dragged = None
         self.offset_x = 0
         self.offset_y = 0
-        self.grid_cards = board.Board().grid_cards  # { (row, col): [card1, card2, ...], ... }
+        self.grid_cards = (
+            board.Board().grid_cards
+        )  # { (row, col): [card1, card2, ...], ... }
         self.selected_cards = self.game_engine.current_player.selected_cards
 
     # Run the game loop
@@ -56,7 +58,7 @@ class GameUI:
             # draw grid
             self.draw_grid(self.screen)
             # self.draw_hands_region()
-            
+
             # draw button
             pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
             self.screen.blit(
@@ -108,14 +110,21 @@ class GameUI:
         # handle dropping card
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 and self.dragging:  # left button released
+                mouse_x, mouse_y = event.pos
                 for card in self.sprites:
-                    if card.rect.collidepoint(event.pos):
+                    if (
+                        card.rect.collidepoint(event.pos)
+                        and mouse_x > CARD_WIDTH
+                        and mouse_y > CARD_HEIGHT
+                    ):
                         # if the card is in the selected_cards, remove it from the selected_cards
                         if card in self.selected_cards:
                             self.selected_cards.remove(card)
                         else:
                             self.selected_cards.append(card)
+                
                 self.drop_card()
+        
         # handle dragging
         elif event.type == pygame.MOUSEMOTION and self.dragging:
             if self.card_being_dragged is not None:
@@ -123,7 +132,7 @@ class GameUI:
                 for card in self.cards_being_dragged:
                     new_x = mouse_x + self.offset_x
                     new_y = mouse_y + self.offset_y
-                    
+
                     # update the card's position
                     new_x = max(0, min(SCREEN_WIDTH - card.rect.width, new_x))
                     new_y = max(0, min(SCREEN_HEIGHT - card.rect.height, new_y))
@@ -161,6 +170,7 @@ class GameUI:
     def sort_grid(self, grid_cards):
         # if (row, col) in grid_cards
         for _ in grid_cards.keys():
+            grid_cards[_] = list(set(grid_cards[_]))
             grid_cards[_].sort(key=lambda crd: (crd.colour, crd.number))
             for i, card in enumerate(grid_cards[_]):
                 card_grid_x, card_grid_y = self.find_nearest_grid_pos(
@@ -211,8 +221,8 @@ class GameUI:
             key=lambda crd: (crd.colour, crd.number)
         )
         for i, card in enumerate(self.game_engine.current_player.hands):
-            card.rect.centerx = 300 + CARD_WIDTH * i + 5 * i + 5
-            card.rect.centery = 1100
+            card.rect.centerx = HANDS_REGION + CARD_WIDTH * i + 5 * i + 5
+            card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50
             # card.draw(self.game_engine)
 
     def start_dragging(self, card, mouse_pos):
@@ -226,62 +236,87 @@ class GameUI:
             self.cards_being_dragged = list(self.selected_cards)
         else:
             self.cards_being_dragged = [card]
-        
+
         # record the original position of the cards
         self.original_positions = {}
         self.original_xy = {}
         for selected_card in self.cards_being_dragged:
-            grid_pos = (self.find_nearest_grid(selected_card.rect.centerx, selected_card.rect.centery))
+            grid_pos = self.find_nearest_grid(
+                selected_card.rect.centerx, selected_card.rect.centery
+            )
             self.original_positions[selected_card] = grid_pos
-            self.original_xy[selected_card] = (selected_card.rect.centerx, selected_card.rect.centery)
-        
+            self.original_xy[selected_card] = (
+                selected_card.rect.centerx,
+                selected_card.rect.centery,
+            )
 
     def drop_card(self):
         self.dragging = False
         # find the nearest grid to the card
-        row, col = self.find_nearest_grid(self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery)
+        row, col = self.find_nearest_grid(
+            self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
+        )
         # add the new grid to the grid_cards if it is not in the grid_cards
         if (row, col) not in self.grid_cards.keys():
             self.grid_cards[(row, col)] = []
-        
+
         for card in self.cards_being_dragged:
             original_grid = self.original_positions[card]
             original_xy = self.original_xy[card]
+            # if (row, col) == original_grid:
+            #     card.rect.centerx = original_xy[0]
+            #     card.rect.centery = original_xy[1]
+            #     self.grid_cards[(row, col)].append(card)
+
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
                 # remove the card from the original grid
-                if original_grid in self.grid_cards and card in self.grid_cards[original_grid]:
+                if (
+                    original_grid in self.grid_cards
+                    and card in self.grid_cards[original_grid]
+                ):
                     self.grid_cards[original_grid].remove(card)
-                    # self.sort_grid(self.grid_cards)
                 # if the card is in the selected_cards, put all the selected cards to the grid
                 self.place_card_to_grid(card, row, col)
-                
+
             ## if the card is outside the board, put it back to the original position
             else:
-                self.card_being_dragged.rect.centerx = original_xy[0]
-                self.card_being_dragged.rect.centery = original_xy[1]
-        
+                card.rect.centerx = original_xy[0]
+                card.rect.centery = original_xy[1]
+
         self.card_being_dragged = None
         self.cards_being_dragged = []
         self.original_positions = {}
         self.original_xy = {}
-        
+
         # if all(card in self.grid_cards[(row, col)] for card in self.selected_cards):
         #     self.selected_cards = []
         # remove empty keys and sort the cards in each grid
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
-        print("selected cards:",self.selected_cards)
+        print("selected cards:", self.selected_cards)
         print("grid:", self.grid_cards)
-    
+        pygame.display.update()
+
     def is_valid_grid_position(self, row, col):
-        return 0 <= row < BOARD_HEIGHT // GRID_HEIGHT and 0 <= col < BOARD_WIDTH // GRID_WIDTH
-    
+        return (
+            0 <= row < BOARD_HEIGHT // GRID_HEIGHT 
+            and 0 <= col < BOARD_WIDTH // GRID_WIDTH 
+        )
+
     def place_card_to_grid(self, card, row, col):
-        grid_x, grid_y = self.find_nearest_grid_pos(card.rect.centerx, card.rect.centery)
-        card.rect.centerx = grid_x + CARD_WIDTH * len(self.grid_cards[(row, col)]) + 5 * len(self.grid_cards[(row, col)]) + 5
+        grid_x, grid_y = self.find_nearest_grid_pos(
+            card.rect.centerx, card.rect.centery
+        )
+        card.rect.centerx = (
+            grid_x
+            + CARD_WIDTH * len(self.grid_cards[(row, col)])
+            + 5 * len(self.grid_cards[(row, col)])
+            + 5
+        )
         card.rect.centery = grid_y
-        
+
+        # if card not in self.grid_cards[(row, col)]:
         self.grid_cards[(row, col)].append(card)
         # self.selected_cards = []
 
