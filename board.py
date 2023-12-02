@@ -1,6 +1,8 @@
 class Board:
     def __init__(self) -> None:
         self.board = []
+        self.grid_cards = {}
+        self.selected_cards = []
     
     def __str__(self) -> str:
         return str(self.board)
