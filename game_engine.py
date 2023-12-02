@@ -3,15 +3,18 @@ import deck
 import board
 import player
 import cardset
+import pygame
 
 from config import *
 
 
 class GameEngine:
+    
     def __init__(self, game_ui) -> None:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
         self.board = board.Board()
+        self.hand_regions = []
         self.game_ui = game_ui
         # List of players
         self.players = [
@@ -23,9 +26,12 @@ class GameEngine:
         self.current_player = next(self._player_iterator)
         # deal cards to players
         self.deal_cards()
+        # Link pygame.Rect objects to player's hand_region
+        self.set_player_hand_regions()
         print(f"current player hands: {self.current_player.hands}")
         print(f"deck: {len(self.deck.deck)}")
         self.objects = self.update_objects()
+        
 
     # Get all objects
     # UI and all cards
@@ -47,6 +53,18 @@ class GameEngine:
     def deal_cards(self):
         for player in self.players:
             player.draw_cards(self.deck)
+
+    # Link pygame.Rect objects to player's hand_region
+    # None -> None
+    def set_player_hand_regions(self):
+        # Define hand regions
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION),2))
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION, HANDS_REGION),2))
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION,SCREEN_WIDTH - 2 * HANDS_REGION,HANDS_REGION),2))
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(SCREEN_WIDTH - HANDS_REGION,HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION),2))
+
+        for player in self.players:
+            player.hand_region = self.hand_regions.pop(0)
 
     # find every possible valid combinations of selected cards, but not effective for every case,
     # actually there can be too many kinds of different combinations given same cards, it is not sensible

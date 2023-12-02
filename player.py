@@ -12,6 +12,7 @@ class Player:
         # The last index is the destination 
         # It can be only three formats: [cardset,card] or [card,card,...,card,card,cardset] or [cardset,cardset]
         self.selected_cards = []
+        self.hand_region = None # pygame.Rect
     
     def draw_cards(self, deck):
         for _ in range(14):

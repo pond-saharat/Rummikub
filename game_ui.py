@@ -24,8 +24,8 @@ class GameUI:
 
         # button settings
         self.button_font = pygame.font.SysFont(None, 36)
-        self.button_rect = pygame.Rect(100, 20, 150, 50)
-        self.button_text = self.button_font.render("End Turn", True, 0)
+        self.button_rect = pygame.Rect(1100, 20, 130, 50)
+        self.button_text = self.button_font.render("Submit", True, 0)
         pygame.time.delay(10)
 
         # drag and drop settings
@@ -33,9 +33,7 @@ class GameUI:
         self.card_being_dragged = None
         self.offset_x = 0
         self.offset_y = 0
-        self.grid_cards = (
-            board.Board().grid_cards
-        )  # { (row, col): [card1, card2, ...], ... }
+        self.grid_cards = board.Board().grid_cards # { (row, col): [card1, card2, ...], ... }
         self.selected_cards = self.game_engine.current_player.selected_cards
 
     # Run the game loop
@@ -77,6 +75,7 @@ class GameUI:
         for obj in self.game_engine.objects:
             self.sprites.add(obj)
 
+    # Check input events by the user
     def check_event(self, event):
         # Quit the game if the event is QUIT
         if event.type == pygame.QUIT:
@@ -98,12 +97,6 @@ class GameUI:
                             self.start_dragging(card, event.pos)
                             break
                             # obj.left_click_action(self.game_engine)
-            elif event.button == 3:
-                for obj in self.sprites:
-                    # Check if the mouse click is within sprites' boundaries
-                    if obj.rect.collidepoint(mouse_x, mouse_y):
-                        # Do the actions for the right click
-                        obj.right_click_action(self.game_engine)
             else:
                 pass
 
@@ -112,17 +105,12 @@ class GameUI:
             if event.button == 1 and self.dragging:  # left button released
                 mouse_x, mouse_y = event.pos
                 for card in self.sprites:
-                    if (
-                        card.rect.collidepoint(event.pos)
-                        and mouse_x > CARD_WIDTH
-                        and mouse_y > CARD_HEIGHT
-                    ):
+                    if (card.rect.collidepoint(event.pos) and mouse_x > CARD_WIDTH and mouse_y > CARD_HEIGHT):
                         # if the card is in the selected_cards, remove it from the selected_cards
                         if card in self.selected_cards:
                             self.selected_cards.remove(card)
                         else:
                             self.selected_cards.append(card)
-                
                 self.drop_card()
         
         # handle dragging
@@ -140,7 +128,10 @@ class GameUI:
                     card.rect.y = new_y
                 # draw the dragged card
                 self.card_being_dragged.draw(self.game_engine)
+        else:
+            pass
 
+    # Draw lines of the grid
     def draw_grid(self, screen):
         for x in range(HANDS_REGION, HANDS_REGION + BOARD_WIDTH + 1, GRID_WIDTH):
             pygame.draw.line(
@@ -176,7 +167,6 @@ class GameUI:
                 card_grid_x, card_grid_y = self.find_nearest_grid_pos(
                     card.rect.centerx, card.rect.centery
                 )
-
                 card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
                 card.rect.centery = card_grid_y
 
@@ -252,10 +242,13 @@ class GameUI:
 
     def drop_card(self):
         self.dragging = False
+        dropped_pos_x, dropped_pos_y = self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
+        
+        # Please continue here
+        
         # find the nearest grid to the card
-        row, col = self.find_nearest_grid(
-            self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
-        )
+        row, col = self.find_nearest_grid(dropped_pos_x, dropped_pos_y)
+
         # add the new grid to the grid_cards if it is not in the grid_cards
         if (row, col) not in self.grid_cards.keys():
             self.grid_cards[(row, col)] = []
@@ -284,6 +277,7 @@ class GameUI:
                 card.rect.centerx = original_xy[0]
                 card.rect.centery = original_xy[1]
 
+        # Reset dragging parameters to their initial values
         self.card_being_dragged = None
         self.cards_being_dragged = []
         self.original_positions = {}
@@ -303,6 +297,9 @@ class GameUI:
             0 <= row < BOARD_HEIGHT // GRID_HEIGHT 
             and 0 <= col < BOARD_WIDTH // GRID_WIDTH 
         )
+
+    # def is_valid_hand_position(self, row, col):
+    #     pass
 
     def place_card_to_grid(self, card, row, col):
         grid_x, grid_y = self.find_nearest_grid_pos(
