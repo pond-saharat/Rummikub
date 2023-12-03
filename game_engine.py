@@ -14,7 +14,7 @@ class GameEngine:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
         self.objects = self.deck.deck
-        self.board = board.Board()
+        # self.board = board.Board()
         self.hand_regions = []
         self.game_ui = game_ui
         self.screen = self.game_ui.screen
@@ -50,6 +50,19 @@ class GameEngine:
     # Go to the next turn
     # None -> Player
     def next_turn(self):
+        for pos,card_list in self.game_ui.grid_cards.items():
+            print(pos,cardset.CardSet.is_valid(card_list))
+            if not cardset.CardSet.is_valid(card_list):
+                # return to player's hand
+                for card in card_list:
+                    card.owner = self.current_player
+                self.current_player.hands.extend(card_list)
+                self.game_ui.grid_cards[pos] = []
+            else:
+                pass
+        self.game_ui.reset_drag_parameters()
+        self.game_ui.set_current_player_hands()
+        self.game_ui.grid_cards =  {k: v for k, v in self.game_ui.grid_cards.items() if v != []}
         self.current_player = next(self._player_iterator)
         print(f"It's now : {self.current_player}'s turn")
         print(f"current player hands: {self.current_player.hands}")

@@ -101,8 +101,6 @@ class GameUI:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if event.button == 1:
                 if self.button_rect.collidepoint(event.pos):
-                    self.reset_drag_parameters()
-                    self.set_current_player_hands()
                     self.game_engine.next_turn()
                     print(f"It's now {self.game_engine.current_player}'s turn")
                 else:
@@ -228,7 +226,6 @@ class GameUI:
     def set_current_player_hands(self):
         for p, player in enumerate(self.game_engine.players):
             player.hands.sort(key=lambda crd: (crd.colour, crd.number))
-            print("Debug: ", len(player.hands))
             if p == 0:
                 for i, card in enumerate(player.hands):
                     card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5) + 5
