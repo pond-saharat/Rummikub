@@ -13,6 +13,7 @@ class GameEngine:
     def __init__(self, game_ui) -> None:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
+        self.objects = self.deck.deck
         self.board = board.Board()
         self.hand_regions = []
         self.game_ui = game_ui
@@ -25,13 +26,16 @@ class GameEngine:
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)
         self.current_player = next(self._player_iterator)
+        
         # deal cards to players
         self.deal_cards()
+        
         # Link pygame.Rect objects to player's hand_region
         self.set_player_hand_regions()
+        
         print(f"current player hands: {self.current_player.hands}")
         print(f"deck: {len(self.deck.deck)}")
-        self.objects = self.update_objects()
+        
         
 
     # Get all objects
@@ -40,7 +44,7 @@ class GameEngine:
         # self.objects = self.deck.deck[-2:0] # NEED TO EDIT THE VALUE THIS IS FOR TESTING
         # self.objects = self.deck.deck + self.board.board + self.current_player.hands
         # print(f"deck: {len(self.deck.deck)}")
-        self.objects = self.deck.deck
+        self.objects = self.deck.deck + [card for player in self.players for card in player.hands]
         return self.objects
 
     # Go to the next turn
@@ -62,7 +66,7 @@ class GameEngine:
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION,SCREEN_WIDTH - 2 * HANDS_REGION,HANDS_REGION),2))
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION),2))
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION, HANDS_REGION),2))
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(SCREEN_WIDTH - HANDS_REGION,HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION),2))
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION + BOARD_WIDTH, HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION),2))
 
         for player in self.players:
             player.hand_region = self.hand_regions.pop(0)

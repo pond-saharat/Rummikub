@@ -11,6 +11,8 @@ class Card(pygame.sprite.Sprite):
         self.is_selected = False
         self.parent_set = None
         self.flipped = False
+        # Owner is a Player object
+        self.owner = None
 
     def __repr__(self):
         return f"{self.colour[0]}-{self.number}"
@@ -21,10 +23,8 @@ class Card(pygame.sprite.Sprite):
         if self.is_selected:
             pygame.draw.rect(game_engine.screen, (255, 0, 0), self.rect, 10)
             game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
-            # print("something1")
         else:
             game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
-            # print("something2")
         pygame.display.update()
 
     # Perfome actions when the card is clicked
@@ -59,6 +59,11 @@ class Card(pygame.sprite.Sprite):
     def highlight(self, game_engine):
         self.is_selected = not self.is_selected
         self.draw(game_engine)
+    
+    def load_image(self):
+        self.image = pygame.transform.smoothscale(
+            pygame.image.load(self.image_path), (CARD_WIDTH, CARD_HEIGHT)
+        )
 
     # Get only the colour cards for a pack of cards
     # None -> List[ColourCard]
@@ -85,10 +90,9 @@ class ColourCard(Card):
     def __init__(self, colour, number):
         super().__init__(colour, number)
         self.joker = False
-        self.image = pygame.transform.smoothscale(
-            pygame.image.load(f"./src/{self.colour.lower()}{self.number}.png"),
-            (CARD_WIDTH, CARD_HEIGHT),
-        )
+        self.image_path = f"./src/{self.colour.lower()}{self.number}.png"
+        self.image = None
+        self.load_image()
         self.rect = self.image.get_rect()
 
     # Get the penalty for this card
@@ -97,13 +101,14 @@ class ColourCard(Card):
         return -self.number
 
 
+
 class JokerCard(Card):
     def __init__(self):
         super().__init__("Joker", 0)
         self.joker = True
-        self.image = pygame.transform.smoothscale(
-            pygame.image.load(f"./src/joker.png"), (CARD_WIDTH, CARD_HEIGHT)
-        )
+        self.image_path = f"./src/joker.png"
+        self.image = None
+        self.load_image()
         self.rect = self.image.get_rect()
 
     # Get the penalty for this card

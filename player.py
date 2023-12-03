@@ -15,9 +15,11 @@ class Player:
         self.hand_region = None # pygame.Rect
     
     def draw_cards(self, deck):
-        for _ in range(14):
-            card = deck.deck.pop()
-            self.hands.append(card)
+        popped_to_hand = deck.deck[:14]
+        for card in popped_to_hand:
+            card.owner = self
+        self.hands += popped_to_hand
+        deck.deck = deck.deck[14:]
     
     def draw_one_card(self, deck):
         card = deck.deck.pop()

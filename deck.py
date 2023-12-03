@@ -10,13 +10,14 @@ class Deck:
     def __init__(self):
         self.deck = []
         # Create a list of ColourCard instances
-        self.deck += NUM_OF_IDENTICAL_CARDS * [
+        self.deck += [
             card.ColourCard(colour, number)
             for colour in COLOURS
             for number in range(1, NUM_OF_CARDS_EACH_COLOUR + 1)
+            for _ in range(NUM_OF_IDENTICAL_CARDS)
         ]
         # Create a list of JokerCard instances
-        self.deck += NUM_OF_JOKER_CARDS * [card.JokerCard()]
+        self.deck += [card.JokerCard() for _ in range(NUM_OF_JOKER_CARDS)]
         random.shuffle(self.deck)
 
     def __str__(self):

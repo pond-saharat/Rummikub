@@ -88,10 +88,6 @@ class GameUI:
     def add_all_sprites(self):
         for obj in self.game_engine.objects:
             self.sprites.add(obj)
-            
-    def add_all_sprites(self):
-        for obj in self.game_engine.objects:
-            self.sprites.add(obj)
 
     # Check input events by the user
     def check_event(self, event, game_engine):
@@ -111,10 +107,11 @@ class GameUI:
                     for card in self.sprites:
                         # Check if the mouse click is within sprites' boundaries
                         if card.rect.collidepoint(mouse_x, mouse_y):
-                            # Do the actions for the left click
-                            self.start_dragging(card, event.pos)
-                            break
-                            # obj.left_click_action(self.game_engine)
+                            if card.owner == self.game_engine.current_player or card.owner is None:
+                                # Do the actions for the left click
+                                self.start_dragging(card, event.pos)
+                                break
+                                # obj.left_click_action(self.game_engine)
             else:
                 pass
 
@@ -225,13 +222,37 @@ class GameUI:
         )
 
     def set_current_player_hands(self):
-        self.game_engine.current_player.hands.sort(
-            key=lambda crd: (crd.colour, crd.number)
-        )
-        for i, card in enumerate(self.game_engine.current_player.hands):
-            card.rect.centerx = HANDS_REGION + CARD_WIDTH * i + 5 * i + 5
-            card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50
-            # card.draw(self.game_engine)
+        for p, player in enumerate(self.game_engine.players):
+            player.hands.sort(key=lambda crd: (crd.colour, crd.number))
+            print("Debug: ", len(player.hands))
+            if p == 0:
+                for i, card in enumerate(player.hands):
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5) + 5
+                    card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50
+            elif p == 1:
+                i, j = 0, 0
+                for card in player.hands:
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) - 70
+                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 20
+                    i += 1
+                    if i == 2:
+                        i = 0
+                        j +=1
+            elif p == 2:
+                for i, card in enumerate(player.hands):
+                    card.rect.centerx = HANDS_REGION + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centery = HANDS_REGION - 50
+            elif p == 3:
+                i, j = 0, 0
+                for card in player.hands:
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5)  + BOARD_WIDTH + 30
+                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 20
+                    i += 1
+                    if i == 2:
+                        i = 0
+                        j +=1
+            else:
+                pass
 
     def start_dragging(self, card, mouse_pos):
         self.dragging = True
@@ -266,6 +287,7 @@ class GameUI:
         if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
             for card in self.cards_being_dragged:
                 game_engine.current_player.hands.append(card)
+                card.owner = game_engine.current_player
 
             self.card_being_dragged = None
             self.cards_being_dragged = []
@@ -298,6 +320,9 @@ class GameUI:
                     self.grid_cards[original_grid].remove(card)
                 # if the card is in the selected_cards, put all the selected cards to the grid
                 self.place_card_to_grid(card, row, col)
+
+                # Reset the owner of the card
+                card.owner = None
 
             ## if the card is outside the board, put it back to the original position
             else:
