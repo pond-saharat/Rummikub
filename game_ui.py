@@ -75,7 +75,7 @@ class GameUI:
                 )
                 # Draw all of the sprites
                 # self.set_current_player_hands()
-
+                
                 self.sprites.draw(self.screen)
                 for card in self.selected_cards:
                     pygame.draw.rect(self.screen, 0, card.rect, 3)
@@ -101,6 +101,8 @@ class GameUI:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if event.button == 1:
                 if self.button_rect.collidepoint(event.pos):
+                    self.reset_drag_parameters()
+                    self.set_current_player_hands()
                     self.game_engine.next_turn()
                     print(f"It's now {self.game_engine.current_player}'s turn")
                 else:
@@ -112,6 +114,8 @@ class GameUI:
                                 self.start_dragging(card, event.pos)
                                 break
                                 # obj.left_click_action(self.game_engine)
+            elif event.button == 3:
+                self.selected_cards = []
             else:
                 pass
 
@@ -286,13 +290,16 @@ class GameUI:
         # If the current drop position is in current player's hand region -> leave a card in that region
         if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
             for card in self.cards_being_dragged:
-                game_engine.current_player.hands.append(card)
+                if card not in game_engine.current_player.hands:
+                    game_engine.current_player.hands.append(card)
                 card.owner = game_engine.current_player
-
-            self.card_being_dragged = None
-            self.cards_being_dragged = []
-            self.original_positions = {}
-            self.original_xy = {}
+                if card in game_engine.deck.deck:
+                    game_engine.deck.deck.remove(card)
+            for key, card_list in self.grid_cards.items():
+                self.grid_cards[key] = [crd for crd in card_list if crd not in self.cards_being_dragged]
+            print("selected cards:", self.selected_cards)
+            print("grid:", self.grid_cards)
+            self.reset_drag_parameters()
             return
         
         # find the nearest grid to the card
@@ -322,6 +329,10 @@ class GameUI:
                 self.place_card_to_grid(card, row, col)
 
                 # Reset the owner of the card
+                if card.owner:
+                    card.owner.hands.remove(card)
+                    card.owner = None
+
                 card.owner = None
 
             ## if the card is outside the board, put it back to the original position
@@ -330,10 +341,7 @@ class GameUI:
                 card.rect.centery = original_xy[1]
 
         # Reset dragging parameters to their initial values
-        self.card_being_dragged = None
-        self.cards_being_dragged = []
-        self.original_positions = {}
-        self.original_xy = {}
+        self.reset_drag_parameters()
 
         # if all(card in self.grid_cards[(row, col)] for card in self.selected_cards):
         #     self.selected_cards = []
@@ -344,6 +352,18 @@ class GameUI:
         print("grid:", self.grid_cards)
         pygame.display.update()
 
+    def reset_drag_parameters(self):
+        self.game_engine.current_player.selected_cards = []
+        for card in self.game_engine.current_player.hands:
+            card.is_selected = False
+        for k,cards in self.grid_cards.items():
+            for card in cards:
+                card.is_selected = False
+        self.card_being_dragged = None
+        self.cards_being_dragged = []
+        self.original_positions = {}
+        self.original_xy = {}
+    
     def is_valid_grid_position(self, row, col):
         return (
             0 <= row < BOARD_HEIGHT // GRID_HEIGHT 

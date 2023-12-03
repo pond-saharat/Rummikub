@@ -41,8 +41,8 @@ class ImageGenerator:
 
     def generate_joker_card_png(self):
         fig = plt.figure()
-        fig.patch.set_facecolor('black')  # the background color of Joker is black
-        plt.text(1.5,2.0,s=f"J",c="white",fontsize=120,horizontalalignment='center',verticalalignment='center')
+        fig.patch.set_facecolor('white')  # the background color of Joker is black
+        plt.text(1.5,2.0,s=f"J",c="black",fontsize=120,horizontalalignment='center',verticalalignment='center')
         plt.xlim([0,3]) 
         plt.ylim([0,4]) 
         plt.axis('off')

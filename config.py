@@ -10,7 +10,7 @@ NUM_OF_AI_PLAYERS = 0
 NUM_OF_HUMAN_PLAYERS = 4
 
 # Variables for GameEngine
-REGENERATE_IMAGE = False
+REGENERATE_IMAGE = True
 
 # Variables for GameUI
 SCREEN_WIDTH = 1280
