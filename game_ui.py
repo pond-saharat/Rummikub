@@ -12,15 +12,19 @@ class GameUI:
         self.running = True
         # Initialize an empty group of game objects
         self.sprites = pygame.sprite.Group()
+
+        pygame.init()
+        # Create a blank screen
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
         self.game_engine = game_engine.GameEngine(self)
-        pygame.init()
+
         # clock = pygame.time.Clock()
 
         pygame.mouse.set_visible(1)
-        # Create a blank screen
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
         pygame.display.set_caption(CAPTION)
+        # Passing screen to game_engine
         self.game_engine.screen = self.screen
         self.game_state = "main_menu"
     
@@ -53,52 +57,44 @@ class GameUI:
         while self.running:
             # Check the game state
             if self.game_state == "main_menu":
-                menu.Menu(self.screen)
-            else:
+                menu.Menu(self).run()
+            elif self.game_state == "game":
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
-                    self.check_event(event)
+                    self.check_event(event,self.game_engine)
                 # Clear the screen
-                self.screen.fill("black")
+                self.screen.fill(BACKGROUND_COLOUR)
+                # draw grid
+                self.draw_grid(self.screen)
+                # self.draw_hands_region()
+
+                # draw button
+                pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
+                self.screen.blit(
+                    self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
+                )
                 # Draw all of the sprites
+                # self.set_current_player_hands()
+
                 self.sprites.draw(self.screen)
+                for card in self.selected_cards:
+                    pygame.draw.rect(self.screen, 0, card.rect, 3)
+
                 pygame.display.flip()
+            else:
+                pass
+
     
     def add_all_sprites(self):
         for obj in self.game_engine.objects:
             self.sprites.add(obj)
-    
-    def check_event(self,event):
-
-            # Check the inputs provided by the user
-            for event in pygame.event.get():
-                self.check_event(event)
-            # Clear the screen
-            self.screen.fill(BACKGROUND_COLOUR)
-            # draw grid
-            self.draw_grid(self.screen)
-            # self.draw_hands_region()
-
-            # draw button
-            pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
-            self.screen.blit(
-                self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
-            )
-            # Draw all of the sprites
-            # self.set_current_player_hands()
-
-            self.sprites.draw(self.screen)
-            for card in self.selected_cards:
-                pygame.draw.rect(self.screen, 0, card.rect, 3)
-
-            pygame.display.flip()
-
+            
     def add_all_sprites(self):
         for obj in self.game_engine.objects:
             self.sprites.add(obj)
 
     # Check input events by the user
-    def check_event(self, event):
+    def check_event(self, event, game_engine):
         # Quit the game if the event is QUIT
         if event.type == pygame.QUIT:
             self.running = False
@@ -133,7 +129,7 @@ class GameUI:
                             self.selected_cards.remove(card)
                         else:
                             self.selected_cards.append(card)
-                self.drop_card()
+                self.drop_card(game_engine)
         
         # handle dragging
         elif event.type == pygame.MOUSEMOTION and self.dragging:
@@ -262,11 +258,20 @@ class GameUI:
                 selected_card.rect.centery,
             )
 
-    def drop_card(self):
+    def drop_card(self, game_engine):
         self.dragging = False
         dropped_pos_x, dropped_pos_y = self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
         
-        # Please continue here
+        # If the current drop position is in current player's hand region -> leave a card in that region
+        if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
+            for card in self.cards_being_dragged:
+                game_engine.current_player.hands.append(card)
+
+            self.card_being_dragged = None
+            self.cards_being_dragged = []
+            self.original_positions = {}
+            self.original_xy = {}
+            return
         
         # find the nearest grid to the card
         row, col = self.find_nearest_grid(dropped_pos_x, dropped_pos_y)
@@ -320,8 +325,6 @@ class GameUI:
             and 0 <= col < BOARD_WIDTH // GRID_WIDTH 
         )
 
-    # def is_valid_hand_position(self, row, col):
-    #     pass
 
     def place_card_to_grid(self, card, row, col):
         grid_x, grid_y = self.find_nearest_grid_pos(

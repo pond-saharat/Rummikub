@@ -114,13 +114,13 @@ class Run(CardSet):
 # For testing
 # is_run
 # True
-cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",9)] + [JokerCard()]
-print(CardSet.is_run(cards))
-cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",7)] 
-print(CardSet.is_run(cards))
-cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
-print(CardSet.is_run(cards))
-# False
-cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
-print(CardSet.is_run(cards))
+# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",9)] + [JokerCard()]
+# print(CardSet.is_run(cards))
+# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",7)] 
+# print(CardSet.is_run(cards))
+# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+# print(CardSet.is_run(cards))
+# # False
+# cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
+# print(CardSet.is_run(cards))
 

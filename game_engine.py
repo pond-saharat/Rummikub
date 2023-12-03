@@ -16,6 +16,7 @@ class GameEngine:
         self.board = board.Board()
         self.hand_regions = []
         self.game_ui = game_ui
+        self.screen = self.game_ui.screen
         # List of players
         self.players = [
             player.HumanPlayer(f"Human_player_{_}") for _ in range(NUM_OF_HUMAN_PLAYERS)
@@ -58,9 +59,9 @@ class GameEngine:
     # None -> None
     def set_player_hand_regions(self):
         # Define hand regions
+        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION,SCREEN_WIDTH - 2 * HANDS_REGION,HANDS_REGION),2))
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION),2))
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION, HANDS_REGION),2))
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION,SCREEN_WIDTH - 2 * HANDS_REGION,HANDS_REGION),2))
         self.hand_regions.append(pygame.draw.rect(self.screen,0,(SCREEN_WIDTH - HANDS_REGION,HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION),2))
 
         for player in self.players:
@@ -73,7 +74,7 @@ class GameEngine:
     def find_combinations(self, cards):
         combinations = []
         cards.sort(key=lambda card: card.number)
-        print(cards)
+        # print(cards)
         for i in range(len(cards)):
             for j in range(i, len(cards)):
                 cards_temp = cards[i:j]

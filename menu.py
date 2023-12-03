@@ -6,10 +6,11 @@ from config import *
 class Menu:
   TEXT_COL = (255, 255, 255)
 
-  def __init__(self, screen):
+  def __init__(self, game_ui):
+    self.game_ui = game_ui
     pygame.display.set_caption("Rummikub - Paused")
     self.menu_state = "main"
-    self.screen = screen
+    self.screen = self.game_ui.screen
     self.game_paused = False
     # define fonts
     self.font = pygame.font.SysFont("arialblack", 40)
@@ -37,7 +38,7 @@ class Menu:
     #game loop
     running = True
     while running:
-      self.blit(image1,(0,0))
+      self.screen.blit(image1,(0,0))
       # self.screen.fill((0,0, 255))
 
       #check if game is paused
@@ -72,16 +73,12 @@ class Menu:
             self.game_paused = True
         if event.type == pygame.QUIT:
           running = False
-          pygame.quit()
+          
+          
       pygame.display.update()
-  
+    self.game_ui.game_state = "game"
+
   # Draw plain text on the center of the screen
   def draw_text(self, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
-    screen.blit(img, (x, y))
-
-# For testing only
-pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-menu = Menu(screen)
-menu.run()
+    self.screen.blit(img, (x, y))
