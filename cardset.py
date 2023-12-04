@@ -68,25 +68,32 @@ class CardSet:
         run = []
         previous_number = None
         for card in colour_cards:
+            
             # First iteration
             if previous_number is None:
                 previous_number = card.number
                 run.append(card)
                 continue
-            # If the current card is the previous card number + 1 -> add the card to the list
+            # If the current card is the previous card number + 2 -> add the card to the list
             if card.number == previous_number + 2:
                 previous_number = card.number
                 run.append(card)
                 continue
             # If the current card is not the previous card number + 1 -> add the joker card to the list and increment the previous card number
-            elif card.number != previous_number + 2: 
+            elif card.number != previous_number + 2:
                 while joker_cards != [] and card.number != previous_number + 2:
                     popped_joker_card = joker_cards.pop(0)
                     run.append(popped_joker_card)
                     previous_number += 2
-                if joker_cards == [] and card.number != previous_number + 2:
-                    print("here3",card.number, previous_number)
-                    return False
+                    # print(run,card,previous_number
+                    if joker_cards == [] and card.number != previous_number + 2:
+                        return False
+                    elif card.number == previous_number + 2:
+                        previous_number = card.number
+                        run.append(card)
+                        continue
+                    else:
+                        pass
             else:
                 continue
         return True
@@ -97,7 +104,57 @@ class CardSet:
     def is_valid(cls,cards):
         return cls.is_group(cards) or cls.is_run(cards)              
     
+    # Sort a group of cards or a set of cards
+    @classmethod
+    def sort_list(cls,cards):
+        # Sort like a run
+        if cls.is_run(cards):
+            
+            # Get the colour cards (regular cards) from a pack of cards
+            colour_cards = sorted(Card.get_colour_cards(cards), key=lambda x: x.number)
+            # Get the count of Joker cards from a pack of cards
+            joker_cards = Card.get_joker_cards(cards)
 
+            run = []
+            previous_number = None
+            for card in colour_cards:
+                # First iteration
+                if previous_number is None:
+                    previous_number = card.number
+                    run.append(card)
+                    continue
+                # If the current card is the previous card number + 2 -> add the card to the list
+                if card.number == previous_number + 2:
+                    previous_number = card.number
+                    run.append(card)
+                    continue
+                # If the current card is not the previous card number + 1 -> add the joker card to the list and increment the previous card number
+                elif card.number != previous_number + 2:
+                    while joker_cards != [] and card.number != previous_number + 2:
+                        popped_joker_card = joker_cards.pop(0)
+                        run.append(popped_joker_card)
+                        previous_number += 2
+                        # print(run,card,previous_number
+                        if card.number == previous_number + 2:
+                            previous_number = card.number
+                            run.append(card)
+                            continue
+                        else:
+                            pass
+                else:
+                    continue
+            return run
+        
+        # Sort like a group
+        elif cls.is_group(cards):
+            # Get the colour cards (regular cards) from a pack of cards
+            colour_cards = Card.get_colour_cards(cards)
+            joker_cards = Card.get_joker_cards(cards)
+            group = sorted(colour_cards,key=lambda crd: (crd.colour,crd.number))+joker_cards
+            print(group)
+            return group
+        else:
+            return []
 
 class Group(CardSet):
     def __init__(self,cards):
@@ -114,12 +171,9 @@ class Run(CardSet):
 # For testing
 # is_run
 # True
-# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",9)] + [JokerCard()]
+# cards = [ColourCard("pink",4),ColourCard("pink",8),ColourCard("pink",10)] + [JokerCard()]
 # print(CardSet.is_run(cards))
-# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",5),ColourCard("green",7)] 
-# print(CardSet.is_run(cards))
-# cards = [ColourCard("green",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
-# print(CardSet.is_run(cards))
+# print(CardSet.sort_list(cards))
 # # False
 # cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
 # print(CardSet.is_run(cards))

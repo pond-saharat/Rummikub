@@ -2,6 +2,7 @@ import pygame
 import game_engine
 import menu
 import board
+import cardset
 
 from pygame.locals import *
 from config import *
@@ -176,16 +177,26 @@ class GameUI:
         return row, col
 
     def sort_grid(self, grid_cards):
+        
         # if (row, col) in grid_cards
         for _ in grid_cards.keys():
-            grid_cards[_] = list(set(grid_cards[_]))
-            grid_cards[_].sort(key=lambda crd: (crd.colour, crd.number))
-            for i, card in enumerate(grid_cards[_]):
-                card_grid_x, card_grid_y = self.find_nearest_grid_pos(
-                    card.rect.centerx, card.rect.centery
-                )
-                card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
-                card.rect.centery = card_grid_y
+            if not cardset.CardSet.is_valid(grid_cards[_]):
+                grid_cards[_] = list(set(grid_cards[_]))
+                grid_cards[_].sort(key=lambda crd: (crd.colour, crd.number))
+                for i, card in enumerate(grid_cards[_]):
+                    card_grid_x, card_grid_y = self.find_nearest_grid_pos(
+                        card.rect.centerx, card.rect.centery
+                    )
+                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centery = card_grid_y
+            else:
+                grid_cards[_] = cardset.CardSet.sort_list(grid_cards[_])
+                for i, card in enumerate(grid_cards[_]):
+                    card_grid_x, card_grid_y = self.find_nearest_grid_pos(
+                        card.rect.centerx, card.rect.centery
+                    )
+                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centery = card_grid_y
 
     def draw_hands_region(self):
         pygame.draw.rect(
