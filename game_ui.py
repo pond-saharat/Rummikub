@@ -27,6 +27,7 @@ class GameUI:
         # Passing screen to game_engine
         self.game_engine.screen = self.screen
         self.game_state = "main_menu"
+        self.pause_state= False
     
 
         # button settings
@@ -59,8 +60,18 @@ class GameUI:
             if self.game_state == "main_menu":
                 menu.Menu(self).run()
             elif self.game_state == "game":
+                self.pause_state=True
+                
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                       if event.key == pygame.K_SPACE: 
+                           
+                           menu.Menu(self).run()
+                           
+                            
+                           
+                           
                     self.check_event(event,self.game_engine)
                 # Clear the screen
                 self.screen.fill(BACKGROUND_COLOUR)
