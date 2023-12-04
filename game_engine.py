@@ -51,13 +51,15 @@ class GameEngine:
     # None -> Player
     def next_turn(self):
         for pos,card_list in self.game_ui.grid_cards.items():
-            print(pos,cardset.CardSet.is_valid(card_list))
+            # print(card_list)
+            # print(pos,cardset.CardSet.is_valid(card_list))
             if not cardset.CardSet.is_valid(card_list):
                 # return to player's hand
                 for card in card_list:
                     card.owner = self.current_player
                 self.current_player.hands.extend(card_list)
                 self.game_ui.grid_cards[pos] = []
+                
             else:
                 pass
         self.game_ui.reset_drag_parameters()
