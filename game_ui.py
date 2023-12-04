@@ -308,6 +308,7 @@ class GameUI:
             print("selected cards:", self.selected_cards)
             print("grid:", self.grid_cards)
             self.reset_drag_parameters()
+            self.set_current_player_hands()
             return
         
         # find the nearest grid to the card
@@ -334,7 +335,7 @@ class GameUI:
                 ):
                     self.grid_cards[original_grid].remove(card)
                 # if the card is in the selected_cards, put all the selected cards to the grid
-                self.place_card_to_grid(card, row, col)
+                self.place_card_to_grid(card, row, col, self.card_being_dragged)
 
                 # Reset the owner of the card
                 if card.owner:
@@ -356,6 +357,8 @@ class GameUI:
         # remove empty keys and sort the cards in each grid
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
+        self.reset_drag_parameters()
+        
         print("selected cards:", self.selected_cards)
         print("grid:", self.grid_cards)
         pygame.display.update()
@@ -379,10 +382,11 @@ class GameUI:
         )
 
 
-    def place_card_to_grid(self, card, row, col):
+    def place_card_to_grid(self, card, row, col, card_being_dragged):
         grid_x, grid_y = self.find_nearest_grid_pos(
-            card.rect.centerx, card.rect.centery
+            card_being_dragged.rect.centerx, card_being_dragged.rect.centery
         )
+        
         card.rect.centerx = (
             grid_x
             + CARD_WIDTH * len(self.grid_cards[(row, col)])
