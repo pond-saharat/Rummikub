@@ -351,13 +351,13 @@ class GameUI:
 
         # Reset dragging parameters to their initial values
         self.reset_drag_parameters()
+        self.set_current_player_hands()
 
         # if all(card in self.grid_cards[(row, col)] for card in self.selected_cards):
         #     self.selected_cards = []
         # remove empty keys and sort the cards in each grid
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
-        self.reset_drag_parameters()
         
         print("selected cards:", self.selected_cards)
         print("grid:", self.grid_cards)
@@ -370,6 +370,7 @@ class GameUI:
         for k,cards in self.grid_cards.items():
             for card in cards:
                 card.is_selected = False
+        self.game_engine.selected_cards = []
         self.card_being_dragged = None
         self.cards_being_dragged = []
         self.original_positions = {}
