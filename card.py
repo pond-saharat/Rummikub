@@ -20,11 +20,11 @@ class Card(pygame.sprite.Sprite):
     # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None
     def draw(self, game_engine):
-        if self.is_selected:
-            pygame.draw.rect(game_engine.screen, (255, 0, 0), self.rect, 10)
-            game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
-        else:
-            game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
+        # if self.is_selected:
+        #     pygame.draw.rect(game_engine.screen, (255, 0, 0), self.rect, 10)
+        #     game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
+        # else:
+        game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
         pygame.display.update()
 
     # Perfome actions when the card is clicked

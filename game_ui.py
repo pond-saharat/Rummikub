@@ -34,7 +34,7 @@ class GameUI:
         # button settings
         self.button_font = pygame.font.SysFont(None, 36)
         self.button_rect = pygame.Rect(1100, 20, 130, 50)
-        self.button_text = self.button_font.render("Submit", True, 0)
+        self.button_text = self.button_font.render("End Turn", True, 0)
         pygame.time.delay(10)
 
         # drag and drop settings
@@ -251,26 +251,26 @@ class GameUI:
             player.hands.sort(key=lambda crd: (crd.colour, crd.number))
             if p == 0:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5) + 5
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 10
                     card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50
             elif p == 1:
                 i, j = 0, 0
                 for card in player.hands:
                     card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) - 70
-                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 20
+                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25
                     i += 1
                     if i == 2:
                         i = 0
                         j +=1
             elif p == 2:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = HANDS_REGION + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 10
                     card.rect.centery = HANDS_REGION - 50
             elif p == 3:
                 i, j = 0, 0
                 for card in player.hands:
                     card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5)  + BOARD_WIDTH + 30
-                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 20
+                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25
                     i += 1
                     if i == 2:
                         i = 0
