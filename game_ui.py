@@ -50,7 +50,6 @@ class GameUI:
 
     # Run the game loop
     def run(self):
-        self.screen.fill(BACKGROUND_COLOUR)
         # Add all sprites
         self.add_all_sprites()
 
@@ -60,10 +59,17 @@ class GameUI:
 
         # Infinite loop
         while self.running:
-            # Check the game state
+            # Check the game state   
             if self.game_state == "main_menu":
                 menu.Menu(self).run()
             elif self.game_state == "game":
+                # Fill backgroud colour
+                self.screen.fill(BACKGROUND_COLOUR)
+                self.game_engine.draw_player_hand_regions()
+                # Draw background elements
+                self.draw_grid(self.screen)
+
+                       
                 self.pause_state=True
                 
                 # Check the inputs provided by the user
@@ -73,10 +79,8 @@ class GameUI:
                            menu.Menu(self).run()
                            
                     self.check_event(event,self.game_engine)
-                # Clear the screen
-                self.screen.fill(BACKGROUND_COLOUR)
                 # draw grid
-                self.draw_grid(self.screen)
+                
                 # self.draw_hands_region()
 
                 # draw button
@@ -223,67 +227,31 @@ class GameUI:
                     card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
                     card.rect.centery = card_grid_y
 
-    def draw_hands_region(self):
-        pygame.draw.rect(
-            self.screen,
-            0,
-            (0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION),
-            2,
-        )
-        pygame.draw.rect(
-            self.screen,
-            0,
-            (HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION, HANDS_REGION),
-            2,
-        )
-        pygame.draw.rect(
-            self.screen,
-            0,
-            (
-                HANDS_REGION,
-                SCREEN_HEIGHT - HANDS_REGION,
-                SCREEN_WIDTH - 2 * HANDS_REGION,
-                HANDS_REGION,
-            ),
-            2,
-        )
-        pygame.draw.rect(
-            self.screen,
-            0,
-            (
-                SCREEN_WIDTH - HANDS_REGION,
-                HANDS_REGION,
-                HANDS_REGION,
-                SCREEN_HEIGHT - 2 * HANDS_REGION,
-            ),
-            2,
-        )
-
     def set_current_player_hands(self):
         for p, player in enumerate(self.game_engine.players):
             player.hands.sort(key=lambda crd: (crd.colour, crd.number))
             if p == 0:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 10
-                    card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 25
+                    card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50 
             elif p == 1:
                 i, j = 0, 0
                 for card in player.hands:
                     card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) - 70
-                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25
+                    card.rect.centery = (HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25) + 20
                     i += 1
                     if i == 2:
                         i = 0
                         j +=1
             elif p == 2:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 10
+                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 25
                     card.rect.centery = HANDS_REGION - 50
             elif p == 3:
                 i, j = 0, 0
                 for card in player.hands:
                     card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5)  + BOARD_WIDTH + 30
-                    card.rect.centery = HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25
+                    card.rect.centery = (HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25) + 20
                     i += 1
                     if i == 2:
                         i = 0

@@ -101,14 +101,33 @@ class GameEngine:
     # Link pygame.Rect objects to player's hand_region
     # None -> None
     def set_player_hand_regions(self):
-        # Define hand regions
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION,SCREEN_WIDTH - 2 * HANDS_REGION,HANDS_REGION),2))
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION),2))
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION, HANDS_REGION),2))
-        self.hand_regions.append(pygame.draw.rect(self.screen,0,(HANDS_REGION + BOARD_WIDTH, HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION),2))
+        colour = (0,0,0,0)
+        p1 = pygame.Rect(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION - 40,SCREEN_WIDTH - 2 * HANDS_REGION -280,HANDS_REGION)
+        p2 = pygame.Rect(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION -40)
+        p3 = pygame.Rect(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION -280, HANDS_REGION)
+        p4 = pygame.Rect(HANDS_REGION + BOARD_WIDTH, HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION -40)
+        self.hand_regions = [p1,p2,p3,p4]
+        for index, player in enumerate(self.players):
+            player.hand_region = self.hand_regions[index]
 
-        for player in self.players:
-            player.hand_region = self.hand_regions.pop(0)
+    # Draw hand regions
+    # None -> None  
+    def draw_player_hand_regions(self):
+        # Define hand regions
+        colour = (40,195,233,100)
+        offset = 3
+        radius = 0
+        for hand_region in self.hand_regions:
+            
+            shadow = pygame.Surface((hand_region.width, hand_region.height), pygame.SRCALPHA)
+            shadow_rect = shadow.get_rect()
+            pygame.draw.rect(shadow,(16, 38, 59, 100),shadow_rect, border_radius=radius)
+            
+            shadow_rect.x = hand_region.x + offset
+            shadow_rect.y = hand_region.y + offset
+
+            self.screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
+            pygame.draw.rect(self.screen,colour,hand_region,border_radius=radius)
 
     # Check if the current player is a winner
     # If so, calculate the score and change game_state
