@@ -36,6 +36,10 @@ class GameEngine:
         # Link pygame.Rect objects to player's hand_region
         self.set_player_hand_regions()
         
+        # Score and a list of winners
+        self.winning_score = 0
+        self.winners = []
+
         print(f"current player hands: {self.current_player.hands}")
         print(f"deck: {len(self.deck.deck)}")
         
@@ -115,8 +119,8 @@ class GameEngine:
         else:
             return False
 
-    # Calculate the final score of each player and return the tuple of the max score and the list of winners 
-    # None -> Tuple(score, List[Player])
+    # Calculate the final score of each player and set the max score and the list of winners 
+    # None -> None
     def endgame_score_calculation(self):
         winner_exists = len([player for player in self.players if player.winner == True]) != 0
         if winner_exists:
@@ -133,9 +137,9 @@ class GameEngine:
                 score_to_players[player.score] = [player]
             else:
                 score_to_players[player.score].append(player)
-        # Return the tuple of the list of winners and their score
-        max_score = max(list(score_to_players.keys()))
-        return max_score, score_to_players[max_score]
+
+        self.winning_score = max(list(score_to_players.keys()))
+        self.winners = score_to_players[self.winning_score]
         
         
     # # find every possible valid combinations of selected cards, but not effective for every case,
