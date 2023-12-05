@@ -32,12 +32,12 @@ class Button():
 		return action
 
 class GameButton(pygame.sprite.Sprite):
-	def __init__(self, x, y, width, height, text,size=36):
+	def __init__(self, rect, text,size=36):
 		super().__init__()
-		self.x = x
-		self.y = y
-		self.width = width
-		self.height = height
+		self.x = rect[0]
+		self.y = rect[1]
+		self.width = rect[2]
+		self.height = rect[3]
 		self.font = pygame.font.SysFont(None, 36)
 		self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 		self.size = size
@@ -72,8 +72,8 @@ class GameButton(pygame.sprite.Sprite):
 		pass
 
 class DrawButton(GameButton):
-	def __init__(self, x, y, width, height, text,size=36):
-		super().__init__(x,y,width,height,text,size)
+	def __init__(self, rect, text,size=36):
+		super().__init__(rect,text,size)
 		self.cards = []
 
 	def left_click_action(self, game_ui):
@@ -93,8 +93,8 @@ class DrawButton(GameButton):
 		self.cards = []
 		
 class EndTurnButton(GameButton):
-	def __init__(self, x, y, width, height, text,size=36):
-		super().__init__(x,y,width,height,text,size)
+	def __init__(self, rect, text,size=36):
+		super().__init__(rect,text,size)
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
@@ -103,8 +103,8 @@ class EndTurnButton(GameButton):
 		print(f"It's now {game_ui.game_engine.current_player}'s turn")
 
 class FlipAllCardsButton(GameButton):
-	def __init__(self, x, y, width, height, text,size=36):
-		super().__init__(x,y,width,height,text,size)
+	def __init__(self, rect, text,size=36):
+		super().__init__(rect,text,size)
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
@@ -112,8 +112,8 @@ class FlipAllCardsButton(GameButton):
 			c.Card.flip_all_cards(player.hands)
 
 class PlayForMeButton(GameButton):
-	def __init__(self, x, y, width, height, text,size=36):
-		super().__init__(x,y,width,height,text,size)
+	def __init__(self, rect, text,size=36):
+		super().__init__(rect,text,size)
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True

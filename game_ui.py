@@ -35,10 +35,10 @@ class GameUI:
 
         # button settings
         self.ui_objects = []
-        self.ui_objects.append(button.EndTurnButton(1050,20,200,50,"End turn",36))
-        self.ui_objects.append(button.PlayForMeButton(1050,90,200,50,"Play for me",36))
-        self.ui_objects.append(button.FlipAllCardsButton(1050,160,200,50,"Flip all cards",36))
-        self.draw_button = button.DrawButton(1050,230,200,50,"Draw",36)
+        self.ui_objects.append(button.EndTurnButton(END_TURN_BUTTON_REGION,"End turn",36))
+        self.ui_objects.append(button.PlayForMeButton(PLAY_FOR_ME_BUTTON_REGION,"Play for me",36))
+        self.ui_objects.append(button.FlipAllCardsButton(FLIP_ALL_CARDS_BUTTON_REGION,"Flip all cards",36))
+        self.draw_button = button.DrawButton(DRAW_BUTTON_REGION,"Draw",36)
         self.ui_objects.append(self.draw_button)
         self.draw_region = None
         self.game_engine.update_objects()
@@ -81,9 +81,9 @@ class GameUI:
                 
                 turn_surface = pygame.font.SysFont(None, 24).render(f"Turn: {self.game_engine.current_player}", True, (255, 255, 255)) 
                 score_surface = pygame.font.SysFont(None, 24).render(f"Score: {self.game_engine.current_player.score}", True, (255, 255, 255)) 
-                self.screen.blit(turn_surface, turn_surface.get_rect(top= 290,left = 1050))
-                self.screen.blit(score_surface, score_surface.get_rect(top= 310,left = 1050))
-                self.screen.blit(notification_surface, notification_surface.get_rect(top= 330,left = 1050))
+                self.screen.blit(turn_surface, NOTIFICATION_REGION_1)
+                self.screen.blit(score_surface, NOTIFICATION_REGION_2)
+                self.screen.blit(notification_surface, NOTIFICATION_REGION_3)
 
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
@@ -174,21 +174,29 @@ class GameUI:
         # handle dropping card
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 and self.dragging:  # left button released
+                self.dragging = False
                 mouse_x, mouse_y = event.pos
                 for sprite in self.sprites:
+                    # other_sprites = [s for s in self.sprites if s != sprite]
                     if isinstance(sprite,c.Card):
                         if (sprite.rect.collidepoint(event.pos) and mouse_x > CARD_WIDTH and mouse_y > CARD_HEIGHT):
                             # if the card is in the selected_cards, remove it from the selected_cards
                             if sprite in self.selected_cards:
                                 self.selected_cards.remove(sprite)
                             else:
-                                if len([crd for crd in self.selected_cards if crd in self.draw_button.cards]) > 0 and sprite in self.draw_button.cards:
+                                if len([c for c in self.selected_cards if c in self.draw_button.cards]) > 0 and sprite in self.draw_button.cards:
                                     self.notification = "You must choose only one"
                                     self.selected_cards = []
-                                if len(self.selected_cards) < 8:
+                                
+                                if len(self.selected_cards) < 8 and (sprite.owner == self.game_engine.current_player or sprite.owner is None):
+                                    self.selected_cards.append(sprite)
+                                elif sprite.owner != self.game_engine.current_player:
+                                    self.notification = "You can only select your own cards"
+                                    self.selected_cards = []
+                                elif len(self.selected_cards) >= 8:
+                                    self.selected_cards.pop(0)
                                     self.selected_cards.append(sprite)
                                 else:
-                                    self.selected_cards.pop(0)
                                     self.selected_cards.append(sprite)
                     else:
                         pass
@@ -224,33 +232,32 @@ class GameUI:
 
     # Draw lines of the grid
     def draw_grid(self, screen):
-        for x in range(HANDS_REGION, HANDS_REGION + BOARD_WIDTH + 1, GRID_WIDTH):
+        for x in range(WIDTH_2_COLUMNS, WIDTH_2_COLUMNS + BOARD_WIDTH + 1, GRID_WIDTH):
             pygame.draw.line(
-                screen, 0, (x, HANDS_REGION), (x, HANDS_REGION + BOARD_HEIGHT)
+                screen, 0, (x, HEIGHT_1_ROW), (x, HEIGHT_1_ROW + BOARD_HEIGHT)
             )
-        for y in range(HANDS_REGION, HANDS_REGION + BOARD_HEIGHT + 1, GRID_HEIGHT):
+        for y in range(HEIGHT_1_ROW, HEIGHT_1_ROW + BOARD_HEIGHT + 1, GRID_HEIGHT):
             pygame.draw.line(
-                screen, 0, (HANDS_REGION, y), (HANDS_REGION + BOARD_WIDTH, y)
+                screen, 0, (WIDTH_2_COLUMNS, y), (WIDTH_2_COLUMNS + BOARD_WIDTH, y)
             )
 
     def find_nearest_grid_pos(self, x, y):
-        x_board = x - HANDS_REGION
-        y_board = y - HANDS_REGION
+        x_board = x - WIDTH_2_COLUMNS
+        y_board = y - HEIGHT_1_ROW
 
-        grid_x = x_board // GRID_WIDTH * GRID_WIDTH + CARD_WIDTH // 2 + HANDS_REGION
-        grid_y = y_board // GRID_HEIGHT * GRID_HEIGHT + GRID_HEIGHT // 2 + HANDS_REGION
+        grid_x = x_board // GRID_WIDTH * GRID_WIDTH + CARD_WIDTH // 2 + WIDTH_2_COLUMNS
+        grid_y = y_board // GRID_HEIGHT * GRID_HEIGHT + GRID_HEIGHT // 2 + HEIGHT_1_ROW
         return grid_x, grid_y
 
     def find_nearest_grid(self, x, y):
-        x_board = x - HANDS_REGION
-        y_board = y - HANDS_REGION
+        x_board = x - WIDTH_2_COLUMNS
+        y_board = y - HEIGHT_1_ROW
 
         col = x_board // GRID_WIDTH
         row = y_board // GRID_HEIGHT
         return row, col
 
     def sort_grid(self, grid_cards):
-        
         # if (row, col) in grid_cards
         for _ in grid_cards.keys():
             if not cardset.CardSet.is_valid(grid_cards[_]):
@@ -260,7 +267,7 @@ class GameUI:
                     card_grid_x, card_grid_y = self.find_nearest_grid_pos(
                         card.rect.centerx, card.rect.centery
                     )
-                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + GAP * i + GAP 
                     card.rect.centery = card_grid_y
             else:
                 grid_cards[_] = cardset.CardSet.sort_list(grid_cards[_])
@@ -268,7 +275,7 @@ class GameUI:
                     card_grid_x, card_grid_y = self.find_nearest_grid_pos(
                         card.rect.centerx, card.rect.centery
                     )
-                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + 5 * i + 5
+                    card.rect.centerx = card_grid_x + CARD_WIDTH * i + GAP * i + GAP
                     card.rect.centery = card_grid_y
 
     def set_current_player_hands(self):
@@ -276,26 +283,26 @@ class GameUI:
             player.hands.sort(key=lambda crd: (crd.colour, crd.number))
             if p == 0:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 25
-                    card.rect.centery = HANDS_REGION + BOARD_HEIGHT + 50 
+                    card.rect.centerx = WIDTH_2_COLUMNS + CARD_WIDTH // 2 + CARD_WIDTH * i + GAP * i + GAP 
+                    card.rect.centery = HEIGHT_1_ROW + CARD_HEIGHT // 2 + BOARD_HEIGHT + GAP
             elif p == 1:
                 i, j = 0, 0
                 for card in player.hands:
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) - 70
-                    card.rect.centery = (HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25) + 20
+                    card.rect.centerx = CARD_WIDTH // 2 + CARD_WIDTH * i + GAP * i + GAP 
+                    card.rect.centery = HEIGHT_1_ROW + CARD_HEIGHT // 2 + CARD_HEIGHT * j + GAP * j + GAP
                     i += 1
                     if i == 2:
                         i = 0
                         j +=1
             elif p == 2:
                 for i, card in enumerate(player.hands):
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5) + 25
-                    card.rect.centery = HANDS_REGION - 50
+                    card.rect.centerx = WIDTH_2_COLUMNS + CARD_WIDTH // 2 + CARD_WIDTH * i + GAP * i + GAP 
+                    card.rect.centery = CARD_HEIGHT // 2 + GAP
             elif p == 3:
                 i, j = 0, 0
                 for card in player.hands:
-                    card.rect.centerx = (HANDS_REGION + CARD_WIDTH * i + 5 * i + 5)  + BOARD_WIDTH + 30
-                    card.rect.centery = (HANDS_REGION + CARD_HEIGHT * j + 5 * j + 25) + 20
+                    card.rect.centerx = BOARD_WIDTH + WIDTH_2_COLUMNS + CARD_WIDTH // 2 + CARD_WIDTH * i + GAP * i + GAP 
+                    card.rect.centery = HEIGHT_1_ROW + CARD_HEIGHT // 2 + CARD_HEIGHT * j + GAP * j + GAP
                     i += 1
                     if i == 2:
                         i = 0
@@ -329,13 +336,13 @@ class GameUI:
             )
 
     def drop_card(self, game_engine):
-        self.dragging = False
+        # self.dragging = False
         dropped_pos_x, dropped_pos_y = self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
         
         # If the current drop position is in current player's hand region -> leave a card in that region
         if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
             for card in self.cards_being_dragged:
-                if card not in game_engine.current_player.hands:
+                if card not in game_engine.current_player.hands and card not in self.draw_button.cards:
                     game_engine.current_player.hands.append(card)
                 card.owner = game_engine.current_player
                 if card in game_engine.deck.deck and card in self.draw_button.cards:
@@ -397,6 +404,7 @@ class GameUI:
             else:
                 card.rect.centerx = original_xy[0]
                 card.rect.centery = original_xy[1]
+                self.selected_cards = []
 
         # Reset dragging parameters to their initial values
         self.reset_drag_parameters()
@@ -440,8 +448,8 @@ class GameUI:
         card.rect.centerx = (
             grid_x
             + CARD_WIDTH * len(self.grid_cards[(row, col)])
-            + 5 * len(self.grid_cards[(row, col)])
-            + 5
+            + GAP * len(self.grid_cards[(row, col)])
+            + GAP
         )
         card.rect.centery = grid_y
 
