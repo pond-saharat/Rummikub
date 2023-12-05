@@ -72,16 +72,15 @@ class GameUI:
                 self.game_engine.draw_regions()
                 # Draw background elements
                 self.draw_grid(self.screen)
-
-                       
+                
                 self.pause_state=True
                 
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
-                       if event.key == pygame.K_SPACE: 
-                           menu.Menu(self).run()
-                           
+                        if event.key == pygame.K_SPACE: 
+                            menu.Menu(self).run()
+                        
                     self.check_event(event,self.game_engine)
                 # draw grid
                 
@@ -149,7 +148,11 @@ class GameUI:
                             if sprite in self.selected_cards:
                                 self.selected_cards.remove(sprite)
                             else:
-                                self.selected_cards.append(sprite)
+                                if len(self.selected_cards) < 8:
+                                    self.selected_cards.append(sprite)
+                                else:
+                                    self.selected_cards.pop(0)
+                                    self.selected_cards.append(sprite)
                     else:
                         pass
                 self.drop_card(game_engine)
@@ -328,7 +331,12 @@ class GameUI:
 
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
-
+                # if the grid is full, put the card back to the original position
+                if self.is_grid_full(row, col):
+                    card.rect.centerx = original_xy[0]
+                    card.rect.centery = original_xy[1]
+                    continue
+                
                 # remove the card from the original grid
                 if (original_grid in self.grid_cards and card in self.grid_cards[original_grid]):
                     self.grid_cards[original_grid].remove(card)
@@ -402,3 +410,6 @@ class GameUI:
     def show_players_hands(self):
         for player in self.game_engine.players:
             print(player.name, player.hands)
+
+    def is_grid_full(self, row, col):
+        return len(self.grid_cards[(row, col)]) >= 8
