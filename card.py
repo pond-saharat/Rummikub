@@ -150,8 +150,6 @@ class ColourCard(Card):
     def penalty(self):
         return -self.number
 
-
-
 class JokerCard(Card):
     def __init__(self):
         super().__init__("Joker", None)

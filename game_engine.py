@@ -147,7 +147,6 @@ class GameEngine:
     def check_win(self):
         if self.current_player.hands == []:
             self.current_player.winner = True
-            self.score += 30
             return True
         else:
             return False
@@ -155,14 +154,19 @@ class GameEngine:
     # Calculate the final score of each player and set the max score and the list of winners 
     # None -> None
     def endgame_score_calculation(self):
-        winner_exists = len([player for player in self.players if player.winner == True]) != 0
+        winners = [player for player in self.players if player.winner == True]
+        winner_exists = len(winners) != 0
         if winner_exists:
             penalised_players = [player for player in self.players if player.winner == False]
             for player in penalised_players:
-                player.score += c.Card.get_penalty(player.hands)
+                penalty = c.Card.get_penalty(player.hands)
+                player.score += penalty
+                for winner in winners:
+                    winner.score -= penalty
         else:
             for player in self.players:
                 player.score += c.Card.get_penalty(player.hands)
+        
         # Get the list of winners and their scores
         score_to_players = {}
         for player in self.players:
