@@ -409,8 +409,9 @@ class GameUI:
 
     def reset_drag_parameters(self):
         self.game_engine.current_player.selected_cards = []
-        for card in self.game_engine.current_player.hands:
-            card.is_selected = False
+        for player in self.game_engine.players:
+            for card in player.hands:
+                card.is_selected = False
         for k,cards in self.grid_cards.items():
             for card in cards:
                 card.is_selected = False
