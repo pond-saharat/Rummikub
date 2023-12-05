@@ -182,7 +182,6 @@ class GameUI:
                                 if len([crd for crd in self.selected_cards if crd in self.draw_button.cards]) > 0 and sprite in self.draw_button.cards:
                                     self.notification = "You must choose only one"
                                     self.selected_cards = []
-                                    break
                                 if len(self.selected_cards) < 8:
                                     self.selected_cards.append(sprite)
                                 else:
