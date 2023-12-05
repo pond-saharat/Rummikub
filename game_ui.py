@@ -109,7 +109,10 @@ class GameUI:
                             highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
                             highlight_rect = highlight.get_rect()
                             highlight_rect.center = sprite.rect.center
-                            pygame.draw.rect(self.screen,(255, 255, 150, 0),highlight_rect, border_radius=0)
+                            if isinstance(sprite,c.ColourCard):
+                                pygame.draw.rect(self.screen,sprite.colour,highlight_rect, border_radius=0)
+                            elif isinstance(sprite,c.JokerCard):
+                                pygame.draw.rect(self.screen,"black",highlight_rect, border_radius=0)
                     elif sprite.rect.collidepoint(mouse_x,mouse_y):
                         offset = 15
                         highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)

@@ -109,10 +109,12 @@ class GameEngine:
     # None -> None
     def set_player_hand_regions(self):
         colour = (0,0,0,0)
-        p1 = pygame.Rect(HANDS_REGION,SCREEN_HEIGHT - HANDS_REGION - 40,SCREEN_WIDTH - 2 * HANDS_REGION -280,HANDS_REGION)
+        p1 = pygame.Rect(HANDS_REGION,(CARD_HEIGHT + 2*GAP) + BOARD_HEIGHT,BOARD_WIDTH,CARD_HEIGHT + 2*GAP)
+        p3 = pygame.Rect(HANDS_REGION, 0, BOARD_WIDTH, CARD_HEIGHT + 2*GAP)
+
         p2 = pygame.Rect(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION -40)
-        p3 = pygame.Rect(HANDS_REGION, 0, SCREEN_WIDTH - 2 * HANDS_REGION -280, HANDS_REGION)
         p4 = pygame.Rect(HANDS_REGION + BOARD_WIDTH, HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION -40)
+
         self.hand_regions = [p1,p2,p3,p4]
         for index, player in enumerate(self.players):
             player.hand_region = self.hand_regions[index]
@@ -124,7 +126,7 @@ class GameEngine:
         colour = (40,195,233,100)
         offset = 3
         radius = 0
-        self.game_ui.draw_region = pygame.Rect(1050, 360, CARD_HEIGHT + 2*GAP_HEIGHT, 2*CARD_WIDTH + 3*GAP_WIDTH)
+        self.game_ui.draw_region = pygame.Rect(1050, 360, CARD_HEIGHT + 2*GAP, 2*CARD_WIDTH + 3*GAP)
         regions = self.hand_regions + [self.game_ui.draw_region]
         
         for region in regions:

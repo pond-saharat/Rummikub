@@ -1,4 +1,5 @@
 import pygame
+import os.path
 
 from config import *
 
@@ -11,7 +12,10 @@ class Card(pygame.sprite.Sprite):
         self.is_selected = False
         self.parent_set = None
         self.flipped = True
-        self.flipped_image_path = "./src/cards/back.png"
+        if os.path.isfile("./src/finalcards/back.png"):
+            self.flipped_image_path = "./src/finalcards/back.png"
+        else:
+            self.flipped_image_path = "./src/cards/back.png"
         self.flipped_image = None
         self.visible = True
         # Owner is a Player object
@@ -136,7 +140,10 @@ class ColourCard(Card):
     def __init__(self, colour, number):
         super().__init__(colour, number)
         self.joker = False
-        self.image_path = f"./src/cards/{self.colour.lower()}{self.number}.png"
+        if os.path.isfile(f"./src/finalcards/{self.colour.lower()}-{self.number}.png"):
+            self.image_path = f"./src/finalcards/{self.colour.lower()}-{self.number}.png"
+        else:
+            self.image_path = f"./src/cards/{self.colour.lower()}-{self.number}.png"
         self.image = None
         self.load_image()
         self.rect = self.image.get_rect()
@@ -150,7 +157,10 @@ class JokerCard(Card):
     def __init__(self):
         super().__init__("Joker", None)
         self.joker = True
-        self.image_path = f"./src/cards/joker.png"
+        if os.path.isfile("./src/finalcards/joker.png"):
+            self.image_path = "./src/finalcards/joker.png"
+        else:
+            self.image_path = "./src/cards/joker.png"
         self.image = None
         self.load_image()
         self.rect = self.image.get_rect()

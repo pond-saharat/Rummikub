@@ -84,8 +84,8 @@ class DrawButton(GameButton):
 		card1.visible = True
 		card2.visible = True
 		self.cards = [card1,card2]
-		card1.rect.x, card1.rect.y = region.x + GAP_WIDTH, region.y + GAP_HEIGHT
-		card2.rect.x, card2.rect.y = region.x + GAP_WIDTH + CARD_WIDTH + GAP_WIDTH, region.y + GAP_HEIGHT
+		card1.rect.x, card1.rect.y = region.x + GAP, region.y + GAP
+		card2.rect.x, card2.rect.y = region.x + GAP + CARD_WIDTH + GAP, region.y + GAP
 	
 	def reset(self):
 		for card in self.cards:
