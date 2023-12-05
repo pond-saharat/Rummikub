@@ -83,8 +83,6 @@ class GameEngine:
 
         # Check if the current player is a winner
         if not self.check_win() and not self.round == MAX_ROUND:
-            self.current_player == self.players[-1]
-            self.round +=1
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
             c.Card.set_to_flipped(self.current_player.hands)
@@ -94,9 +92,9 @@ class GameEngine:
             return self.current_player
         else:
             # If there is a winner
-            score, winners = self.endgame_score_calculation()
+            self.endgame_score_calculation()
             self.game_ui.game_state = "congratulation"
-            print(f"{winners} are a winner with a score of {score}")
+            print(f"{self.winners} are a winner with a score of {self.winning_score}")
 
     def deal_cards(self):
         for player in self.players:

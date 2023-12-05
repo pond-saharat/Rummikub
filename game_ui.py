@@ -35,7 +35,6 @@ class GameUI:
 
         # button settings
         self.ui_objects = []
-
         self.ui_objects.append(button.EndTurnButton(1050,20,200,50,"End turn",36))
         self.ui_objects.append(button.PlayForMeButton(1050,90,200,50,"Play for me",36))
         self.ui_objects.append(button.FlipAllCardsButton(1050,160,200,50,"Flip all cards",36))
@@ -44,6 +43,8 @@ class GameUI:
         self.draw_region = None
         self.game_engine.update_objects()
 
+        # text settings
+        self.notification = "Welcome to Rummikub!"
         # drag and drop settings
         self.dragging = False
         self.card_being_dragged = None
@@ -72,9 +73,16 @@ class GameUI:
                 self.game_engine.draw_regions()
                 # Draw background elements
                 self.draw_grid(self.screen)
-                
                 self.pause_state=True
+                # Display text
+                notification_surface = pygame.font.SysFont(None, 24).render(self.notification, True, (255, 255, 255)) 
                 
+                turn_surface = pygame.font.SysFont(None, 24).render(f"Turn: {self.game_engine.current_player}", True, (255, 255, 255)) 
+                score_surface = pygame.font.SysFont(None, 24).render(f"Score: {self.game_engine.current_player.score}", True, (255, 255, 255)) 
+                self.screen.blit(turn_surface, turn_surface.get_rect(top= 290,left = 1050))
+                self.screen.blit(score_surface, score_surface.get_rect(top= 310,left = 1050))
+                self.screen.blit(notification_surface, notification_surface.get_rect(top= 330,left = 1050))
+
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
@@ -149,6 +157,7 @@ class GameUI:
                                 self.selected_cards.remove(sprite)
                             else:
                                 if len([crd for crd in self.selected_cards if crd in self.draw_button.cards]) > 0 and sprite in self.draw_button.cards:
+                                    self.notification = "You must choose only one"
                                     self.selected_cards = []
                                     break
                                 if len(self.selected_cards) < 8:
