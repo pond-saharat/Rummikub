@@ -5,7 +5,7 @@ import board
 import cardset
 import card as c
 import button
-
+import timer as t
 from pygame.locals import *
 from config import *
 
@@ -61,7 +61,7 @@ class GameUI:
         # deal cards
         # self.game_engine.deal_cards()
         self.set_current_player_hands()
-
+        self.timer = t.Timer(max_time = MAX_TIME+10)
         # Infinite loop
         while self.running:
             # Check the game state   
@@ -71,6 +71,8 @@ class GameUI:
                 # Fill backgroud colour
                 self.screen.fill(BACKGROUND_COLOUR)
                 self.game_engine.draw_regions()
+                
+                
                 # Draw background elements
                 self.draw_grid(self.screen)
                 self.pause_state=True
@@ -130,7 +132,8 @@ class GameUI:
                 # Highlight selected cards
                 for card in self.selected_cards:
                     pygame.draw.rect(self.screen, 0, card.rect, 3)
-
+    
+                self.timer.display(self)
                 pygame.display.flip()
             else:
                 pass

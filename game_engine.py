@@ -6,6 +6,7 @@ import cardset
 import pygame
 import card as c
 import button
+import timer as t
 
 from config import *
 
@@ -86,6 +87,7 @@ class GameEngine:
         if not self.check_win() and not self.round == MAX_ROUND:
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
+            self.game_ui.timer = t.Timer()
             c.Card.set_to_flipped(self.current_player.hands)
             c.Card.set_others_to_unflipped(self)
             print(f"It's now : {self.current_player}'s turn")
