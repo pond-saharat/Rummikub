@@ -232,13 +232,15 @@ class GameUI:
 
     # Draw lines of the grid
     def draw_grid(self, screen):
+        grid_colour = (16, 38, 59, 0.1)
+        # grid_colour = (215, 51, 108)
         for x in range(WIDTH_2_COLUMNS, WIDTH_2_COLUMNS + BOARD_WIDTH + 1, GRID_WIDTH):
             pygame.draw.line(
-                screen, 0, (x, HEIGHT_1_ROW), (x, HEIGHT_1_ROW + BOARD_HEIGHT)
+                screen, grid_colour, (x, HEIGHT_1_ROW), (x, HEIGHT_1_ROW + BOARD_HEIGHT)
             )
         for y in range(HEIGHT_1_ROW, HEIGHT_1_ROW + BOARD_HEIGHT + 1, GRID_HEIGHT):
             pygame.draw.line(
-                screen, 0, (WIDTH_2_COLUMNS, y), (WIDTH_2_COLUMNS + BOARD_WIDTH, y)
+                screen, grid_colour, (WIDTH_2_COLUMNS, y), (WIDTH_2_COLUMNS + BOARD_WIDTH, y)
             )
 
     def find_nearest_grid_pos(self, x, y):
