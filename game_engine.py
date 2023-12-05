@@ -71,6 +71,7 @@ class GameEngine:
                 
             else:
                 pass
+        self.game_ui.selected_cards = []
         self.game_ui.reset_drag_parameters()
         self.game_ui.set_current_player_hands()
         self.game_ui.grid_cards =  {k: v for k, v in self.game_ui.grid_cards.items() if v != []}
