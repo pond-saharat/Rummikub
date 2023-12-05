@@ -110,6 +110,7 @@ class GameEngine:
     def check_win(self):
         if self.current_player.hands == []:
             self.current_player.winner = True
+            self.score += 30
             return True
         else:
             return False
