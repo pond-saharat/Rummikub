@@ -4,7 +4,7 @@ import board
 import player
 import cardset
 import pygame
-import card
+import card as c
 import button
 
 from config import *
@@ -74,6 +74,8 @@ class GameEngine:
         self.game_ui.reset_drag_parameters()
         self.game_ui.set_current_player_hands()
         self.game_ui.grid_cards =  {k: v for k, v in self.game_ui.grid_cards.items() if v != []}
+        # Unflip all cards
+        c.Card.set_to_unflipped(self.current_player.hands)
 
         # If this player is the last player -> check if the current round is the last round
         if self.current_player == self.players[-1]:
@@ -85,6 +87,8 @@ class GameEngine:
             self.round +=1
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
+            c.Card.set_to_flipped(self.current_player.hands)
+            c.Card.set_others_to_unflipped(self)
             print(f"It's now : {self.current_player}'s turn")
             print(f"current player hands: {self.current_player.hands}")
             return self.current_player
@@ -97,6 +101,11 @@ class GameEngine:
     def deal_cards(self):
         for player in self.players:
             player.draw_cards(self.deck)
+
+        c.Card.set_others_to_unflipped(self)
+
+        for card in self.deck.deck:
+            card.visible = False
         
     # Link pygame.Rect objects to player's hand_region
     # None -> None
@@ -112,22 +121,25 @@ class GameEngine:
 
     # Draw hand regions
     # None -> None  
-    def draw_player_hand_regions(self):
-        # Define hand regions
+    def draw_regions(self):
+        # Draw hand regions
         colour = (40,195,233,100)
         offset = 3
         radius = 0
-        for hand_region in self.hand_regions:
-            
-            shadow = pygame.Surface((hand_region.width, hand_region.height), pygame.SRCALPHA)
+        self.game_ui.draw_region = pygame.Rect(1050, 360, CARD_HEIGHT + 2*GAP_HEIGHT, 2*CARD_WIDTH + 3*GAP_WIDTH)
+        regions = self.hand_regions + [self.game_ui.draw_region]
+        
+        for region in regions:
+            shadow = pygame.Surface((region.width, region.height), pygame.SRCALPHA)
             shadow_rect = shadow.get_rect()
             pygame.draw.rect(shadow,(16, 38, 59, 100),shadow_rect, border_radius=radius)
             
-            shadow_rect.x = hand_region.x + offset
-            shadow_rect.y = hand_region.y + offset
+            shadow_rect.x = region.x + offset
+            shadow_rect.y = region.y + offset
 
             self.screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
-            pygame.draw.rect(self.screen,colour,hand_region,border_radius=radius)
+            pygame.draw.rect(self.screen,colour,region,border_radius=radius)
+        
 
     # Check if the current player is a winner
     # If so, calculate the score and change game_state
@@ -147,10 +159,10 @@ class GameEngine:
         if winner_exists:
             penalised_players = [player for player in self.players if player.winner == False]
             for player in penalised_players:
-                player.score += card.Card.get_penalty(player.hands)
+                player.score += c.Card.get_penalty(player.hands)
         else:
             for player in self.players:
-                player.score += card.Card.get_penalty(player.hands)
+                player.score += c.Card.get_penalty(player.hands)
         # Get the list of winners and their scores
         score_to_players = {}
         for player in self.players:

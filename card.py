@@ -11,6 +11,8 @@ class Card(pygame.sprite.Sprite):
         self.is_selected = False
         self.parent_set = None
         self.flipped = True
+        self.flipped_image_path = "./src/cards/back.png"
+        self.flipped_image = None
         self.visible = True
         # Owner is a Player object
         self.owner = None
@@ -31,12 +33,13 @@ class Card(pygame.sprite.Sprite):
         shadow_rect.x = self.rect.x + offset
         shadow_rect.y = self.rect.y + offset
 
-        screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
         if self.visible:
             if self.flipped:
+                screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
                 screen.blit(self.image, (self.rect.x, self.rect.y))
             else:
-                pass
+                screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
+                screen.blit(self.flipped_image, (self.rect.x, self.rect.y))
 
 
     # Perfome actions when the card is clicked
@@ -79,7 +82,7 @@ class Card(pygame.sprite.Sprite):
         )
         # Flipped image
         self.flipped_image = pygame.transform.smoothscale(
-            pygame.image.load(self.image_path), (CARD_WIDTH, CARD_HEIGHT)
+            pygame.image.load(self.flipped_image_path), (CARD_WIDTH, CARD_HEIGHT)
         )
 
     # Get only the colour cards for a pack of cards
@@ -102,7 +105,28 @@ class Card(pygame.sprite.Sprite):
     def flip_all_cards(cards):
         for card in cards:
             card.flipped = not card.flipped
+
+    # Set to flipped
+    # List[Card] -> None
+    @staticmethod
+    def set_to_flipped(cards):
+        for card in cards:
+            card.flipped = True
     
+    # Set to umflipped
+    # List[Card] -> None
+    @staticmethod
+    def set_to_unflipped(cards):
+        for card in cards:
+            card.flipped = False
+    
+    # Set cards of the player that is not the current player to unflipped
+    @staticmethod
+    def set_others_to_unflipped(game_engine):
+        other_players = [player for player in game_engine.players if player != game_engine.current_player]
+        for player in other_players:
+            Card.set_to_unflipped(player.hands)
+
     # Get all penalty of all remaining cards
     # List[Card] -> int
     @staticmethod

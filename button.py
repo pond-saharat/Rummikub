@@ -1,4 +1,6 @@
 import pygame
+import card as c
+from config import *
 
 #button class
 class Button():
@@ -67,6 +69,26 @@ class GameButton(pygame.sprite.Sprite):
 		self.clicked = True
 		pass
 
+class DrawButton(GameButton):
+	def __init__(self, x, y, width, height, text,size=36):
+		super().__init__(x,y,width,height,text,size)
+		self.cards = []
+
+	def left_click_action(self, game_ui):
+		self.clicked = True
+		deck = game_ui.game_engine.deck.deck
+		region = game_ui.draw_region
+		card1, card2 = tuple(deck[:2])
+		card1.visible = True
+		card2.visible = True
+		self.cards = [card1,card2]
+		card1.rect.x, card1.rect.y = region.x + GAP_WIDTH, region.y + GAP_HEIGHT
+		card2.rect.x, card2.rect.y = region.x + GAP_WIDTH + CARD_WIDTH + GAP_WIDTH, region.y + GAP_HEIGHT
+	
+	def reset(self):
+		for card in self.cards:
+			card.visible = False
+		
 class EndTurnButton(GameButton):
 	def __init__(self, x, y, width, height, text,size=36):
 		super().__init__(x,y,width,height,text,size)
@@ -83,7 +105,8 @@ class FlipAllCardsButton(GameButton):
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
-		pass
+		for player in [p for p in game_ui.game_engine.players if p != game_ui.game_engine.current_player]:
+			c.Card.flip_all_cards(player.hands)
 
 class PlayForMeButton(GameButton):
 	def __init__(self, x, y, width, height, text,size=36):

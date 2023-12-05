@@ -35,9 +35,13 @@ class GameUI:
 
         # button settings
         self.ui_objects = []
+
         self.ui_objects.append(button.EndTurnButton(1050,20,200,50,"End turn",36))
         self.ui_objects.append(button.PlayForMeButton(1050,90,200,50,"Play for me",36))
         self.ui_objects.append(button.FlipAllCardsButton(1050,160,200,50,"Flip all cards",36))
+        self.draw_button = button.DrawButton(1050,230,200,50,"Draw",36)
+        self.ui_objects.append(self.draw_button)
+        self.draw_region = None
         self.game_engine.update_objects()
 
         # drag and drop settings
@@ -65,7 +69,7 @@ class GameUI:
             elif self.game_state == "game":
                 # Fill backgroud colour
                 self.screen.fill(BACKGROUND_COLOUR)
-                self.game_engine.draw_player_hand_regions()
+                self.game_engine.draw_regions()
                 # Draw background elements
                 self.draw_grid(self.screen)
 
@@ -294,8 +298,11 @@ class GameUI:
                 if card not in game_engine.current_player.hands:
                     game_engine.current_player.hands.append(card)
                 card.owner = game_engine.current_player
-                if card in game_engine.deck.deck:
+                if card in game_engine.deck.deck and card in self.draw_button.cards:
+                    self.draw_button.cards.remove(card)
                     game_engine.deck.deck.remove(card)
+                    self.draw_button.reset()
+
             for key, card_list in self.grid_cards.items():
                 self.grid_cards[key] = [crd for crd in card_list if crd not in self.cards_being_dragged]
             print("selected cards:", self.selected_cards)

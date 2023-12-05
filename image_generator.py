@@ -20,6 +20,7 @@ class ImageGenerator:
                 os.system("rm ./src/cards/*.png")
                 self.generate_colour_card_png()
                 self.generate_joker_card_png()
+                self.generate_back_card_png()
                 print("The images were generated successfully.")
             except:
                 raise RuntimeError("Image generation failed.")
@@ -49,6 +50,17 @@ class ImageGenerator:
         plt.axis('off')
         plt.gcf().set_size_inches(3,4)
         plt.savefig(f"./src/cards/joker.png", dpi=300)
+        plt.close()
+    
+    def generate_back_card_png(self):
+        fig = plt.figure()
+        fig.patch.set_facecolor('white')  # the background color of Joker is black
+        plt.text(1.5,2.0,s=f"B",c="black",fontsize=120,horizontalalignment='center',verticalalignment='center')
+        plt.xlim([0,3]) 
+        plt.ylim([0,4]) 
+        plt.axis('off')
+        plt.gcf().set_size_inches(3,4)
+        plt.savefig(f"./src/cards/back.png", dpi=300)
         plt.close()
 
 image_generator = ImageGenerator(card_number, joker_number)
