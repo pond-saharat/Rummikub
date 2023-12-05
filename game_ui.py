@@ -101,8 +101,28 @@ class GameUI:
                 # )
                 # Draw all of the sprites
                 # self.set_current_player_hands()
+                mouse_x, mouse_y = pygame.mouse.get_pos()
                 for sprite in self.sprites:
+                    if sprite.rect.collidepoint(mouse_x,mouse_y) and isinstance(sprite,c.Card):
+                        if sprite.visible and (sprite.owner == self.game_engine.current_player or sprite.owner is None):
+                            offset = 10
+                            highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
+                            highlight_rect = highlight.get_rect()
+                            highlight_rect.center = sprite.rect.center
+                            pygame.draw.rect(self.screen,(255, 255, 150, 0),highlight_rect, border_radius=0)
+                    elif sprite.rect.collidepoint(mouse_x,mouse_y):
+                        offset = 15
+                        highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
+                        highlight_rect = highlight.get_rect()
+                        highlight_rect.center = sprite.rect.center
+                        pygame.draw.rect(self.screen,(255, 255, 150, 0),highlight_rect, border_radius=0)
+                    else:
+                        pass
+                    
                     sprite.draw(self.screen)
+                        
+                        
+                        
 
                 # Highlight selected cards
                 for card in self.selected_cards:

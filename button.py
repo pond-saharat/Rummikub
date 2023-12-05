@@ -46,6 +46,8 @@ class GameButton(pygame.sprite.Sprite):
 		self.text_rect = self.text.get_rect(center=(self.rect.x + (self.width//2), self.rect.y + (self.height//2)))
 		self.radius = 15
 		self.clicked = False
+		self.hover = False
+		self.visible = False
 		
 	def draw(self, screen):
 

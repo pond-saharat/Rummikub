@@ -18,6 +18,7 @@ class Card(pygame.sprite.Sprite):
         self.owner = None
         # Back side of the card
         self.back_image = None
+        self.hover = False
 
     def __repr__(self):
         return f"{self.colour[0]}-{self.number}"
@@ -70,11 +71,6 @@ class Card(pygame.sprite.Sprite):
         else:
             current_player.selected_cards.append(self)
             current_player.make_move(game_engine)
-
-    # Highlight the card or unhighlight the card
-    def highlight(self, game_engine):
-        self.is_selected = not self.is_selected
-        self.draw(game_engine)
     
     def load_image(self):
         self.image = pygame.transform.smoothscale(
