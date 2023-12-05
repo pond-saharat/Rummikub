@@ -68,7 +68,7 @@ class CardSet:
         run = []
         previous_number = None
         for card in colour_cards:
-            
+            print(card,previous_number)
             # First iteration
             if previous_number is None:
                 previous_number = card.number
@@ -80,7 +80,7 @@ class CardSet:
                 run.append(card)
                 continue
             # If the current card is not the previous card number + 1 -> add the joker card to the list and increment the previous card number
-            elif card.number != previous_number + 2:
+            elif card.number != previous_number + 2 and joker_cards != []:
                 while joker_cards != [] and card.number != previous_number + 2:
                     popped_joker_card = joker_cards.pop(0)
                     run.append(popped_joker_card)
@@ -94,8 +94,10 @@ class CardSet:
                         continue
                     else:
                         pass
+            elif card.number != previous_number + 2 and joker_cards == []:
+                return False
             else:
-                continue
+                pass
         return True
     
     # Classmethod: Check if the CardSet is either a valid Group or a valid Run
@@ -122,7 +124,6 @@ class CardSet:
                 if previous_number is None:
                     previous_number = card.number
                     run.append(card)
-                    print(1,run)
                     continue
                 # If the current card is the previous card number + 2 -> add the card to the list
                 if card.number == previous_number + 2:
@@ -176,8 +177,8 @@ class Run(CardSet):
 # For testing
 # is_run
 # True
-# cards = [ColourCard("pink",3),ColourCard("pink",5)] + [JokerCard()]
-# print(CardSet.is_run(cards))
+# cards = [ColourCard("pink",5),ColourCard("pink",1),ColourCard("pink",9)]
+# print(1,CardSet.is_run(cards))
 # print(CardSet.sort_list(cards))
 # # False
 # cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
