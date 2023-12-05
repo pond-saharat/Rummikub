@@ -13,6 +13,8 @@ class Card(pygame.sprite.Sprite):
         self.flipped = False
         # Owner is a Player object
         self.owner = None
+        # Back side of the card
+        self.back_image = None
 
     def __repr__(self):
         return f"{self.colour[0]}-{self.number}"
@@ -25,7 +27,6 @@ class Card(pygame.sprite.Sprite):
         #     game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
         # else:
         game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
-        pygame.display.update()
 
     # Perfome actions when the card is clicked
     # Game engine instance -> None
@@ -64,6 +65,10 @@ class Card(pygame.sprite.Sprite):
         self.image = pygame.transform.smoothscale(
             pygame.image.load(self.image_path), (CARD_WIDTH, CARD_HEIGHT)
         )
+        # Flipped image
+        self.flipped_image = pygame.transform.smoothscale(
+            pygame.image.load(self.image_path), (CARD_WIDTH, CARD_HEIGHT)
+        )
 
     # Get only the colour cards for a pack of cards
     # None -> List[ColourCard]
@@ -85,12 +90,21 @@ class Card(pygame.sprite.Sprite):
     def flip_all_cards(cards):
         for card in cards:
             card.flipped = not card.flipped
+    
+    # Get all penalty of all remaining cards
+    # List[Card] -> int
+    @staticmethod
+    def get_penalty(cards):
+        penalty = 0
+        for card in cards:
+            penalty += card.penalty()
+        return penalty
 
 class ColourCard(Card):
     def __init__(self, colour, number):
         super().__init__(colour, number)
         self.joker = False
-        self.image_path = f"./src/{self.colour.lower()}{self.number}.png"
+        self.image_path = f"./src/cards/{self.colour.lower()}{self.number}.png"
         self.image = None
         self.load_image()
         self.rect = self.image.get_rect()
@@ -106,7 +120,7 @@ class JokerCard(Card):
     def __init__(self):
         super().__init__("Joker", None)
         self.joker = True
-        self.image_path = f"./src/joker.png"
+        self.image_path = f"./src/cards/joker.png"
         self.image = None
         self.load_image()
         self.rect = self.image.get_rect()

@@ -17,6 +17,7 @@ class ImageGenerator:
         if regenerate == True:
             try:
                 os.system("rm ./src/*.png")
+                os.system("rm ./src/cards/*.png")
                 self.generate_colour_card_png()
                 self.generate_joker_card_png()
                 print("The images were generated successfully.")
@@ -36,7 +37,7 @@ class ImageGenerator:
                 plt.ylim([0,4]) 
                 plt.axis('off')
                 plt.gcf().set_size_inches(3,4)
-                plt.savefig(f"./src/{colour.lower()}{number}.png", dpi=300)
+                plt.savefig(f"./src/cards/{colour.lower()}{number}.png", dpi=300)
                 plt.close()
 
     def generate_joker_card_png(self):
@@ -47,7 +48,7 @@ class ImageGenerator:
         plt.ylim([0,4]) 
         plt.axis('off')
         plt.gcf().set_size_inches(3,4)
-        plt.savefig(f"./src/joker.png", dpi=300)
+        plt.savefig(f"./src/cards/joker.png", dpi=300)
         plt.close()
 
 image_generator = ImageGenerator(card_number, joker_number)
