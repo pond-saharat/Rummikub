@@ -110,11 +110,10 @@ class GameEngine:
     # None -> None
     def set_player_hand_regions(self):
         colour = (0,0,0,0)
-        p1 = pygame.Rect(HANDS_REGION,(CARD_HEIGHT + 2*GAP) + BOARD_HEIGHT,BOARD_WIDTH,CARD_HEIGHT + 2*GAP)
-        p3 = pygame.Rect(HANDS_REGION, 0, BOARD_WIDTH, CARD_HEIGHT + 2*GAP)
-
-        p2 = pygame.Rect(0, HANDS_REGION, HANDS_REGION, SCREEN_HEIGHT - 2 * HANDS_REGION -40)
-        p4 = pygame.Rect(HANDS_REGION + BOARD_WIDTH, HANDS_REGION,HANDS_REGION,SCREEN_HEIGHT - 2 * HANDS_REGION -40)
+        p1 = pygame.Rect(P1_HANDS_REGION)
+        p2 = pygame.Rect(P2_HANDS_REGION)
+        p3 = pygame.Rect(P3_HANDS_REGION)
+        p4 = pygame.Rect(P4_HANDS_REGION)
 
         self.hand_regions = [p1,p2,p3,p4]
         for index, player in enumerate(self.players):
@@ -127,13 +126,13 @@ class GameEngine:
         colour = (40,195,233,100)
         offset = 3
         radius = 0
-        self.game_ui.draw_region = pygame.Rect(1050, 360, CARD_HEIGHT + 2*GAP, 2*CARD_WIDTH + 3*GAP)
+        self.game_ui.draw_region = pygame.Rect(DRAW_CARDS_REGION)
         regions = self.hand_regions + [self.game_ui.draw_region]
         
         for region in regions:
             shadow = pygame.Surface((region.width, region.height), pygame.SRCALPHA)
             shadow_rect = shadow.get_rect()
-            pygame.draw.rect(shadow,(16, 38, 59, 100),shadow_rect, border_radius=radius)
+            pygame.draw.rect(shadow,(16, 38, 59, 100), shadow_rect, border_radius=radius)
             
             shadow_rect.x = region.x + offset
             shadow_rect.y = region.y + offset
