@@ -10,7 +10,8 @@ class Card(pygame.sprite.Sprite):
         self.number = number
         self.is_selected = False
         self.parent_set = None
-        self.flipped = False
+        self.flipped = True
+        self.visible = True
         # Owner is a Player object
         self.owner = None
         # Back side of the card
@@ -21,28 +22,39 @@ class Card(pygame.sprite.Sprite):
 
     # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None
-    def draw(self, game_engine):
-        # if self.is_selected:
-        #     pygame.draw.rect(game_engine.screen, (255, 0, 0), self.rect, 10)
-        #     game_engine.screen.blit(self.image, (self.rect.x + 5, self.rect.y + 5))
-        # else:
-        game_engine.screen.blit(self.image, (self.rect.x, self.rect.y))
+    def draw(self, screen):
+        shadow = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
+        shadow_rect = shadow.get_rect()
+        shadow.fill((16, 38, 59, 100)) 
+
+        offset = 3
+        shadow_rect.x = self.rect.x + offset
+        shadow_rect.y = self.rect.y + offset
+
+        screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
+        if self.visible:
+            if self.flipped:
+                screen.blit(self.image, (self.rect.x, self.rect.y))
+            else:
+                pass
+
 
     # Perfome actions when the card is clicked
-    # Game engine instance -> None
-    def left_click_action(self, game_engine):
-        current_player = game_engine.current_player
-        # Actions if the card belongs to a set
-        if self.parent_set:
-            current_player.selected_cards.append(self.parent_set)
-            # print(current_player.selected_cards)
-            self.parent_set.highlight(game_engine)
-        # Add itself to the list of selected cards
-        else:
-            current_player.selected_cards.append(self)
-            # print(current_player.selected_cards)
+    # Game UI instance -> None
+    def left_click_action(self, game_ui):
+        pass
+        # current_player = game_engine.current_player
+        # # Actions if the card belongs to a set
+        # if self.parent_set:
+        #     current_player.selected_cards.append(self.parent_set)
+        #     # print(current_player.selected_cards)
+        #     self.parent_set.highlight(game_engine)
+        # # Add itself to the list of selected cards
+        # else:
+        #     current_player.selected_cards.append(self)
+        #     # print(current_player.selected_cards)
 
-            self.highlight(game_engine)
+        #     self.highlight(game_engine)
 
     # Perfome actions when the card is clicked
     # Game engine instance -> None

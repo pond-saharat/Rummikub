@@ -3,6 +3,8 @@ import game_engine
 import menu
 import board
 import cardset
+import card as c
+import button
 
 from pygame.locals import *
 from config import *
@@ -32,10 +34,11 @@ class GameUI:
     
 
         # button settings
-        self.button_font = pygame.font.SysFont(None, 36)
-        self.button_rect = pygame.Rect(1100, 20, 130, 50)
-        self.button_text = self.button_font.render("End Turn", True, 0)
-        pygame.time.delay(10)
+        self.ui_objects = []
+        self.ui_objects.append(button.EndTurnButton(1050,20,200,50,"End turn",36))
+        self.ui_objects.append(button.PlayForMeButton(1050,90,200,50,"Play for me",36))
+        self.ui_objects.append(button.FlipAllCardsButton(1050,160,200,50,"Flip all cards",36))
+        self.game_engine.update_objects()
 
         # drag and drop settings
         self.dragging = False
@@ -67,11 +70,7 @@ class GameUI:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                        if event.key == pygame.K_SPACE: 
-                           
                            menu.Menu(self).run()
-                           
-                            
-                           
                            
                     self.check_event(event,self.game_engine)
                 # Clear the screen
@@ -81,14 +80,16 @@ class GameUI:
                 # self.draw_hands_region()
 
                 # draw button
-                pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
-                self.screen.blit(
-                    self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
-                )
+                # pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
+                # self.screen.blit(
+                #     self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
+                # )
                 # Draw all of the sprites
                 # self.set_current_player_hands()
-                
-                self.sprites.draw(self.screen)
+                for sprite in self.sprites:
+                    sprite.draw(self.screen)
+
+                # Highlight selected cards
                 for card in self.selected_cards:
                     pygame.draw.rect(self.screen, 0, card.rect, 3)
 
@@ -112,19 +113,18 @@ class GameUI:
             # Get the mouse position
             mouse_x, mouse_y = pygame.mouse.get_pos()
             if event.button == 1:
-                if self.button_rect.collidepoint(event.pos):
-                    self.reset_drag_parameters()
-                    self.game_engine.next_turn()
-                    print(f"It's now {self.game_engine.current_player}'s turn")
-                else:
-                    for card in self.sprites:
-                        # Check if the mouse click is within sprites' boundaries
-                        if card.rect.collidepoint(mouse_x, mouse_y):
-                            if card.owner == self.game_engine.current_player or card.owner is None:
-                                # Do the actions for the left click
-                                self.start_dragging(card, event.pos)
+                for sprite in self.sprites:
+                    # Check if the mouse click is within sprites' boundaries
+                    if sprite.rect.collidepoint(mouse_x, mouse_y):
+                        if isinstance(sprite, c.Card):
+                            if sprite.owner == self.game_engine.current_player or sprite.owner is None:
+                                self.start_dragging(sprite, event.pos)
                                 break
-                                # obj.left_click_action(self.game_engine)
+                        elif isinstance(sprite, button.GameButton):
+                            sprite.left_click_action(self)
+                            break
+                        else:
+                            pass
             elif event.button == 3:
                 self.selected_cards = []
             else:
@@ -134,14 +134,27 @@ class GameUI:
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1 and self.dragging:  # left button released
                 mouse_x, mouse_y = event.pos
-                for card in self.sprites:
-                    if (card.rect.collidepoint(event.pos) and mouse_x > CARD_WIDTH and mouse_y > CARD_HEIGHT):
-                        # if the card is in the selected_cards, remove it from the selected_cards
-                        if card in self.selected_cards:
-                            self.selected_cards.remove(card)
-                        else:
-                            self.selected_cards.append(card)
+                for sprite in self.sprites:
+                    if isinstance(sprite,c.Card):
+                        if (sprite.rect.collidepoint(event.pos) and mouse_x > CARD_WIDTH and mouse_y > CARD_HEIGHT):
+                            # if the card is in the selected_cards, remove it from the selected_cards
+                            if sprite in self.selected_cards:
+                                self.selected_cards.remove(sprite)
+                            else:
+                                self.selected_cards.append(sprite)
+                    else:
+                        pass
                 self.drop_card(game_engine)
+            elif event.button == 1:
+                for sprite in self.sprites:
+                    if isinstance(sprite,c.Card):
+                        pass
+                    elif isinstance(sprite,button.GameButton):
+                        sprite.clicked = False
+                    else:
+                        pass
+            else:
+                pass
         
         # handle dragging
         elif event.type == pygame.MOUSEMOTION and self.dragging:
@@ -157,7 +170,7 @@ class GameUI:
                     card.rect.x = new_x
                     card.rect.y = new_y
                 # draw the dragged card
-                self.card_being_dragged.draw(self.game_engine)
+                # self.card_being_dragged.draw(self.game_engine)
         else:
             pass
 

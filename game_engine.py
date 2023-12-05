@@ -5,6 +5,7 @@ import player
 import cardset
 import pygame
 import card
+import button
 
 from config import *
 
@@ -13,7 +14,8 @@ class GameEngine:
     def __init__(self, game_ui) -> None:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()
-        self.objects = self.deck.deck
+        self.objects = None
+        
         # self.board = board.Board()
         self.hand_regions = []
         self.game_ui = game_ui
@@ -26,7 +28,7 @@ class GameEngine:
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)
         self.current_player = next(self._player_iterator)
-        
+
         # Round
         self.round = 1
 
@@ -52,7 +54,7 @@ class GameEngine:
         # self.objects = self.deck.deck + self.board.board + self.current_player.hands
         # print(f"deck: {len(self.deck.deck)}")
         self.objects = self.deck.deck + [card for player in self.players for card in player.hands]
-        return self.objects
+        self.objects += self.game_ui.ui_objects
 
     # Go to the next turn
     # None -> Player
