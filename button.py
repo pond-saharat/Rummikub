@@ -88,6 +88,7 @@ class DrawButton(GameButton):
 	def reset(self):
 		for card in self.cards:
 			card.visible = False
+		self.cards = []
 		
 class EndTurnButton(GameButton):
 	def __init__(self, x, y, width, height, text,size=36):

@@ -148,6 +148,9 @@ class GameUI:
                             if sprite in self.selected_cards:
                                 self.selected_cards.remove(sprite)
                             else:
+                                if len([crd for crd in self.selected_cards if crd in self.draw_button.cards]) > 0 and sprite in self.draw_button.cards:
+                                    self.selected_cards = []
+                                    break
                                 if len(self.selected_cards) < 8:
                                     self.selected_cards.append(sprite)
                                 else:
@@ -337,6 +340,11 @@ class GameUI:
                     card.rect.centery = original_xy[1]
                     continue
                 
+                if card in game_engine.deck.deck and card in self.draw_button.cards:
+                    self.draw_button.cards.remove(card)
+                    game_engine.deck.deck.remove(card)
+                    self.draw_button.reset()
+
                 # remove the card from the original grid
                 if (original_grid in self.grid_cards and card in self.grid_cards[original_grid]):
                     self.grid_cards[original_grid].remove(card)
