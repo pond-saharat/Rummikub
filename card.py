@@ -104,7 +104,7 @@ class ColourCard(Card):
 
 class JokerCard(Card):
     def __init__(self):
-        super().__init__("Joker", 0)
+        super().__init__("Joker", None)
         self.joker = True
         self.image_path = f"./src/joker.png"
         self.image = None

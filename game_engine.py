@@ -9,7 +9,6 @@ from config import *
 
 
 class GameEngine:
-    
     def __init__(self, game_ui) -> None:
         # Initialize the ui engine, deck, and board
         self.deck = deck.Deck()

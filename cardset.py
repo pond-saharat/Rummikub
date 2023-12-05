@@ -122,11 +122,13 @@ class CardSet:
                 if previous_number is None:
                     previous_number = card.number
                     run.append(card)
+                    print(1,run)
                     continue
                 # If the current card is the previous card number + 2 -> add the card to the list
                 if card.number == previous_number + 2:
                     previous_number = card.number
                     run.append(card)
+                    print(2,run)
                     continue
                 # If the current card is not the previous card number + 1 -> add the joker card to the list and increment the previous card number
                 elif card.number != previous_number + 2:
@@ -138,11 +140,14 @@ class CardSet:
                         if card.number == previous_number + 2:
                             previous_number = card.number
                             run.append(card)
+                            print(3,run)
                             continue
                         else:
                             pass
                 else:
                     continue
+            if len(joker_cards) > 0:
+                run += joker_cards
             return run
         
         # Sort like a group
@@ -171,7 +176,7 @@ class Run(CardSet):
 # For testing
 # is_run
 # True
-# cards = [ColourCard("pink",4),ColourCard("pink",8),ColourCard("pink",10)] + [JokerCard()]
+# cards = [ColourCard("pink",3),ColourCard("pink",5)] + [JokerCard()]
 # print(CardSet.is_run(cards))
 # print(CardSet.sort_list(cards))
 # # False

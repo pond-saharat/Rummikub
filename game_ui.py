@@ -340,12 +340,11 @@ class GameUI:
 
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
+
                 # remove the card from the original grid
-                if (
-                    original_grid in self.grid_cards
-                    and card in self.grid_cards[original_grid]
-                ):
+                if (original_grid in self.grid_cards and card in self.grid_cards[original_grid]):
                     self.grid_cards[original_grid].remove(card)
+                    
                 # if the card is in the selected_cards, put all the selected cards to the grid
                 self.place_card_to_grid(card, row, col, self.card_being_dragged)
 
