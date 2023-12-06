@@ -135,6 +135,12 @@ class Card(pygame.sprite.Sprite):
         for card in cards:
             penalty += card.penalty()
         return penalty
+    
+    @staticmethod
+    def set_to_selected(cards,game_ui):
+        game_ui.selected_cards = cards
+        for card in cards:
+            card.is_selected = True
 
 class ColourCard(Card):
     def __init__(self, colour, number):

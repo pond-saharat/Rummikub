@@ -136,7 +136,8 @@ class GameUI:
                         pygame.draw.rect(self.screen, card.colour, card.rect, 3)
                     elif isinstance(card, c.JokerCard):
                         pygame.draw.rect(self.screen, "black", card.rect, 3)
-    
+                    else:
+                        pass
                 self.timer.display(self)
                 pygame.display.flip()
             else:
