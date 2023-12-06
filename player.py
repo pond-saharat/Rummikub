@@ -16,6 +16,7 @@ class Player:
         self.hand_region = None # pygame.Rect
         # Track if this person is a winner or not
         self.winner = False
+        self.made_move = False
     
     def draw_cards(self, deck):
         popped_to_hand = deck.deck[:14]

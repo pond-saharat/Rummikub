@@ -73,19 +73,21 @@ class GameEngine:
                 
             else:
                 pass
+        self.game_ui.draw_button.reset()
         self.game_ui.selected_cards = []
         self.game_ui.reset_drag_parameters()
         self.game_ui.set_current_player_hands()
         self.game_ui.grid_cards =  {k: v for k, v in self.game_ui.grid_cards.items() if v != []}
+        self.current_player.made_move = False
         # Unflip all cards
         c.Card.set_to_unflipped(self.current_player.hands)
 
         # If this player is the last player -> check if the current round is the last round
         if self.current_player == self.players[-1]:
             self.round += 1
-
+            
         # Check if the current player is a winner
-        if not self.check_win() and not self.round == MAX_ROUND:
+        if not self.check_win() and not self.round > MAX_ROUND:
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
             self.game_ui.timer = t.Timer()

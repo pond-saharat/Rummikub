@@ -99,6 +99,9 @@ class EndTurnButton(GameButton):
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
+		if game_ui.game_engine.current_player.made_move == False:
+			game_ui.notification = "Need to make a move or draw"
+			return
 		game_ui.reset_drag_parameters()
 		game_ui.game_engine.next_turn()
 		print(f"It's now {game_ui.game_engine.current_player}'s turn")

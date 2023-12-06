@@ -345,14 +345,17 @@ class GameUI:
         # If the current drop position is in current player's hand region -> leave a card in that region
         if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
             for card in self.cards_being_dragged:
-                if card not in game_engine.current_player.hands and card not in self.draw_button.cards:
+                if card not in game_engine.current_player.hands: #  and card not in self.draw_button.cards:
                     game_engine.current_player.hands.append(card)
-                card.owner = game_engine.current_player
+                
                 if card in game_engine.deck.deck and card in self.draw_button.cards:
                     self.draw_button.cards.remove(card)
                     game_engine.deck.deck.remove(card)
                     self.draw_button.reset()
-
+                    self.game_engine.current_player.made_move = True
+                    
+                card.owner = game_engine.current_player
+                
             for key, card_list in self.grid_cards.items():
                 self.grid_cards[key] = [crd for crd in card_list if crd not in self.cards_being_dragged]
             print("selected cards:", self.selected_cards)
@@ -378,6 +381,7 @@ class GameUI:
 
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
+                self.game_engine.current_player.made_move = True
                 # if the grid is full, put the card back to the original position
                 if self.is_grid_full(row, col):
                     card.rect.centerx = original_xy[0]
@@ -388,6 +392,7 @@ class GameUI:
                     self.draw_button.cards.remove(card)
                     game_engine.deck.deck.remove(card)
                     self.draw_button.reset()
+                    self.game_engine.current_player.made_move = True
 
                 # remove the card from the original grid
                 if (original_grid in self.grid_cards and card in self.grid_cards[original_grid]):
