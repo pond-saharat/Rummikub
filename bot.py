@@ -21,25 +21,14 @@ class CardsTensor():
         else:
             self.tensor = np.zeros((15, 6, 2))
             self.cards = []
-
-    def __getattr__(self, attr):
-        # delegete all undefined method to ndarray
-        return getattr(self.tensor, attr)
-
-    def tensor2cards(self):
-        cards = []
-        for num in range(15):
-            for color in range(5):
-                if self.tensor[num][color][0] == 1:
-                    cards.append(card.Card(self.colorNum2Text_dict[color], num + 1))
-                elif self.tensor[num][color][1] == 1:
-                    cards.append(card.Card(self.colorNum2Text_dict[color], num + 1))
-        if any(self.tensor[:,5,0]):
-            cards.append(card.Card('Joker', None))
-        if any(self.tensor[:,5,1]):
-            cards.append(card.Card('Joker', None))
-        return cards
-
+        
+        self.cards_idx_dict = {}    # {(card.colour, card.number, 0): idx1, ...]}
+        if cards is not None:
+            for i, c in enumerate(cards):
+                if (c.colour, c.number, 0) not in self.cards_idx_dict:
+                    self.cards_idx_dict[(c.colour, c.number, 0)] = i
+                else:
+                    self.cards_idx_dict[(c.colour, c.number, 1)] = i
 
     def cards2tensor(self, cards_from_deck):
         cards_from_deck = [card for card in cards_from_deck if card.number is not None]
@@ -61,6 +50,31 @@ class CardsTensor():
                     cards_tensor[num][color][1] = 1
         return cards_tensor
     
+    def tensor2cards(self):
+        cards = []
+        for num in range(15):
+            for color in range(5):
+                if self.tensor[num][color][0] == 1:
+                    cards.append(card.Card(self.colorNum2Text_dict[color], num + 1))
+                elif self.tensor[num][color][1] == 1:
+                    cards.append(card.Card(self.colorNum2Text_dict[color], num + 1))
+        if any(self.tensor[:,5,0]):
+            cards.append(card.Card('Joker', None))
+        if any(self.tensor[:,5,1]):
+            cards.append(card.Card('Joker', None))
+        return cards
+
+    def tensor2cards_indices(self):
+        cards = self.tensor2cards()
+        cards_idx = []
+        for c in cards:
+            if (c.colour, c.number, 0) in self.cards_idx_dict:
+                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 0)])
+            if (c.colour, c.number, 1) in self.cards_idx_dict:
+                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 1)])
+        return cards_idx
+    
+
     def __repr__(self):
         return repr(self.tensor.T)
 
@@ -158,6 +172,11 @@ class CardsTensor():
         return best_play
     
     
+    def find_longest_combos_idx(self):
+        longest_play, longest_num = self.find_longest_combos()
+        return [self.from_tensor_to_indices(play) for play in longest_play], longest_num
+    
+    
     def find_max_sum_combos(self, cards_tensor=None, current_play=[], best_play=None):
         cards_tensor = self.tensor.copy() if cards_tensor is None else cards_tensor
         best_play = ([], 0) if best_play is None else best_play
@@ -177,8 +196,30 @@ class CardsTensor():
 
         return best_play
     
+    
+    def find_max_sum_combos_idx(self):
+        max_play, max_num = self.find_max_sum_combos()
+        return [self.from_tensor_to_indices(play) for play in max_play], max_num
+    
+    
+    def from_tensor_to_indices(self, cards_tensor):
+        cards = cards_tensor.tensor2cards()
+        cards_idx = []
+        for c in cards:
+            if (c.colour, c.number, 0) in self.cards_idx_dict:
+                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 0)])
+            if (c.colour, c.number, 1) in self.cards_idx_dict:
+                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 1)])
+        return cards_idx
+    
+    
     def add_cards_to_grid(self, cards_tensor, grid):
         # for card in cards_tensor.tensor2cards():
         #     
         # return grid
         pass
+    
+    
+    def __getattr__(self, attr):
+        # delegete all undefined method to ndarray
+        return getattr(self.tensor, attr)

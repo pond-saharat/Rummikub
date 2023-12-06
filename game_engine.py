@@ -61,7 +61,7 @@ class GameEngine:
     # Go to the next turn
     # None -> Player
     def next_turn(self):
-        for pos,card_list in self.game_ui.grid_cards.items():
+        for pos, card_list in self.game_ui.grid_cards.items():
             # print(card_list)
             # print(pos,cardset.CardSet.is_valid(card_list))
             if not cardset.CardSet.is_valid(card_list):
@@ -73,6 +73,7 @@ class GameEngine:
                 
             else:
                 pass
+        
         self.game_ui.draw_button.reset()
         self.game_ui.selected_cards = []
         self.game_ui.reset_drag_parameters()
@@ -99,7 +100,7 @@ class GameEngine:
         else:
             # If there is a winner
             self.endgame_score_calculation()
-            self.game_ui.game_state = "congratulation"
+            self.game_ui.game_state = "Rummikub!"
             print(f"{self.winners} are a winner with a score of {self.winning_score}")
 
     def deal_cards(self):
