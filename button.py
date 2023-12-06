@@ -117,4 +117,4 @@ class PlayForMeButton(GameButton):
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
-		pass
+		game_ui.game_engine.current_player.make_first_move(game_ui)

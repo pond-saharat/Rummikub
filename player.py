@@ -1,6 +1,7 @@
 import cardset
 import card
 import copy
+import bot
 
 class Player:
     def __init__(self, name) -> None:
@@ -33,6 +34,18 @@ class Player:
     def __repr__(self):
         return self.__str__()
 
+
+    def make_first_move(self, game_ui):
+        # Find the best combos
+        self.card_tensor = bot.CardsTensor(cards=self.hands)
+        best_play = self.card_tensor.find_max_sum_combos()
+        best_play_combos = [i.tensor2cards() for i in best_play[0]]
+        max_num_sum = best_play[1]
+        # for combo in best_play[0]:
+            # self.selected_cards.extend(combo.tensor2cards())  # this is a list of new card objects, need to change to the original card objects
+        print(best_play_combos, f"max_num_sum: {max_num_sum}")
+        game_ui.notification = f"{best_play_combos} {max_num_sum}"
+        
     # def make_move(self,game_engine):
     #     source = self.selected_cards[:-1] # This is a list
     #     destination = self.selected_cards[-1] # This is an instance
@@ -86,3 +99,20 @@ class HumanPlayer(Player):
 class AIPlayer(Player):
     def __init__(self, name):
         super().__init__(name)
+        
+    def make_first_move(self):
+        # Find the best combos
+        self.card_tensor = bot.CardsTensor(cards=self.hands)
+        best_play = self.card_tensor.find_longest_combos()
+        for combo in best_play[0]:
+            self.selected_cards.extend(combo.tensor2cards())
+        print(best_play.cards)
+        
+        
+        # # Add the best set to the board
+        # game_engine.board.board.append(best_set)
+        # # Remove the cards from the player's hand
+        # for card in best_set.cards:
+        #     self.hands.remove(card)
+        # # Set the first moved flag to True
+        # self.first_moved = True
