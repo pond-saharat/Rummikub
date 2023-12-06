@@ -38,15 +38,26 @@ class Player:
 
     def make_first_move(self, game_ui):
         # Find the best combos
-        self.card_tensor = bot.CardsTensor(cards=self.hands)
-        best_play = self.card_tensor.find_max_sum_combos()
-        best_play_combos = [i.tensor2cards() for i in best_play[0]]
-        max_num_sum = best_play[1]
-        # for combo in best_play[0]:
-            # self.selected_cards.extend(combo.tensor2cards())  # this is a list of new card objects, need to change to the original card objects
-        print(best_play_combos, f"The best combination found: {max_num_sum}")
-        game_ui.notification = f"{best_play_combos} {max_num_sum}"
+        self.hand_cards_tensor = bot.CardsTensor(cards=self.hands)
+        best_play_idx_combos, max_sum = self.hand_cards_tensor.find_max_sum_combos_idx()
+
+        all_indices = [i for combo in best_play_idx_combos for i in combo]
+        cards_in_best_play = [self.hands[i] for i in all_indices]
+        self.selected_cards = cards_in_best_play
         
+        # # Select the cards
+        # for idx in all_indices:
+        #     self.selected_cards.append(self.hands[idx])
+        
+        print(cards_in_best_play, f"The best combination found: {max_sum}")
+        game_ui.notification = f"{cards_in_best_play} {max_sum}"
+        
+        return cards_in_best_play
+    
+    
+    
+    
+    
     # def make_move(self,game_engine):
     #     source = self.selected_cards[:-1] # This is a list
     #     destination = self.selected_cards[-1] # This is an instance
