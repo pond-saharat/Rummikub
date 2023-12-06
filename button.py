@@ -3,36 +3,7 @@ import card as c
 import bot
 from config import *
 
-#button class
-class Button():
-	def __init__(self, x, y, image, scale):
-		width = image.get_width()
-		height = image.get_height()
-		self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-		self.rect = self.image.get_rect()
-		self.rect.topleft = (x, y)
-		self.clicked = False
-
-	def draw(self, surface):
-		action = False
-		#get mouse position
-		pos = pygame.mouse.get_pos()
-
-		#check mouseover and clicked conditions
-		if self.rect.collidepoint(pos):
-			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-				self.clicked = True
-				action = True
-
-		if pygame.mouse.get_pressed()[0] == 0:
-			self.clicked = False
-
-		#draw button on screen
-		surface.blit(self.image, (self.rect.x, self.rect.y))
-
-		return action
-
-class GameButton(pygame.sprite.Sprite):
+class Button(pygame.sprite.Sprite):
 	def __init__(self, rect, text,size=36):
 		super().__init__()
 		self.x = rect[0]
@@ -51,7 +22,6 @@ class GameButton(pygame.sprite.Sprite):
 		self.visible = False
 		
 	def draw(self, screen):
-
 		shadow = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
 		shadow_rect = shadow.get_rect()
 		pygame.draw.rect(shadow,(16, 38, 59, 100),shadow_rect, border_radius=self.radius)
@@ -72,7 +42,7 @@ class GameButton(pygame.sprite.Sprite):
 		self.clicked = True
 		pass
 
-class DrawButton(GameButton):
+class DrawButton(Button):
 	def __init__(self, rect, text,size=36):
 		super().__init__(rect,text,size)
 		self.cards = []
@@ -93,7 +63,7 @@ class DrawButton(GameButton):
 			card.visible = False
 		self.cards = []
 		
-class EndTurnButton(GameButton):
+class EndTurnButton(Button):
 	def __init__(self, rect, text,size=36):
 		super().__init__(rect,text,size)
 	
@@ -106,7 +76,7 @@ class EndTurnButton(GameButton):
 		game_ui.game_engine.next_turn()
 		print(f"It's now {game_ui.game_engine.current_player}'s turn")
 
-class FlipAllCardsButton(GameButton):
+class FlipAllCardsButton(Button):
 	def __init__(self, rect, text,size=36):
 		super().__init__(rect,text,size)
 	
@@ -115,16 +85,14 @@ class FlipAllCardsButton(GameButton):
 		for player in [p for p in game_ui.game_engine.players if p != game_ui.game_engine.current_player]:
 			c.Card.flip_all_cards(player.hands)
 
-class PlayForMeButton(GameButton):
+class PlayForMeButton(Button):
 	def __init__(self, rect, text,size=36):
 		super().__init__(rect,text,size)
 	
 	def left_click_action(self, game_ui):
 		self.clicked = True
 		game_ui.game_engine.current_player.make_first_move(game_ui)
-
-
-class HintButton(GameButton):
+class HintButton(Button):
 	def __init__(self, rect, text,size=36):
 		super().__init__(rect,text,size)
 	

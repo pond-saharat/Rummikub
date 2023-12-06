@@ -4,7 +4,6 @@ import card
 
 from config import *
 
-
 # Class Deck
 class Deck:
     def __init__(self):
@@ -25,8 +24,3 @@ class Deck:
     
     def __repr__(self):
         return self.__str__()
-
-
-# # For testing purposes
-# d = Deck()
-# print(d.deck[0].image)

@@ -12,26 +12,27 @@ from config import *
 
 class GameUI:
     def __init__(self):
+        # Initialise pygame
         self.running = True
-        # Initialize an empty group of game objects
+        pygame.init()
+        pygame.display.set_caption(CAPTION)
+        pygame.mouse.set_visible(1)
+        
+        self.game_state = "main_menu"
+
+        # Go to the main menu and set parameters
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen.fill(BACKGROUND_COLOUR)    
+        menu.MainMenu.get_config(self)
+        print("End of menu")
         self.sprites = pygame.sprite.Group()
 
-        pygame.init()
-        # Create a blank screen
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        # Refer ui engine location to ui game location and refer game engine location to ui engine location
+        # GameEngine
+        # Create GameEngine instance
         self.game_engine = game_engine.GameEngine(self)
 
-        # clock = pygame.time.Clock()
-
-        pygame.mouse.set_visible(1)
-
-        pygame.display.set_caption(CAPTION)
         # Passing screen to game_engine
         self.game_engine.screen = self.screen
-        self.game_state = "main_menu"
-        self.pause_state= False
-    
 
         # button settings
         self.ui_objects = []
@@ -65,79 +66,76 @@ class GameUI:
         self.timer = t.Timer(max_time = MAX_TIME+10)
         # Infinite loop
         while self.running:
-            # Check the game state   
-            if self.game_state == "main_menu":
-                menu.Menu(self).run()
-            elif self.game_state == "game":
-                # Fill backgroud colour
-                self.screen.fill(BACKGROUND_COLOUR)
-                self.game_engine.draw_regions()
-                
-                
-                # Draw background elements
-                self.draw_grid(self.screen)
-                self.pause_state=True
-                # Display text
-                notification_surface = pygame.font.SysFont(None, 24).render(self.notification, True, (255, 255, 255)) 
-                
-                turn_surface = pygame.font.SysFont(None, 24).render(f"Turn: {self.game_engine.current_player}", True, (255, 255, 255)) 
-                score_surface = pygame.font.SysFont(None, 24).render(f"Score: {self.game_engine.current_player.score}", True, (255, 255, 255)) 
-                self.screen.blit(turn_surface, NOTIFICATION_REGION_1)
-                self.screen.blit(score_surface, NOTIFICATION_REGION_2)
-                self.screen.blit(notification_surface, NOTIFICATION_REGION_3)
+            # # Check the game state   
+            # if self.game_state == "main_menu":
+            #     menu.Menu(self).run()
+            # elif self.game_state == "game":
+            # Fill backgroud colour
+            self.screen.fill(BACKGROUND_COLOUR)
+            self.game_engine.draw_regions()
+            
+            
+            # Draw background elements
+            self.draw_grid(self.screen)
+            # Display text
+            notification_surface = pygame.font.SysFont(None, 24).render(self.notification, True, (255, 255, 255)) 
+            
+            turn_surface = pygame.font.SysFont(None, 24).render(f"Turn: {self.game_engine.current_player}", True, (255, 255, 255)) 
+            score_surface = pygame.font.SysFont(None, 24).render(f"Score: {self.game_engine.current_player.score}", True, (255, 255, 255)) 
+            self.screen.blit(turn_surface, NOTIFICATION_REGION_1)
+            self.screen.blit(score_surface, NOTIFICATION_REGION_2)
+            self.screen.blit(notification_surface, NOTIFICATION_REGION_3)
 
-                # Check the inputs provided by the user
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE: 
-                            menu.Menu(self).run()
-                        
-                    self.check_event(event,self.game_engine)
-                # draw grid
-                
-                # self.draw_hands_region()
+            # Check the inputs provided by the user
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE: 
+                        menu.Menu(self).run()
+                    
+                self.check_event(event,self.game_engine)
+            # draw grid
+            
+            # self.draw_hands_region()
 
-                # draw button
-                # pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
-                # self.screen.blit(
-                #     self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
-                # )
-                # Draw all of the sprites
-                # self.set_current_player_hands()
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                for sprite in self.sprites:
-                    if sprite.rect.collidepoint(mouse_x,mouse_y) and isinstance(sprite,c.Card):
-                        if sprite.visible and (sprite.owner == self.game_engine.current_player or sprite.owner is None):
-                            offset = 10
-                            highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
-                            highlight_rect = highlight.get_rect()
-                            highlight_rect.center = sprite.rect.center
-                            if isinstance(sprite,c.ColourCard):
-                                pygame.draw.rect(self.screen,sprite.colour,highlight_rect, border_radius=0)
-                            elif isinstance(sprite,c.JokerCard):
-                                pygame.draw.rect(self.screen,"black",highlight_rect, border_radius=0)
-                    elif sprite.rect.collidepoint(mouse_x,mouse_y):
-                        offset = 15
+            # draw button
+            # pygame.draw.rect(self.screen, (200, 200, 200), self.button_rect)
+            # self.screen.blit(
+            #     self.button_text, (self.button_rect.x + 20, self.button_rect.y + 10)
+            # )
+            # Draw all of the sprites
+            # self.set_current_player_hands()
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            for sprite in self.sprites:
+                if sprite.rect.collidepoint(mouse_x,mouse_y) and isinstance(sprite,c.Card):
+                    if sprite.visible and (sprite.owner == self.game_engine.current_player or sprite.owner is None):
+                        offset = 10
                         highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
                         highlight_rect = highlight.get_rect()
                         highlight_rect.center = sprite.rect.center
-                        pygame.draw.rect(self.screen,(255, 255, 150, 0),highlight_rect, border_radius=0)
-                    else:
-                        pass
+                        if isinstance(sprite,c.ColourCard):
+                            pygame.draw.rect(self.screen,sprite.colour,highlight_rect, border_radius=0)
+                        elif isinstance(sprite,c.JokerCard):
+                            pygame.draw.rect(self.screen,"black",highlight_rect, border_radius=0)
+                elif sprite.rect.collidepoint(mouse_x,mouse_y):
+                    offset = 15
+                    highlight = pygame.Surface((sprite.rect.width+offset, sprite.rect.height+offset), pygame.SRCALPHA)
+                    highlight_rect = highlight.get_rect()
+                    highlight_rect.center = sprite.rect.center
+                    pygame.draw.rect(self.screen,(255, 255, 150, 0),highlight_rect, border_radius=0)
+                else:
+                    pass
+                
+                sprite.draw(self.screen)
                     
-                    sprite.draw(self.screen)
-                        
-                        
-                        
+                    
+                    
 
-                # Highlight selected cards
-                for card in self.selected_cards:
-                    pygame.draw.rect(self.screen, 0, card.rect, 3)
-    
-                self.timer.display(self)
-                pygame.display.flip()
-            else:
-                pass
+            # Highlight selected cards
+            for card in self.selected_cards:
+                pygame.draw.rect(self.screen, 0, card.rect, 3)
+
+            self.timer.display(self)
+            pygame.display.flip()
 
     
     def add_all_sprites(self):
@@ -162,7 +160,7 @@ class GameUI:
                             if sprite.owner == self.game_engine.current_player or sprite.owner is None:
                                 self.start_dragging(sprite, event.pos)
                                 break
-                        elif isinstance(sprite, button.GameButton):
+                        elif isinstance(sprite, button.Button):
                             sprite.left_click_action(self)
                             break
                         else:
@@ -206,7 +204,7 @@ class GameUI:
                 for sprite in self.sprites:
                     if isinstance(sprite,c.Card):
                         pass
-                    elif isinstance(sprite,button.GameButton):
+                    elif isinstance(sprite,button.Button):
                         sprite.clicked = False
                     else:
                         pass
