@@ -132,7 +132,10 @@ class GameUI:
 
                 # Highlight selected cards
                 for card in self.selected_cards:
-                    pygame.draw.rect(self.screen, 0, card.rect, 3)
+                    if isinstance(card, c.ColourCard):
+                        pygame.draw.rect(self.screen, card.colour, card.rect, 3)
+                    elif isinstance(card, c.JokerCard):
+                        pygame.draw.rect(self.screen, "black", card.rect, 3)
     
                 self.timer.display(self)
                 pygame.display.flip()
@@ -381,7 +384,8 @@ class GameUI:
 
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
-                self.game_engine.current_player.made_move = True
+                if cardset.CardSet.is_valid(self.grid_cards[(row, col)]):
+                    self.game_engine.current_player.made_move = True
                 # if the grid is full, put the card back to the original position
                 if self.is_grid_full(row, col):
                     card.rect.centerx = original_xy[0]
