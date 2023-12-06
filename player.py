@@ -43,7 +43,7 @@ class Player:
         max_num_sum = best_play[1]
         # for combo in best_play[0]:
             # self.selected_cards.extend(combo.tensor2cards())  # this is a list of new card objects, need to change to the original card objects
-        print(best_play_combos, f"max_num_sum: {max_num_sum}")
+        print(best_play_combos, f"The best combination found: {max_num_sum}")
         game_ui.notification = f"{best_play_combos} {max_num_sum}"
         
     # def make_move(self,game_engine):

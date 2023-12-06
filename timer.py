@@ -9,8 +9,8 @@ class Timer:
         self.objects = []
         self.image_dict = self.load_image()
         self.max_time = max_time
-        self.x = BUTTON_X + GAP
-        self.y = 8 * BUTTON_GAP 
+        self.x = TIMER_REGION[0]
+        self.y = TIMER_REGION[1]
         self.first_rect = None
         self.initial_score = None
 
@@ -35,7 +35,7 @@ class Timer:
                 self.first_rect.y += self.y + 2 * GAP
             game_ui.screen.blit(image, (self.first_rect.x + (i * CARD_WIDTH) + i * GAP, self.first_rect.y))
         text = pygame.font.SysFont(None, 24, bold=True).render(f"Time remaning (seconds):", True, (255, 255, 255)) 
-        game_ui.screen.blit(text, (self.x, self.y - GAP))
+        game_ui.screen.blit(text, (self.x, self.y + 10 * GAP))
         
     
     def load_image(self):

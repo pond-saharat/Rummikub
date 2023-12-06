@@ -38,6 +38,7 @@ class GameUI:
         self.ui_objects.append(button.EndTurnButton(END_TURN_BUTTON_REGION,"End turn",36))
         self.ui_objects.append(button.PlayForMeButton(PLAY_FOR_ME_BUTTON_REGION,"Play for me",36))
         self.ui_objects.append(button.FlipAllCardsButton(FLIP_ALL_CARDS_BUTTON_REGION,"Flip all cards",36))
+        self.ui_objects.append(button.HintButton(HINT_BUTTON_REGION,"Give me a hint",36))
         self.draw_button = button.DrawButton(DRAW_BUTTON_REGION,"Draw",36)
         self.ui_objects.append(self.draw_button)
         self.draw_region = None

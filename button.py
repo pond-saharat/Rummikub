@@ -1,5 +1,6 @@
 import pygame
 import card as c
+import bot
 from config import *
 
 #button class
@@ -118,3 +119,19 @@ class PlayForMeButton(GameButton):
 	def left_click_action(self, game_ui):
 		self.clicked = True
 		game_ui.game_engine.current_player.make_first_move(game_ui)
+
+
+class HintButton(GameButton):
+	def __init__(self, rect, text,size=36):
+		super().__init__(rect,text,size)
+	
+	def left_click_action(self, game_ui):
+		self.clicked = True
+		card_tensor = bot.CardsTensor(cards=game_ui.game_engine.current_player.hands)
+		best_play = card_tensor.find_longest_combos()
+		to_be_selected = []
+		for combo in best_play[0]:
+			to_be_selected.extend(combo.tensor2cards())
+		game_ui.selected_card = to_be_selected
+		print([card for card in game_ui.selected_card if card in game_ui.game_engine.current_player.hands])
+		

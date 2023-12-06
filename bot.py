@@ -66,13 +66,13 @@ class CardsTensor():
 
     
     @classmethod
-    @staticmethod
-    def random_cards_tensor(num_cards=14):
+    # @staticmethod
+    def random_cards_tensor(cls, num_cards=14):
         cards = []
         d = deck.Deck()
         for _ in range(num_cards):
             cards.append(d.deck.pop())
-        return CardsTensor(cards)
+        return cls(cards)
         # return CardsTensor(np.random.randint(0, 2, (15, 6, 2)).__and__(CardsTensor(np.random.randint(0, 2, (15, 6, 2)))))
     
     
