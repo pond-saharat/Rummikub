@@ -19,7 +19,9 @@ class Menu:
         self.VPOS = SCREEN_WIDTH//2
         self.scale = 1.5
 
-    def run(self,game_paused=False) -> None:
+    def run(self,game_paused=False,finish=False) -> None:
+        if finish:
+            self.menu_state = "Rummikub!"
         self.game_paused=game_paused
         if self.game_paused == True:
             self.menu_state = "pause"
@@ -39,8 +41,9 @@ class Menu:
         background = pygame.image.load("image/background1.png").convert_alpha()
         
         background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        backgroundtwp = pygame.image.load("image/background2.png").convert_alpha()
-        backgroundtwo = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        backgroundtwo = pygame.image.load("image/background2.png").convert_alpha()
+        backgroundtwo = pygame.transform.smoothscale(backgroundtwo, (SCREEN_WIDTH, SCREEN_HEIGHT))
         logo = pygame.image.load("image/logo.png").convert_alpha()
         logo = pygame.transform.smoothscale(logo, (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
 
@@ -197,6 +200,18 @@ class Menu:
                     self.volume_button = pygame.draw.circle(
                         self.screen, (255, 255, 0), (self.VPOS, SCREEN_HEIGHT//2), 10, width=0
                     )
+            elif self.menu_state == "Rummikub!":
+                self.screen.fill(BACKGROUND_COLOUR)
+                self.screen.blit(backgroundtwo, (0, 0))
+                text_surface = self.font.render(f'{self.game_ui.game_engine.winners[0]} is a winner with a score of {self.game_ui.game_engine.winning_score}', True, (255, 255, 255))
+                self.screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2))
+                if quit_button1.draw(self.screen):
+                    self.game_ui.running = False
+                    running = False
+                    self.game_paused = True
+                    pygame.time.delay(DELAY_TIME)
+                    pygame.quit()
+                    exit()
             else:
                 pass
             
