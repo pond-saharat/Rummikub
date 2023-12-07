@@ -5,7 +5,7 @@ ALL_COLOURS = ("Red", "Green", "Blue", "Yellow", "Pink")
 COLOURS = ALL_COLOURS
 NUM_OF_JOKER_CARDS = 2
 NUM_OF_IDENTICAL_CARDS = 2
-MAX_ROUND = 96
+MAX_ROUND = 4   # Game Round: 4 rounds in 4-player game
 MAX_TIME = 120
 
 NUM_OF_AI_PLAYERS = 0

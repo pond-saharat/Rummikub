@@ -33,6 +33,8 @@ class GameEngine:
 
         # Round
         self.round = 1
+        # Game Round
+        self.game_round = 1
 
         # deal cards to players
         self.deal_cards()
@@ -45,7 +47,7 @@ class GameEngine:
         self.winners = []
 
         print(f"current player hands: {self.current_player.hands}")
-        print(f"deck: {len(self.deck.deck)}")
+        print(f"deck: {len(self.deck.deck)} cards")
         
         
 
@@ -86,9 +88,9 @@ class GameEngine:
         # If this player is the last player -> check if the current round is the last round
         if self.current_player == self.players[-1]:
             self.round += 1
-            
+        
         # Check if the current player is a winner
-        if not self.check_win() and not self.round > MAX_ROUND:
+        if not self.check_win() and not self.game_round > MAX_ROUND:
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
             self.game_ui.timer = t.Timer()
@@ -102,6 +104,9 @@ class GameEngine:
             self.endgame_score_calculation()
             self.game_ui.game_state = "Rummikub!"
             print(f"{self.winners} are a winner with a score of {self.winning_score}")
+            # Whole game round
+            self.game_round += 1
+            
 
     def deal_cards(self):
         for player in self.players:
@@ -170,8 +175,9 @@ class GameEngine:
                 for winner in winners:
                     winner.score -= penalty
         else:
-            for player in self.players:
-                player.score += c.Card.get_penalty(player.hands)
+            # for player in self.players:
+            #     player.score += c.Card.get_penalty(player.hands)
+            pass
         
         # Get the list of winners and their scores
         score_to_players = {}
