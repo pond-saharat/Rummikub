@@ -82,6 +82,8 @@ class GameButton(pygame.sprite.Sprite):
     def left_click_action(self, game_ui):
         self.clicked = True
         pass
+    def left_click_up_action(self, game_ui):
+        pass
 
 
 class DrawButton(GameButton):
@@ -150,7 +152,9 @@ class PlayForMeButton(GameButton):
         #     print(card in game_ui.game_engine.current_player.hands)
         
         # print(game_ui.selected_cards)
-        
+    
+    def left_click_up_action(self, game_ui):
+        game_ui.play_for_me()
 
 
 class HintButton(GameButton):

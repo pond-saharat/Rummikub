@@ -36,7 +36,7 @@ class GameEngine:
 
         # deal cards to players
         self.deal_cards()
-        
+        self.num_of_cards_in_valid_cardset = 0
         # Link pygame.Rect objects to player's hand_region
         self.set_player_hand_regions()
         
@@ -184,6 +184,14 @@ class GameEngine:
         self.winning_score = max(list(score_to_players.keys()))
         self.winners = score_to_players[self.winning_score]
         
+    # def get_num_of_cards_in_valid_cardset(self):
+    #     number_of_valid_cardsets = 0
+    #     if self.game_ui.grid_cards != {}:
+    #         for key, cards in self.game_ui.grid_cards.items():
+    #             if cardset.CardSet.is_valid(cards):
+    #                 number_of_valid_cardsets += len(cards)
+    #     return number_of_valid_cardsets
+
     
         
     
