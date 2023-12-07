@@ -78,11 +78,11 @@ class Card(pygame.sprite.Sprite):
     
     def load_image(self):
         self.image = pygame.transform.smoothscale(
-            pygame.image.load(self.image_path), (CARD_WIDTH, CARD_HEIGHT)
+            pygame.image.load(self.image_path).convert_alpha(), (CARD_WIDTH, CARD_HEIGHT)
         )
         # Flipped image
         self.flipped_image = pygame.transform.smoothscale(
-            pygame.image.load(self.flipped_image_path), (CARD_WIDTH, CARD_HEIGHT)
+            pygame.image.load(self.flipped_image_path).convert_alpha(), (CARD_WIDTH, CARD_HEIGHT)
         )
 
     # Get only the colour cards for a pack of cards

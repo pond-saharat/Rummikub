@@ -5,6 +5,7 @@ import board
 import cardset
 import card as c
 import button
+import player
 import timer as t
 from pygame.locals import *
 from config import *
@@ -20,21 +21,27 @@ class GameUI:
 
         pygame.init()
         # Create a blank screen
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         self.screen.fill(BACKGROUND_COLOUR)
+        pygame.mouse.set_visible(1)
+        pygame.display.set_caption(CAPTION)
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
+        self.game_state = "main_menu"
+        self.pause_state= False
+        self.num_of_ais = 0
+        self.num_of_humans = 4
+        if self.game_state == "main_menu":
+            menu.Menu(self).run()
+        print(self.num_of_ais,self.num_of_humans)
         self.game_engine = game_engine.GameEngine(self)
+        self.game_engine.screen = self.screen
 
         # clock = pygame.time.Clock()
 
-        pygame.mouse.set_visible(1)
 
-        pygame.display.set_caption(CAPTION)
         # Passing screen to game_engine
-        self.game_engine.screen = self.screen
-        self.game_state = "main_menu"
-        self.pause_state= False
-    
+        
+
 
         # button settings
         self.ui_objects = []
@@ -70,7 +77,7 @@ class GameUI:
         # Infinite loop
         while self.running:
             # Check the game state   
-            if self.game_state == "main_menu":
+            if self.game_state == "Rummikub!":
                 menu.Menu(self).run()
             elif self.game_state == "game":
                 # Fill backgroud colour
@@ -90,14 +97,20 @@ class GameUI:
                 self.screen.blit(score_surface, NOTIFICATION_REGION_2)
                 self.screen.blit(notification_surface, NOTIFICATION_REGION_3)
 
-                # Check the inputs provided by the user
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        # if event.key == pygame.K_SPACE: 
-                        if event.key == pygame.K_ESCAPE: 
-                            menu.Menu(self).run()
-                        
-                    self.check_event(event,self.game_engine)
+                if isinstance(self.game_engine.current_player, player.HumanPlayer):
+                
+                    # Check the inputs provided by the user
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                            # if event.key == pygame.K_SPACE: 
+                            if event.key == pygame.K_ESCAPE: 
+                                menu.Menu(self).run(game_paused=True)
+                            
+                        self.check_event(event,self.game_engine)
+                elif isinstance(self.game_engine.current_player, player.AIPlayer):
+                    self.play_for_me_button.left_click_up_action(self)
+                else:
+                    pass
                 # draw grid
                 
                 # self.draw_hands_region()

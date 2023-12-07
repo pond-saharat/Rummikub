@@ -20,7 +20,7 @@ class Player:
         self.winner = False
         self.made_move = False
         self.hand_region = [P1_HANDS_REGION, P2_HANDS_REGION, P3_HANDS_REGION, P4_HANDS_REGION][int(self.name[-1])]
-    
+        
     def draw_cards(self, deck):
         popped_to_hand = deck.deck[:14]
         for card in popped_to_hand:
