@@ -63,7 +63,7 @@ class Menu:
         # musicstop_button = button.Button(THIRD_BUTTON_REGION, "Music")
         # keys_button = button.Button(THIRD_BUTTON_REGION, "Keys")
         back_button = button.Button(FIFTH_BUTTON_REGION, "Back")
-        zero_player_button = button.Button(SECOND_BUTTON_REGION, "Watch AIs playing")
+        zero_player_button = button.Button(FIRST_BUTTON_REGION, "Watch AIs playing")
         one_player_button = button.Button(SECOND_BUTTON_REGION, "1 Player")
         two_players_button = button.Button(THIRD_BUTTON_REGION, "2 Players")
         three_players_button = button.Button(FOURTH_BUTTON_REGION, "3 Players")
