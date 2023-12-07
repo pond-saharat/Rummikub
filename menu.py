@@ -34,6 +34,7 @@ class Menu:
         keys_img = pygame.image.load("image/button_keys.png").convert_alpha()
         back_img = pygame.image.load("image/button_back.png").convert_alpha()
         image1 = pygame.image.load("image/uon.jpg").convert_alpha()
+        image1 = pygame.transform.scale(image1, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # create button instances
         resume_button = button.Button(304, 125, resume_img, 1)
