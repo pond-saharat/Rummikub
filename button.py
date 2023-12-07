@@ -104,6 +104,7 @@ class DrawButton(GameButton):
         for card in self.cards:
             card.visible = False
         self.cards = []
+        self.clicked = False
 
 
 class EndTurnButton(GameButton):
@@ -140,15 +141,16 @@ class PlayForMeButton(GameButton):
 
     def left_click_action(self, game_ui):
         self.clicked = True
-        best_play_cards = game_ui.game_engine.current_player.make_first_move(game_ui)
-        # game_ui.selected_card = game_ui.game_engine.current_player.selected_cards
-        game_ui.selected_cards = best_play_cards
-        # game_ui.game_engine.current_player.made_move = True
-        # pygame.display.flip()
-        for card in game_ui.selected_cards:
-            print(card in game_ui.game_engine.current_player.hands)
+        # best_play_cards = game_ui.game_engine.current_player.make_first_move(game_ui)
+        # # game_ui.selected_card = game_ui.game_engine.current_player.selected_cards
+        # game_ui.selected_cards = best_play_cards
+        # # game_ui.game_engine.current_player.made_move = True
+        # # pygame.display.flip()
+        # for card in game_ui.selected_cards:
+        #     print(card in game_ui.game_engine.current_player.hands)
         
-        print(game_ui.selected_cards)
+        # print(game_ui.selected_cards)
+        
 
 
 class HintButton(GameButton):
@@ -165,8 +167,7 @@ class HintButton(GameButton):
         cards_in_best_play = [
             game_ui.game_engine.current_player.hands[i] for i in all_indices
         ]
-        c.Card.set_to_selected(cards_in_best_play,game_ui)
+        c.Card.set_to_selected(cards_in_best_play, game_ui)
 
-        # pygame.display.flip()
         print(cards_in_best_play, f"The max sum: {sum}")
         print("selected: ", game_ui.selected_cards)

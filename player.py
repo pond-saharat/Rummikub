@@ -2,6 +2,8 @@ import cardset
 import card
 import copy
 import bot
+from config import *
+import pygame
 
 class Player:
     def __init__(self, name) -> None:
@@ -17,6 +19,7 @@ class Player:
         # Track if this person is a winner or not
         self.winner = False
         self.made_move = False
+        self.hand_region = [P1_HANDS_REGION, P2_HANDS_REGION, P3_HANDS_REGION, P4_HANDS_REGION][int(self.name[-1])]
     
     def draw_cards(self, deck):
         popped_to_hand = deck.deck[:14]
@@ -25,9 +28,54 @@ class Player:
         self.hands += popped_to_hand
         deck.deck = deck.deck[14:]
     
-    def draw_one_card(self, deck):
-        card = deck.deck.pop()
-        self.hands.append(card)
+    def draw_one_card(self, game_ui):
+        # card = deck.deck.pop()
+        # self.hands.append(card)
+        game_ui.draw_button.left_click_action(game_ui)
+        card1 = game_ui.draw_button.cards[0]
+        
+        deck = game_ui.game_engine.deck.deck
+        
+        ## region = game_ui.draw_region
+        # card1, card2 = tuple(deck[:2])
+        # card1.visible = True
+        # card2.visible = True
+        # cards = [card1, card2]
+        # card1.rect.x, card1.rect.y = region.x + GAP, region.y + GAP
+        # card2.rect.x, card2.rect.y = region.x + GAP + CARD_WIDTH + GAP, region.y + GAP
+        
+        # default: choose the first card
+        card1.owner = self
+        card1.is_selected = True
+        
+        original_xy_1 = (card1.rect.centerx, card1.rect.centery)    
+        dest_xy_1 = (self.hand_region[0] + self.hand_region[2] //2, self.hand_region[1] + self.hand_region[3]//2) 
+        velocity = ((dest_xy_1[0] - original_xy_1[0]) // 20, (dest_xy_1[1] - original_xy_1[1]) //20)
+        
+        # drag the cards to the grid
+        for _ in range(19):
+            # update the position of the card_1
+            card1.rect.centerx += velocity[0]
+            card1.rect.centery += velocity[1]
+            # draw the dragged card
+            game_ui.screen.fill(BACKGROUND_COLOUR)
+            game_ui.game_engine.draw_regions()
+            game_ui.draw_grid(game_ui.screen)
+            game_ui.timer.display(game_ui)
+            for sprite in game_ui.sprites:
+                sprite.draw(game_ui.screen)
+            pygame.display.flip()
+            pygame.time.wait(10)
+        
+        # self.hands.append(card1)
+        game_ui.game_engine.current_player.hands.append(card1)
+        
+        game_ui.draw_button.cards.remove(card1)
+        deck.remove(card1)
+        # card1.visible = False
+        game_ui.draw_button.reset()
+        game_ui.game_engine.current_player.made_move = True
+        
         
     def __str__(self) -> str:
         return self.name
@@ -49,7 +97,7 @@ class Player:
         # for idx in all_indices:
         #     self.selected_cards.append(self.hands[idx])
         
-        print(cards_in_best_play, f"The best combination found: {max_sum}")
+        # print(cards_in_best_play, f"The best combination found: {max_sum}")
         game_ui.notification = f"{cards_in_best_play} {max_sum}"
         
         return cards_in_best_play
@@ -118,7 +166,7 @@ class AIPlayer(Player):
         best_play = self.card_tensor.find_longest_combos()
         for combo in best_play[0]:
             self.selected_cards.extend(combo.tensor2cards())
-        print(best_play.cards)
+        # print(best_play.cards)
         
         
         # # Add the best set to the board

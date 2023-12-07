@@ -8,6 +8,8 @@ import button
 import timer as t
 from pygame.locals import *
 from config import *
+import bot
+import time
 
 
 class GameUI:
@@ -126,9 +128,9 @@ class GameUI:
                         pass
                     
                     sprite.draw(self.screen)
-                        
-                        
-                        
+                    
+                    
+                    
 
                 # Highlight selected cards
                 for card in self.selected_cards:
@@ -196,7 +198,7 @@ class GameUI:
                                 if len(self.selected_cards) < 8 and (sprite.owner == self.game_engine.current_player or sprite.owner is None):
                                     self.selected_cards.append(sprite)
                                 elif sprite.owner != self.game_engine.current_player:
-                                    self.notification = "You can only select your own cards"
+                                    # self.notification = "You can only select your own cards"
                                     self.selected_cards = []
                                 elif len(self.selected_cards) >= 8:
                                     self.selected_cards.pop(0)
@@ -208,9 +210,14 @@ class GameUI:
                 self.drop_card(game_engine)
             elif event.button == 1:
                 for sprite in self.sprites:
-                    if isinstance(sprite,c.Card):
+                    if isinstance(sprite, c.Card):
                         pass
-                    elif isinstance(sprite,button.GameButton):
+                    elif isinstance(sprite, button.GameButton):
+                        if isinstance(sprite, button.PlayForMeButton):
+                            if sprite.rect.collidepoint(event.pos):
+                                self.play_for_me()
+                                sprite.clicked = False
+                                break
                         sprite.clicked = False
                     else:
                         pass
@@ -431,7 +438,7 @@ class GameUI:
         
         print("selected cards:", self.selected_cards)
         print("grid:", self.grid_cards)
-        pygame.display.update()
+        pygame.display.flip()
 
     def reset_drag_parameters(self):
         self.game_engine.current_player.selected_cards = []
@@ -476,3 +483,137 @@ class GameUI:
 
     def is_grid_full(self, row, col):
         return len(self.grid_cards[(row, col)]) >= 8
+    
+    def find_empty_grid(self):
+        empty_grid = []
+        for row in range(8):
+            for col in range(2):
+                if (row, col) not in self.grid_cards.keys():
+                    empty_grid.append((row, col))
+        return empty_grid
+    
+    def play_for_me(self):
+        
+        empty_grid = self.find_empty_grid()
+        if empty_grid == []:
+            self.notification = "No empty grid"
+            '''draw a card'''
+            return
+        
+        # Find the best combos of hand card indices
+        hand_cards_tensor = bot.CardsTensor(cards=self.game_engine.current_player.hands)
+        best_play_idx_combos, sum = hand_cards_tensor.find_max_sum_combos_idx()
+        all_indices = [i for combo in best_play_idx_combos for i in combo]
+        cards_in_best_play = [
+            self.game_engine.current_player.hands[i] for i in all_indices
+        ]
+        
+        if len(best_play_idx_combos) > len(empty_grid):
+            best_play_idx_combos = best_play_idx_combos[:len(empty_grid)]
+        
+        if best_play_idx_combos == []:
+            '''draw a card'''
+            self.game_engine.current_player.draw_one_card(game_ui=self)
+            self.notification = "No combos"
+            self.game_engine.next_turn()
+            # time.sleep(3)
+            # return
+        elif self.game_engine.current_player.first_moved == False:
+            self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
+            
+            self.notification = f"First moved {cards_in_best_play}"
+            self.game_engine.current_player.first_moved = True
+            self.game_engine.current_player.made_move = True
+            self.game_engine.next_turn()
+            # pygame.time.wait(3000)
+            # time.sleep(3)
+            # return
+        else:
+            self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
+            self.notification = f"Made a move {cards_in_best_play}"
+            self.game_engine.current_player.made_move = True
+            self.game_engine.next_turn()
+            # time.sleep(3)
+            # return
+            
+        
+        
+        
+    
+    # def draw_cards()
+    
+    
+    def place_combos_to_empty_grid(self, best_play_idx_combos, empty_grid):
+        # empty_grid = self.find_empty_grid()
+        # hand_cards_tensor = bot.CardsTensor(cards=self.game_engine.current_player.hands)
+        # best_play_idx_combos, sum = hand_cards_tensor.find_max_sum_combos_idx()
+        all_indices = [i for combo in best_play_idx_combos for i in combo]
+        all_combos_cards = [self.game_engine.current_player.hands[i] for i in all_indices]
+        combos_num = len(best_play_idx_combos)
+        empty_grid_num = len(empty_grid)
+        
+        for i in range(min(combos_num, empty_grid_num)):
+            combo = best_play_idx_combos[i]
+            row, col = empty_grid[i]
+            self.place_combo_to_grid(combo, row, col)
+            
+            # pygame.time.wait(1000)
+        
+        self.game_engine.current_player.hands = [card for card in self.game_engine.current_player.hands if card not in all_combos_cards]
+        self.reset_drag_parameters()
+        self.set_current_player_hands()
+        self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
+        self.sort_grid(self.grid_cards)
+        self.game_engine.current_player.made_move = True
+        # pygame.time.wait(3000)
+
+    
+    def place_combo_to_grid(self, combo, row, col):
+        if (row, col) not in self.grid_cards.keys():
+            self.grid_cards[(row, col)] = []
+        else:
+            print(f"This grid {(row, col)} is not empty")
+            return False
+        
+        grid_x = WIDTH_2_COLUMNS + col * GRID_WIDTH + CARD_WIDTH // 2
+        grid_y = HEIGHT_1_ROW + row * GRID_HEIGHT + GRID_HEIGHT // 2
+        
+        cards = [self.game_engine.current_player.hands[idx] for idx in combo]
+        original_xy = [(card.rect.centerx, card.rect.centery) for card in cards]
+        dest_xy = [(grid_x + CARD_WIDTH * i + GAP * i + GAP, grid_y) for i in range(len(cards))]
+        velocity = [((dest_xy[i][0] - original_xy[i][0]) // 20, (dest_xy[i][1] - original_xy[i][1]) //20) for i in range(len(cards))]
+        
+        # drag the cards to the grid
+        for _ in range(19):
+            # update the position of the cards
+            for i, card in enumerate(cards):
+                card.rect.centerx += velocity[i][0]
+                card.rect.centery += velocity[i][1]
+            # draw the dragged card
+            self.screen.fill(BACKGROUND_COLOUR)
+            self.game_engine.draw_regions()
+            self.draw_grid(self.screen)
+            self.timer.display(self)
+            for sprite in self.sprites:
+                sprite.draw(self.screen)
+            pygame.display.flip()
+            pygame.time.wait(10)
+        
+        
+        for card in cards:
+            # card = self.game_engine.current_player.hands[idx]
+            card.owner = None
+            card.is_selected = False
+            
+            # card.rect.centerx = (
+            # grid_x
+            # # + CARD_WIDTH * len(self.grid_cards[(row, col)])
+            # # + GAP * len(self.grid_cards[(row, col)])
+            # # + GAP
+            # )
+            # card.rect.centery = grid_y
+            self.grid_cards[(row, col)].append(card)
+        
+        self.sort_grid(self.grid_cards)
+        self.selected_cards = []
+        

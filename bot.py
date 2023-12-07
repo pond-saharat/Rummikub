@@ -208,7 +208,7 @@ class CardsTensor():
         for c in cards:
             if (c.colour, c.number, 0) in self.cards_idx_dict:
                 cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 0)])
-            if (c.colour, c.number, 1) in self.cards_idx_dict:
+            elif (c.colour, c.number, 1) in self.cards_idx_dict:
                 cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 1)])
         return cards_idx
     
