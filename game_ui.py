@@ -22,19 +22,25 @@ class GameUI:
         # Create a blank screen
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         self.screen.fill(BACKGROUND_COLOUR)
+        pygame.mouse.set_visible(1)
+        pygame.display.set_caption(CAPTION)
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
+        self.game_state = "main_menu"
+        self.pause_state= False
+        self.num_of_ais = 0
+        self.num_of_humans = 4
+        if self.game_state == "main_menu":
+            menu.Menu(self).run()
+        print(self.num_of_ais,self.num_of_humans)
         self.game_engine = game_engine.GameEngine(self)
+        self.game_engine.screen = self.screen
 
         # clock = pygame.time.Clock()
 
-        pygame.mouse.set_visible(1)
 
-        pygame.display.set_caption(CAPTION)
         # Passing screen to game_engine
-        self.game_engine.screen = self.screen
-        self.game_state = "main_menu"
-        self.pause_state= False
-    
+        
+
 
         # button settings
         self.ui_objects = []
@@ -70,7 +76,7 @@ class GameUI:
         # Infinite loop
         while self.running:
             # Check the game state   
-            if self.game_state == "main_menu":
+            if self.game_state == "Rummikub!":
                 menu.Menu(self).run()
             elif self.game_state == "game":
                 # Fill backgroud colour
@@ -95,7 +101,7 @@ class GameUI:
                     if event.type == pygame.KEYDOWN:
                         # if event.key == pygame.K_SPACE: 
                         if event.key == pygame.K_ESCAPE: 
-                            menu.Menu(self).run()
+                            menu.Menu(self).run(game_paused=True)
                         
                     self.check_event(event,self.game_engine)
                 # draw grid

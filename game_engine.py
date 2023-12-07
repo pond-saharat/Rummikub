@@ -24,8 +24,8 @@ class GameEngine:
         self.screen = self.game_ui.screen
         # List of players
         self.players = [
-            player.HumanPlayer(f"Human_player_{_}") for _ in range(NUM_OF_HUMAN_PLAYERS)
-        ] + [player.AIPlayer("AI_player_{_}") for _ in range(NUM_OF_AI_PLAYERS)]
+            player.HumanPlayer(f"Human_player_{_}") for _ in range(self.game_ui.num_of_ais)
+        ] + [player.AIPlayer(f"AI_player_{_}") for _ in range(self.game_ui.num_of_humans)]
         # Using itertools.cycle() to infinitely loop over the player list
         # Go to the next turn by calling self.next_turn()
         self._player_iterator = itertools.cycle(self.players)

@@ -15,8 +15,8 @@ class Button(pygame.sprite.Sprite):
         self.font = pygame.font.SysFont(None, 36)
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.size = size
-        self.text = text
-        self.text = self.font.render(self.text, True, 0)
+        self.message = text
+        self.text = self.font.render(text, True, 0)
         self.text_rect = self.text.get_rect(center=(self.rect.x + (self.width//2), self.rect.y + (self.height//2)))
         self.radius = 15
         self.clicked = False
@@ -38,21 +38,16 @@ class Button(pygame.sprite.Sprite):
 
         screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
         
-        if not self.clicked:
-            pygame.draw.rect(screen, (250, 246, 239), self.rect, border_radius=self.radius)
-        else:
-            pygame.draw.rect(screen, (200, 194, 189), self.rect, border_radius=self.radius)
+        pygame.draw.rect(screen, (250, 246, 239), self.rect, border_radius=self.radius)
+
         # check mouseover and clicked conditions
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
+        if self.rect.collidepoint(pos) and pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            self.clicked = True
+            action = True
 
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
-
-        
         # draw button on screen
         screen.blit(self.text, self.text_rect)
         return action
