@@ -64,15 +64,15 @@ class CardsTensor():
             cards.append(card.Card('Joker', None))
         return cards
 
-    def tensor2cards_indices(self):
-        cards = self.tensor2cards()
-        cards_idx = []
-        for c in cards:
-            if (c.colour, c.number, 0) in self.cards_idx_dict:
-                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 0)])
-            if (c.colour, c.number, 1) in self.cards_idx_dict:
-                cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 1)])
-        return cards_idx
+    # def tensor2cards_indices(self):
+    #     cards = self.tensor2cards()
+    #     cards_idx = []
+    #     for c in cards:
+    #         if (c.colour, c.number, 0) in self.cards_idx_dict:
+    #             cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 0)])
+    #         if (c.colour, c.number, 1) in self.cards_idx_dict:
+    #             cards_idx.append(self.cards_idx_dict[(c.colour, c.number, 1)])
+    #     return cards_idx
     
 
     def __repr__(self):

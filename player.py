@@ -53,7 +53,7 @@ class Player:
         velocity = ((dest_xy_1[0] - original_xy_1[0]) // 20, (dest_xy_1[1] - original_xy_1[1]) //20)
         
         # drag the cards to the grid
-        for _ in range(19):
+        for _ in range(20):
             # update the position of the card_1
             card1.rect.centerx += velocity[0]
             card1.rect.centery += velocity[1]
@@ -97,7 +97,6 @@ class Player:
         # for idx in all_indices:
         #     self.selected_cards.append(self.hands[idx])
         
-        # print(cards_in_best_play, f"The best combination found: {max_sum}")
         game_ui.notification = f"{cards_in_best_play} {max_sum}"
         
         return cards_in_best_play
@@ -166,7 +165,6 @@ class AIPlayer(Player):
         best_play = self.card_tensor.find_longest_combos()
         for combo in best_play[0]:
             self.selected_cards.extend(combo.tensor2cards())
-        # print(best_play.cards)
         
         
         # # Add the best set to the board

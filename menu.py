@@ -64,7 +64,7 @@ class Menu:
             if self.menu_state == "main" and self.game_ui.pause_state != True:
                 # draw pause screen buttons
                 self.draw_text(
-                    "Welcome to the Rummic game!", self.font, Menu.TEXT_COL, 400, 30
+                    "Welcome to the Rummikub!", self.font, Menu.TEXT_COL, 400, 30
                 )
                 if play_button.draw(self.screen):
                     self.game_ui.game_state = "game"

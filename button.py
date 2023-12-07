@@ -146,12 +146,7 @@ class PlayForMeButton(GameButton):
         # game_ui.selected_cards = best_play_cards
         # # game_ui.game_engine.current_player.made_move = True
         # # pygame.display.flip()
-        # for card in game_ui.selected_cards:
-        #     print(card in game_ui.game_engine.current_player.hands)
         
-        # print(game_ui.selected_cards)
-        
-
 
 class HintButton(GameButton):
     def __init__(self, rect, text, size=36):

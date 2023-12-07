@@ -580,12 +580,12 @@ class GameUI:
         grid_y = HEIGHT_1_ROW + row * GRID_HEIGHT + GRID_HEIGHT // 2
         
         cards = [self.game_engine.current_player.hands[idx] for idx in combo]
-        original_xy = [(card.rect.centerx, card.rect.centery) for card in cards]
+        origin_xy = [(card.rect.centerx, card.rect.centery) for card in cards]
         dest_xy = [(grid_x + CARD_WIDTH * i + GAP * i + GAP, grid_y) for i in range(len(cards))]
-        velocity = [((dest_xy[i][0] - original_xy[i][0]) // 20, (dest_xy[i][1] - original_xy[i][1]) //20) for i in range(len(cards))]
+        velocity = [((dest_xy[i][0] - origin_xy[i][0]) // 20, (dest_xy[i][1] - origin_xy[i][1]) //20) for i in range(len(cards))]
         
         # drag the cards to the grid
-        for _ in range(19):
+        for _ in range(20):
             # update the position of the cards
             for i, card in enumerate(cards):
                 card.rect.centerx += velocity[i][0]
@@ -617,4 +617,6 @@ class GameUI:
         
         self.sort_grid(self.grid_cards)
         self.selected_cards = []
-        
+    
+    # def move_card
+    
