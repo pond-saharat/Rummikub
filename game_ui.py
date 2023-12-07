@@ -5,6 +5,7 @@ import board
 import cardset
 import card as c
 import button
+import player
 import timer as t
 from pygame.locals import *
 from config import *
@@ -96,14 +97,20 @@ class GameUI:
                 self.screen.blit(score_surface, NOTIFICATION_REGION_2)
                 self.screen.blit(notification_surface, NOTIFICATION_REGION_3)
 
-                # Check the inputs provided by the user
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        # if event.key == pygame.K_SPACE: 
-                        if event.key == pygame.K_ESCAPE: 
-                            menu.Menu(self).run(game_paused=True)
-                        
-                    self.check_event(event,self.game_engine)
+                if isinstance(self.game_engine.current_player, player.HumanPlayer):
+                
+                    # Check the inputs provided by the user
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                            # if event.key == pygame.K_SPACE: 
+                            if event.key == pygame.K_ESCAPE: 
+                                menu.Menu(self).run(game_paused=True)
+                            
+                        self.check_event(event,self.game_engine)
+                elif isinstance(self.game_engine.current_player, player.AIPlayer):
+                    self.play_for_me_button.left_click_up_action(self)
+                else:
+                    pass
                 # draw grid
                 
                 # self.draw_hands_region()
