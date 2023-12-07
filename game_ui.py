@@ -92,7 +92,8 @@ class GameUI:
                 # Check the inputs provided by the user
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE: 
+                        # if event.key == pygame.K_SPACE: 
+                        if event.key == pygame.K_ESCAPE: 
                             menu.Menu(self).run()
                         
                     self.check_event(event,self.game_engine)
