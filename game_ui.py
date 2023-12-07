@@ -20,7 +20,7 @@ class GameUI:
 
         pygame.init()
         # Create a blank screen
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         self.screen.fill(BACKGROUND_COLOUR)
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
         self.game_engine = game_engine.GameEngine(self)

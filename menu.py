@@ -33,8 +33,12 @@ class Menu:
         # audio_img = pygame.image.load("image/button_audio.png").convert_alpha()
         # keys_img = pygame.image.load("image/button_keys.png").convert_alpha()
         # back_img = pygame.image.load("image/button_back.png").convert_alpha()
-        # image1 = pygame.image.load("image/uon.jpg").convert_alpha()
-        # image1 = pygame.transform.scale(image1, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        background = pygame.image.load("image/background1.png").convert_alpha()
+        
+        background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        logo = pygame.image.load("image/logo.png").convert_alpha()
+        logo = pygame.transform.smoothscale(logo, (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+
         quit_button1 = button.Button(FIFTH_BUTTON_REGION, "Quit")
 
         # Main
@@ -49,7 +53,7 @@ class Menu:
         video_button = button.Button(THIRD_BUTTON_REGION, "Video setting")
         audio_button = button.Button(THIRD_BUTTON_REGION, "Audio setting")
         # musicstop_button = button.Button(THIRD_BUTTON_REGION, "Music")
-        keys_button = button.Button(THIRD_BUTTON_REGION, "Keys")
+        # keys_button = button.Button(THIRD_BUTTON_REGION, "Keys")
         back_button = button.Button(THIRD_BUTTON_REGION, "Back")
         
 
@@ -59,7 +63,8 @@ class Menu:
         # game loop
         running = True
         while running:
-            # self.screen.blit(image1, (0, 0))
+            self.screen.blit(background, (0, 0))
+            self.screen.blit(logo, (SCREEN_WIDTH//2 - logo.get_rect().width //2, SCREEN_HEIGHT//2 - logo.get_rect().height//2 - 3 * BUTTON_GAP))
             # self.screen.fill((0,0, 255))
 
             # check if game is paused
@@ -71,6 +76,7 @@ class Menu:
                 #     "Welcome to the Rummic game!", self.font, Menu.TEXT_COL, 400, 30
                 # )
                 if play_button.draw(self.screen):
+                    self.game_ui.game_state = "game"
                     self.game_ui.game_state = "choose_player"
                     running = False
                     self.game_paused = True
@@ -101,8 +107,8 @@ class Menu:
                     print("Video Settings")
                 if audio_button.draw(self.screen):
                     self.menu_state = "music"
-                if keys_button.draw(self.screen):
-                    print("Change Key Bindings")
+                # if keys_button.draw(self.screen):
+                #     print("Change Key Bindings")
                 if back_button.draw(self.screen):
                     if self.game_paused == True:
                         self.menu_state = "pause"
