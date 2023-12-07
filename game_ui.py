@@ -354,7 +354,7 @@ class GameUI:
     def drop_card(self, game_engine):
         # self.dragging = False
         dropped_pos_x, dropped_pos_y = self.card_being_dragged.rect.centerx, self.card_being_dragged.rect.centery
-        
+
         # If the current drop position is in current player's hand region -> leave a card in that region
         if game_engine.current_player.hand_region.collidepoint(dropped_pos_x, dropped_pos_y):
             for card in self.cards_being_dragged:
@@ -365,6 +365,7 @@ class GameUI:
                     self.draw_button.cards.remove(card)
                     game_engine.deck.deck.remove(card)
                     self.draw_button.reset()
+                    # if all(cardset.CardSet.is_valid(grid_cell) for grid_cell in self.grid_cards.values()):
                     self.game_engine.current_player.made_move = True
                     
                 card.owner = game_engine.current_player
@@ -396,6 +397,9 @@ class GameUI:
             if self.is_valid_grid_position(row, col):
                 if cardset.CardSet.is_valid(self.grid_cards[(row, col)]+[card]):
                     self.game_engine.current_player.made_move = True
+                else:
+                    self.game_engine.current_player.made_move = False
+                
                 # if the grid is full, put the card back to the original position
                 if self.is_grid_full(row, col):
                     card.rect.centerx = original_xy[0]
@@ -446,7 +450,7 @@ class GameUI:
         self.game_engine.current_player.selected_cards = []
         for card in self.game_engine.current_player.hands:
             card.is_selected = False
-        for k,cards in self.grid_cards.items():
+        for _, cards in self.grid_cards.items():
             for card in cards:
                 card.is_selected = False
         self.game_engine.selected_cards = []
@@ -495,6 +499,15 @@ class GameUI:
         return empty_grid
     
     def play_for_me(self):
+        if self.game_engine.current_player.first_moved == False:            
+            self.play_cards_from_hand()
+        else:
+            self.play_cards_from_hand()
+            # self.manipulate_hands_and_grid_cards()
+            
+        
+    
+    def play_cards_from_hand(self):
         
         empty_grid = self.find_empty_grid()
         if empty_grid == []:
@@ -513,13 +526,16 @@ class GameUI:
         if len(best_play_idx_combos) > len(empty_grid):
             best_play_idx_combos = best_play_idx_combos[:len(empty_grid)]
         
+        # no combos found in hand
         if best_play_idx_combos == []:
             '''draw a card'''
             self.game_engine.current_player.draw_one_card(game_ui=self)
-            self.notification = "No combos"
+            # self.notification = "No combos"
             self.game_engine.next_turn()
+            self.notification = "Drew a card"
             # time.sleep(3)
-            # return
+        
+        # first move
         elif self.game_engine.current_player.first_moved == False:
             self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
             
@@ -527,22 +543,74 @@ class GameUI:
             self.game_engine.current_player.first_moved = True
             self.game_engine.current_player.made_move = True
             self.game_engine.next_turn()
-            # pygame.time.wait(3000)
-            # time.sleep(3)
-            # return
+        
+        # not first move, regular move
         else:
             self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
             self.notification = f"Made a move {cards_in_best_play}"
             self.game_engine.current_player.made_move = True
             self.game_engine.next_turn()
-            # time.sleep(3)
-            # return
-            
-        
-        
-        
     
-    # def draw_cards()
+    
+    
+    
+    def manipulate_hands_and_grid_cards(self):
+        # self.grid_cards_tensor = {pos: bot.CardsTensor(cards=cards) for pos, cards in self.grid_cards.items()}
+        
+        # for pos, cards_tensor in self.grid_cards_tensor.items():
+        #     if cardset.CardSet.is_valid(grid_cards[_]):
+            
+        # for pos, cards in self.grid_cards.items():
+            # if cardset.CardSet.is_group(cards):
+                # self.find_cards_to_add_to_group(pos, cards) -> index of cards in hand to add to group
+        
+        
+        
+        
+        
+
+        
+        
+        
+        pass
+    
+    
+    def find_cards_to_add_to_grid(self, cards):
+        for pos, cards in self.grid_cards.items():
+            if cardset.CardSet.is_group(cards):
+                self.find_cards_to_add_to_group(pos, cards)
+            elif cardset.CardSet.is_run(cards):
+                self.find_cards_to_add_to_run(pos, cards)
+            else:
+                pass
+        # cards_tensor = bot.CardsTensor(cards=cards)
+        # best_play_idx_combos, sum = cards_tensor.find_max_sum_combos_idx()
+        # all_indices = [i for combo in best_play_idx_combos for i in combo]
+        # cards_in_best_play = [self.game_engine.current_player.hands[i] for i in all_indices]
+        # return cards_in_best_play
+        pass
+    
+    
+    
+    
+    # return the cards in hand to add to the group
+    def find_cards_to_add_to_group(self, pos, cards):
+        # cards_tensor = bot.CardsTensor(cards=cards)
+        # best_play_idx_combos, sum = cards_tensor.find_max_sum_combos_idx()
+        # all_indices = [i for combo in best_play_idx_combos for i in combo]
+        # cards_in_best_play = [self.game_engine.current_player.hands[i] for i in all_indices]
+        # return cards_in_best_play
+        pass
+    
+    
+    def can_add_cards_to_group(self, cards, group):
+        group.extend(cards)
+        return cardset.CardSet.is_valid(group)
+    
+    def can_add_cards_to_run(self, cards, run):
+        run.extend(cards)
+        return cardset.CardSet.is_valid(run)
+    
     
     
     def place_combos_to_empty_grid(self, best_play_idx_combos, empty_grid):
@@ -559,7 +627,6 @@ class GameUI:
             row, col = empty_grid[i]
             self.place_combo_to_grid(combo, row, col)
             
-            # pygame.time.wait(1000)
         
         self.game_engine.current_player.hands = [card for card in self.game_engine.current_player.hands if card not in all_combos_cards]
         self.reset_drag_parameters()
@@ -567,7 +634,7 @@ class GameUI:
         self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
         self.sort_grid(self.grid_cards)
         self.game_engine.current_player.made_move = True
-        # pygame.time.wait(3000)
+        return True
 
     
     def place_combo_to_grid(self, combo, row, col):
@@ -581,8 +648,24 @@ class GameUI:
         grid_y = HEIGHT_1_ROW + row * GRID_HEIGHT + GRID_HEIGHT // 2
         
         cards = [self.game_engine.current_player.hands[idx] for idx in combo]
-        origin_xy = [(card.rect.centerx, card.rect.centery) for card in cards]
         dest_xy = [(grid_x + CARD_WIDTH * i + GAP * i + GAP, grid_y) for i in range(len(cards))]
+        
+        # animation of dragging the cards to the grid
+        self.move_cards_animation(cards, dest_xy)
+        
+        for card in cards:
+            # card = self.game_engine.current_player.hands[idx]
+            card.owner = None
+            card.is_selected = False
+            
+            self.grid_cards[(row, col)].append(card)
+        
+        self.sort_grid(self.grid_cards)
+        self.selected_cards = []
+    
+    # animate the cards to the grid
+    def move_cards_animation(self, cards, dest_xy):
+        origin_xy = [(card.rect.centerx, card.rect.centery) for card in cards]
         velocity = [((dest_xy[i][0] - origin_xy[i][0]) // 20, (dest_xy[i][1] - origin_xy[i][1]) //20) for i in range(len(cards))]
         
         # drag the cards to the grid
@@ -601,23 +684,5 @@ class GameUI:
             pygame.display.flip()
             pygame.time.wait(10)
         
-        
-        for card in cards:
-            # card = self.game_engine.current_player.hands[idx]
-            card.owner = None
-            card.is_selected = False
-            
-            # card.rect.centerx = (
-            # grid_x
-            # # + CARD_WIDTH * len(self.grid_cards[(row, col)])
-            # # + GAP * len(self.grid_cards[(row, col)])
-            # # + GAP
-            # )
-            # card.rect.centery = grid_y
-            self.grid_cards[(row, col)].append(card)
-        
-        self.sort_grid(self.grid_cards)
-        self.selected_cards = []
-    
-    # def move_card
+        return True
     

@@ -1,6 +1,7 @@
 import pygame
 import card as c
 import bot
+import cardset
 from config import *
 
 
@@ -138,6 +139,10 @@ class EndTurnButton(GameButton):
     def left_click_action(self, game_ui):
         self.clicked = True
         if game_ui.game_engine.current_player.made_move == False:
+            # if game_ui.grid_cards
+            if not all(cardset.CardSet.is_valid(combo) for combo in game_ui.grid_cards.values()):
+                game_ui.notification = "Invalid move to the grid"
+                return
             game_ui.notification = "Need to make a move or draw"
             return
         game_ui.reset_drag_parameters()
@@ -194,6 +199,7 @@ class HintButton(GameButton):
             game_ui.game_engine.current_player.hands[i] for i in all_indices
         ]
         c.Card.set_to_selected(cards_in_best_play, game_ui)
+        game_ui.notification = f"Hint: {cards_in_best_play}" if cards_in_best_play else "No combos in hand"
 
         print(cards_in_best_play, f"The max sum: {sum}")
         print("selected: ", game_ui.selected_cards)
