@@ -38,10 +38,11 @@ class GameUI:
         # button settings
         self.ui_objects = []
         self.ui_objects.append(button.EndTurnButton(END_TURN_BUTTON_REGION,"End turn",36))
-        self.ui_objects.append(button.PlayForMeButton(PLAY_FOR_ME_BUTTON_REGION,"Play for me",36))
+        self.play_for_me_button = button.PlayForMeButton(PLAY_FOR_ME_BUTTON_REGION,"Play for me",36)
         self.ui_objects.append(button.FlipAllCardsButton(FLIP_ALL_CARDS_BUTTON_REGION,"Flip all cards",36))
         self.ui_objects.append(button.HintButton(HINT_BUTTON_REGION,"Give me a hint",36))
         self.draw_button = button.DrawButton(DRAW_BUTTON_REGION,"Draw",36)
+        self.ui_objects.append(self.play_for_me_button)
         self.ui_objects.append(self.draw_button)
         self.draw_region = None
         self.game_engine.update_objects()
@@ -153,6 +154,7 @@ class GameUI:
 
     # Check input events by the user
     def check_event(self, event, game_engine):
+        
         # Quit the game if the event is QUIT
         if event.type == pygame.QUIT:
             self.running = False
@@ -160,7 +162,7 @@ class GameUI:
         # Check for mouse click events
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Get the mouse position
-            mouse_x, mouse_y = pygame.mouse.get_pos()
+            mouse_x, mouse_y = event.pos
             if event.button == 1:
                 for sprite in self.sprites:
                     # Check if the mouse click is within sprites' boundaries
@@ -181,6 +183,7 @@ class GameUI:
 
         # handle dropping card
         elif event.type == pygame.MOUSEBUTTONUP:
+            mouse_x, mouse_y = event.pos
             if event.button == 1 and self.dragging:  # left button released
                 self.dragging = False
                 mouse_x, mouse_y = event.pos
@@ -214,11 +217,8 @@ class GameUI:
                     if isinstance(sprite, c.Card):
                         pass
                     elif isinstance(sprite, button.GameButton):
-                        if isinstance(sprite, button.PlayForMeButton):
-                            if sprite.rect.collidepoint(event.pos):
-                                self.play_for_me()
-                                sprite.clicked = False
-                                break
+                        if sprite.rect.collidepoint(mouse_x, mouse_y):
+                            sprite.left_click_up_action(self)
                         sprite.clicked = False
                     else:
                         pass
@@ -393,7 +393,7 @@ class GameUI:
 
             ## if this is a valid position, put the card to the grid
             if self.is_valid_grid_position(row, col):
-                if cardset.CardSet.is_valid(self.grid_cards[(row, col)]):
+                if cardset.CardSet.is_valid(self.grid_cards[(row, col)]+[card]):
                     self.game_engine.current_player.made_move = True
                 # if the grid is full, put the card back to the original position
                 if self.is_grid_full(row, col):
