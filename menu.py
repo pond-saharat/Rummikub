@@ -63,6 +63,7 @@ class Menu:
         # musicstop_button = button.Button(THIRD_BUTTON_REGION, "Music")
         # keys_button = button.Button(THIRD_BUTTON_REGION, "Keys")
         back_button = button.Button(FIFTH_BUTTON_REGION, "Back")
+        zero_player_button = button.Button(SECOND_BUTTON_REGION, "Watch AIs playing")
         one_player_button = button.Button(SECOND_BUTTON_REGION, "1 Player")
         two_players_button = button.Button(THIRD_BUTTON_REGION, "2 Players")
         three_players_button = button.Button(FOURTH_BUTTON_REGION, "3 Players")
@@ -102,6 +103,13 @@ class Menu:
                     self.game_paused = True
                     pygame.time.delay(DELAY_TIME)
             elif self.menu_state == "choose_player" and self.game_ui.pause_state != True:
+                if zero_player_button.draw(self.screen):
+                    self.game_ui.num_of_ais = 4
+                    self.game_ui.num_of_humans = 0
+                    self.game_ui.game_state = "game"
+                    running = False
+                    self.game_paused = True
+                    pygame.time.delay(DELAY_TIME)
                 if one_player_button.draw(self.screen):
                     self.game_ui.num_of_ais = 3
                     self.game_ui.num_of_humans = 1
