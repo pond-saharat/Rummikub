@@ -94,6 +94,8 @@ class GameEngine:
         
         # Check if the current player is a winner
         if not self.check_win() and not self.game_round > MAX_ROUND and not len(self.deck.deck) < 1:
+            # pygame.time.delay(DELAY_TIME)
+            
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
             self.game_ui.timer = t.Timer()

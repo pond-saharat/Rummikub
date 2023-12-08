@@ -810,7 +810,8 @@ class GameUI:
             card.is_selected = False
             
             self.grid_cards[(row, col)].append(card)
-            self.game_engine.current_player.hands.remove(card)
+            if card in self.game_engine.current_player.hands:
+                self.game_engine.current_player.hands.remove(card)
         
         self.sort_grid(self.grid_cards)
         self.selected_cards = []
@@ -826,6 +827,8 @@ class GameUI:
         grid_x = WIDTH_2_COLUMNS + col * GRID_WIDTH + CARD_WIDTH // 2 + GAP + CARD_WIDTH * len(self.grid_cards[(row, col)]) + GAP * len(self.grid_cards[(row, col)])
         grid_y = HEIGHT_1_ROW + row * GRID_HEIGHT + GRID_HEIGHT // 2 + GAP
         
+        print("combo:", combo)
+        print("hands:", self.game_engine.current_player.hands)
         cards = [self.game_engine.current_player.hands[idx] for idx in combo]
         dest_xy = [(grid_x + CARD_WIDTH * i + GAP * i + GAP, grid_y) for i in range(len(cards))]
         
@@ -838,7 +841,7 @@ class GameUI:
             card.is_selected = False
             
             self.grid_cards[(row, col)].append(card)
-            self.game_engine.current_player.hands.remove(card)
+            # self.game_engine.current_player.hands.remove(card)
         
         self.sort_grid(self.grid_cards)
         self.selected_cards = []
