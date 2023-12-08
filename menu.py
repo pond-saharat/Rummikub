@@ -208,6 +208,7 @@ class Menu:
                     running = False
 
             pygame.display.update()
+            
         # Drawing a loading screen when the game loop ends
         self.game_ui.game_state = "game"
         self.screen.fill(BACKGROUND_COLOUR)

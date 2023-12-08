@@ -4,11 +4,12 @@ import bot
 import cardset
 from config import *
 
+# This file contains class Button and class GameButton. The difference is that Button can return the value. 
+# On the other hand, GameButton is encapsulated with methods such as GameButton.left_click_action().
 
-# button class
+# Button class
 class Button(pygame.sprite.Sprite):
     def __init__(self, rect,text, size=36):
-
         self.x = rect[0]
         self.y = rect[1]
         self.width = rect[2]
@@ -23,25 +24,28 @@ class Button(pygame.sprite.Sprite):
         self.clicked = False
         self.hover = False
         self.visible = False
-        
+    
+    # Draw a button and retrive the action in bool if the button is clicked
+    # Display Surface object -> bool
     def draw(self, screen):
         action = False
-        # get mouse position
+        # Get the mouse position
         pos = pygame.mouse.get_pos()
-        
+        # Draw a shadow surface
         shadow = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
         shadow_rect = shadow.get_rect()
         pygame.draw.rect(shadow,(16, 38, 59, 100),shadow_rect, border_radius=self.radius)
 
+        # Set an offset to a shadow Rect object
         offset = 3
         shadow_rect.x = self.rect.x + offset
         shadow_rect.y = self.rect.y + offset
 
+        # Drawing shadow and a button
         screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
-        
         pygame.draw.rect(screen, (250, 246, 239), self.rect, border_radius=self.radius)
 
-        # check mouseover and clicked conditions
+        # Check mouseover and clicked events
         if self.rect.collidepoint(pos) and pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
             self.clicked = True
             action = True
@@ -49,11 +53,11 @@ class Button(pygame.sprite.Sprite):
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
 
-        # draw button on screen
+        # Draw text on the button
         screen.blit(self.text, self.text_rect)
         return action
 
-
+# GameButton class
 class GameButton(pygame.sprite.Sprite):
     def __init__(self, rect, text, size=36):
         super().__init__()
@@ -74,17 +78,22 @@ class GameButton(pygame.sprite.Sprite):
         self.hover = False
         self.visible = False
 
+    # Draw a button
+    # Display Surface object -> bool
     def draw(self, screen):
+        # Draw a shadow surface
         shadow = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
         shadow_rect = shadow.get_rect()
         pygame.draw.rect(
             shadow, (16, 38, 59, 100), shadow_rect, border_radius=self.radius
         )
 
+        # Set an offset to a shadow Rect object
         offset = 3
         shadow_rect.x = self.rect.x + offset
         shadow_rect.y = self.rect.y + offset
 
+        # Drawing shadow and a button
         screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
         if not self.clicked:
             pygame.draw.rect(
@@ -95,6 +104,7 @@ class GameButton(pygame.sprite.Sprite):
                 screen, (200, 194, 189), self.rect, border_radius=self.radius
             )
 
+        # Drawing text on a button
         screen.blit(self.text, self.text_rect)
 
     def left_click_action(self, game_ui):

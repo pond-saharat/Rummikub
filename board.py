@@ -1,5 +1,6 @@
 # Class Board
 # A collection of cards of the board
+# This is the initial implementation of a board. However, GameUI.grid_cards is used to represent a board instead.
 class Board:
     def __init__(self) -> None:
         self.board = []
