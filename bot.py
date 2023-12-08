@@ -134,6 +134,12 @@ class CardsTensor():
             if not np.any(card_tensor[number, color, :]):
                 return False
         return True
+    
+    def is_valid_group(self, card_tensor, number, group_colors):
+        for color in group_colors:
+            if not np.any(card_tensor[number, color, :]):
+                return False
+        return True
 
     def create_run_tensor(self, start, end, color, card_tensor):
         run_tensor = np.zeros_like(card_tensor)
