@@ -174,14 +174,14 @@ class GameEngine:
             # for player in self.players:
             #     player.score += c.Card.get_penalty(player.hands)
             winners = [player for player in self.players if player.winner == True]
+            penalised_players = [player for player in self.players if player.winner == False]
             winner_exists = len(winners) != 0
             if winner_exists:
-                penalised_players = [player for player in self.players if player.winner == False]
                 for player in penalised_players:
                     penalty = c.Card.get_penalty(player.hands)
                     player.score += penalty
-                    for winner in winners:
-                        winner.score -= penalty
+                for winner in winners:
+                    winner.score -= -sum([player.score for player in penalised_players])
             else:
                 # for player in self.players:
                 #     player.score += c.Card.get_penalty(player.hands)
@@ -195,32 +195,36 @@ class GameEngine:
                 else:
                     score_to_players[player.score].append(player)
 
-            self.winning_score = max(list(score_to_players.keys()))
-            self.winners = score_to_players[self.winning_score]
+            # self.winning_score = max(list(score_to_players.keys()))
+            # self.winners = score_to_players[self.winning_score]
+            self.winners = winners
+            self.winning_score = max([player.score for player in self.winners])
+            
 
         else:
             for player in self.players:
                 player.score += c.Card.get_penalty(player.hands)
 
-            self.winning_score = max([player.score for player in self.players])
+            winning_score = max([player.score for player in self.players])
+            
             for player in self.players:
-                player.winner = player.score == self.winning_score
+                player.winner = player.score == winning_score
                 
             winners = [player for player in self.players if player.winner == True]
             self.winners = winners
+            penalised_players = [player for player in self.players if player.winner == False]
             
-            # winner_exists = len(winners) != 0
-            # if winner_exists:
-            #     penalised_players = [player for player in self.players if player.winner == False]
-            #     for player in penalised_players:
-            #         penalty = c.Card.get_penalty(player.hands)
-            #         player.score += penalty
-            #         for winner in winners:
-            #             winner.score -= penalty
-            # else:
-            #     # for player in self.players:
-            #     #     player.score += c.Card.get_penalty(player.hands)
-            #     pass
+            winner_exists = len(winners) != 0
+            if winner_exists:
+                for player in penalised_players:
+                    player.score -= winning_score
+                    
+                for winner in winners:
+                    winner.score -= winning_score -sum([player.score for player in penalised_players])
+            else:
+                # for player in self.players:
+                #     player.score += c.Card.get_penalty(player.hands)
+                pass
             
             # Get the list of winners and their scores
             score_to_players = {}
@@ -230,7 +234,7 @@ class GameEngine:
                 else:
                     score_to_players[player.score].append(player)
 
-            # self.winning_score = max(list(score_to_players.keys()))
+            self.winning_score = max([player.score for player in self.winners])
             # self.winners = score_to_players[self.winning_score]
     
     

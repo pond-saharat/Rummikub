@@ -566,34 +566,23 @@ class GameUI:
         return empty_grid
     
     def play_for_me(self):
-        empty_grid = self.find_empty_grid()
-        if empty_grid == []:
-            self.notification = "No empty grid"
-            '''draw a card'''
-            self.game_engine.current_player.draw_one_card(game_ui=self)
-            # self.notification = "No combos"
-            self.game_engine.next_turn()
-            return
-        
         if self.game_engine.current_player.first_moved == False:            
             self.play_cards_from_hand()
         else:
-            # self.play_cards_from_hand()
-            # self.manipulate_hands_and_grid_cards()
             self.play_cards_from_hand()
-            # self.add_hands_cards_to_grid()
+            # self.manipulate_hands_and_grid_cards()
         
     
     def play_cards_from_hand(self):
         
         empty_grid = self.find_empty_grid()
-        if empty_grid == []:
-            self.notification = "No empty grid"
-            '''draw a card'''
-            self.game_engine.current_player.draw_one_card(game_ui=self)
-            # self.notification = "No combos"
-            self.game_engine.next_turn()
-            return
+        # if empty_grid == []:
+        #     self.notification = "No empty grid"
+        #     '''draw a card'''
+        #     self.game_engine.current_player.draw_one_card(game_ui=self)
+        #     # self.notification = "No combos"
+        #     self.game_engine.next_turn()
+        #     return
         
         # Find the best combos of hand card indices
         hand_cards_tensor = bot.CardsTensor(cards=self.game_engine.current_player.hands)
@@ -607,20 +596,89 @@ class GameUI:
             best_play_idx_combos = best_play_idx_combos[:len(empty_grid)]
         
         # no combos found in hand
-        if best_play_idx_combos == []:
-            '''draw a card'''
-            self.game_engine.current_player.draw_one_card(game_ui=self)
-            # self.notification = "No combos"
-            self.game_engine.next_turn()
-            self.notification = "Drew a card"
+        # if best_play_idx_combos == []:
+        #     '''draw a card'''
+        #     self.game_engine.current_player.draw_one_card(game_ui=self)
+        #     # self.notification = "No combos"
+        #     self.game_engine.next_turn()
+        #     self.notification = "Drew a card"
             # time.sleep(3)
         
         # first move
-        elif self.game_engine.current_player.first_moved == False:
+        if self.game_engine.current_player.first_moved == False:
+            # first move need empty grid
+            if empty_grid == []:
+                self.notification = "No empty grid"
+                # draw a card
+                self.game_engine.current_player.draw_one_card(game_ui=self)
+                # self.notification = "No combos"
+                self.game_engine.next_turn()
+                return
+            
+            # first move need to be over 30, now take as over 10
+            if sum < 10:
+                self.notification = "First move must be over 30"
+                self.game_engine.current_player.draw_one_card(game_ui=self)
+                # self.notification = "No combos"
+                self.game_engine.next_turn()
+                return
+            
+            if best_play_idx_combos == []:
+                '''draw a card'''
+                self.game_engine.current_player.draw_one_card(game_ui=self)
+                # self.notification = "No combos"
+                self.game_engine.next_turn()
+                self.notification = "Drew a card"
+            
             self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
             
             self.notification = f"First moved {cards_in_best_play}"
             self.game_engine.current_player.first_moved = True
+            self.game_engine.current_player.made_move = True
+            self.game_engine.next_turn()
+        
+        # not first move, regular move
+        else:
+            if best_play_idx_combos == [] and self.add_hands_cards_to_grid() == []:
+                '''draw a card'''
+                self.game_engine.current_player.draw_one_card(game_ui=self)
+                # self.notification = "No combos"
+                self.game_engine.next_turn()
+                self.notification = "Drew a card"
+                return
+            
+            self.place_combos_to_empty_grid(best_play_idx_combos, empty_grid)
+            self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
+            self.notification = f"Made a move {cards_in_best_play}"
+            
+            self.sort_grid(self.grid_cards)
+            self.add_hands_cards_to_grid()
+            
+            self.game_engine.current_player.made_move = True
+            self.game_engine.next_turn()
+    
+    def regular_move(self):
+        empty_grid = self.find_empty_grid()
+        
+        # Find the best combos of hand card indices
+        hand_cards_tensor = bot.CardsTensor(cards=self.game_engine.current_player.hands)
+        best_play_idx_combos, sum = hand_cards_tensor.find_max_sum_combos_idx()
+        all_indices = [i for combo in best_play_idx_combos for i in combo]
+        cards_in_best_play = [
+            self.game_engine.current_player.hands[i] for i in all_indices
+        ]
+        
+        if len(best_play_idx_combos) > len(empty_grid):
+            best_play_idx_combos = best_play_idx_combos[:len(empty_grid)]
+        
+        # no combos found in hand
+        if self.add_hands_cards_to_grid == []:
+            self.grid_cards = {k: v for k, v in self.grid_cards.items() if v != []}
+            self.notification = f"Made a move {cards_in_best_play}"
+            
+            self.sort_grid(self.grid_cards)
+            self.add_hands_cards_to_grid()
+            
             self.game_engine.current_player.made_move = True
             self.game_engine.next_turn()
         
@@ -637,28 +695,23 @@ class GameUI:
             self.game_engine.next_turn()
     
     
-    
     def add_hands_cards_to_grid(self):
         hand_cards = self.game_engine.current_player.hands
-        
+        cards_for_combos = []
         for pos, cell_cards in self.grid_cards.items():
             all_combos = self.find_combos_to_group_cell(hand_cards, cell_cards)
-            
+            cards_in_combos = [card for combo in all_combos for card in combo]
             # longest_combo = max(all_combos, key=lambda combo: sum([card.number for card in combo if card.number is not None]))
-            if all_combos == [[]] or all_combos == [] or c.JokerCard() in all_combos[0]:
+            if cards_in_combos == [] or c.JokerCard() in cards_in_combos:
+                # return
                 continue
             print("all_combos:", all_combos)
             longest_combo = max(all_combos, key=len)
             
-            # # longest_combo = all_combos[0]
-            # longest_combo_tensor = bot.CardsTensor(cards=longest_combo)
-            # cards_idx = longest_combo_tensor.from_tensor_to_indices(longest_combo_tensor)
-
-            # self.place_combos_to_empty_grid(cards_idx, pos)
             self.place_combos_to_add_grids([longest_combo], [pos])
-            
+            cards_for_combos.extend(longest_combo)
             # self.place_combos_to_add_grids(all_combos, [pos for _ in range(len(all_combos))])
-    
+        return cards_for_combos
     
     
     def manipulate_hands_and_grid_cards(self):
@@ -675,9 +728,6 @@ class GameUI:
         
         test = self.find_max_sum_play_to_add()
         print(test)
-        
-        
-        
         
         pass
     
@@ -751,6 +801,7 @@ class GameUI:
             for card in cards_list:
                 if cardset.CardSet.is_run(cell_cards + [card]) and card.number not in [c.number for c in cards4run]:
                     cards4run.append(card)
+                all_combos.extend([cards4run[i:j] for i in range(len(cards4run)) for j in range(i+1, len(cards4run)+1)])
 
                 
             
