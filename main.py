@@ -27,7 +27,8 @@ true_winning_score = winner_and_scores[true_winner]
 pygame.init()
 quit_button = button.Button(FIFTH_BUTTON_REGION, "Quit")
 background = pygame.image.load("image/background1.png").convert_alpha()
-background = pygame.transform.smoothscale(backgroundtwo, (SCREEN_WIDTH, SCREEN_HEIGHT))
+# background = pygame.transform.smoothscale(backgroundtwo, (SCREEN_WIDTH, SCREEN_HEIGHT))
+background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 font = pygame.font.SysFont("arialblack", 40)
 smallfont = pygame.font.SysFont("arialblack", 30)
 

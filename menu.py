@@ -65,7 +65,7 @@ class Menu:
             self.screen.fill(BACKGROUND_COLOUR)
             self.screen.blit(background, (0, 0))
             self.screen.blit(logo, (SCREEN_WIDTH//2 - logo.get_rect().width //2, SCREEN_HEIGHT//2 - logo.get_rect().height//2 - 3 * BUTTON_GAP))
-           
+            
             # Check if the menu state is "main"
             if self.menu_state == "main" and self.game_ui.pause_state != True:
                 if play_button.draw(self.screen):

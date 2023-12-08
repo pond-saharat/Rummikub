@@ -146,7 +146,6 @@ class GameUI:
                     
                     
                     
-
                 # Highlight selected cards
                 for card in self.selected_cards:
                     if isinstance(card, c.ColourCard):
@@ -341,9 +340,8 @@ class GameUI:
     
     def find_hands_destination(self, card_list, player):
         dest_xy = []
-
         if int(player.name[-1]) == 0:
-            offset_x = WIDTH_2_COLUMNS + GAP + (CARD_WIDTH + GAP) * len(player.hands) + CARD_WIDTH // 2 
+            offset_x = WIDTH_2_COLUMNS + GAP + (CARD_WIDTH + GAP) * len(player.hands) + CARD_WIDTH // 2 + GAP
             offset_y = HEIGHT_1_ROW + BOARD_HEIGHT + GAP + CARD_HEIGHT // 2
             for i in range(len(card_list)):                
                 card_x = offset_x + CARD_WIDTH * i + GAP * i
@@ -351,8 +349,8 @@ class GameUI:
             return dest_xy
             
         elif int(player.name[-1]) == 1:
-            offset_x = GAP + CARD_WIDTH // 2 + (len(player.hands) % 2) * (GAP) 
-            offset_y = HEIGHT_1_ROW + CARD_HEIGHT // 2 + (CARD_HEIGHT + GAP) * (len(player.hands) // 2)
+            offset_x = GAP + CARD_WIDTH // 2 + (len(player.hands) % 2) * (GAP) + CARD_WIDTH // 2 
+            offset_y = HEIGHT_1_ROW + CARD_HEIGHT // 2 + (CARD_HEIGHT + GAP) * (len(player.hands) // 2) + CARD_HEIGHT // 2 
             i, j = len(player.hands) % 2, 0 
             for _ in range(len(card_list)):                
                 card_x = offset_x + CARD_WIDTH * i + GAP * i
@@ -365,16 +363,16 @@ class GameUI:
             return dest_xy
             
         elif int(player.name[-1]) == 2:
-            offset_x = WIDTH_2_COLUMNS + GAP + (CARD_WIDTH + GAP) * len(player.hands) + CARD_WIDTH // 2 
-            offset_y = CARD_HEIGHT // 2 + GAP
+            offset_x = WIDTH_2_COLUMNS + GAP + (CARD_WIDTH + GAP) * len(player.hands) + CARD_WIDTH // 2 + GAP
+            offset_y = CARD_HEIGHT // 2 + GAP + CARD_HEIGHT // 2 
             for i in range(len(card_list)):                
                 card_x = offset_x + CARD_WIDTH * i + GAP * i
                 dest_xy.append((card_x, offset_y))
             return dest_xy
             
         elif int(player.name[-1]) == 3:
-            offset_x = BOARD_WIDTH + WIDTH_2_COLUMNS + GAP + CARD_WIDTH // 2 + (len(player.hands) % 2) * ( GAP) 
-            offset_y = HEIGHT_1_ROW + CARD_HEIGHT // 2 + (CARD_HEIGHT + GAP) * (len(player.hands) // 2)
+            offset_x = BOARD_WIDTH + WIDTH_2_COLUMNS + GAP + CARD_WIDTH // 2 + (len(player.hands) % 2) * ( GAP)  + CARD_WIDTH // 2 
+            offset_y = HEIGHT_1_ROW + CARD_HEIGHT // 2 + (CARD_HEIGHT + GAP) * (len(player.hands) // 2) + CARD_HEIGHT // 2 
             i, j = len(player.hands) % 2, 0 
             for _ in range(len(card_list)):                
                 card_x = offset_x + CARD_WIDTH * i + GAP * i
@@ -723,10 +721,9 @@ class GameUI:
         
         
         
-        test = self.find_max_sum_play_to_add()
-        print(test)
+        max_play = self.find_max_sum_play_to_add()
+        print(max_play)
         
-        pass
     
     
     def find_max_sum_play_to_add(self, cards_list=None, grid_cards=None, current_play=[], best_play=None):
@@ -805,8 +802,6 @@ class GameUI:
             
         # now all_combos still []
         return all_combos 
-            
-            
     
     def can_add_cards_to_cell(self, cards_list, cell_cards):
         return cardset.CardSet.is_valid(cell_cards + cards_list)
