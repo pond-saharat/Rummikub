@@ -107,13 +107,17 @@ class GameButton(pygame.sprite.Sprite):
         # Drawing text on a button
         screen.blit(self.text, self.text_rect)
 
+    # Define left_click_action of the parent class
     def left_click_action(self, game_ui):
         self.clicked = True
         pass
+
+    # Define left_click_action of the parent class when MOUSEBUTTONUP event occurs.
     def left_click_up_action(self, game_ui):
         pass
 
-
+# All game related buttons with specific functionality
+# Draw button
 class DrawButton(GameButton):
     def __init__(self, rect, text, size=36):
         super().__init__(rect, text, size)
@@ -145,7 +149,7 @@ class DrawButton(GameButton):
         self.cards = []
         self.clicked = False
 
-
+# End Turn button
 class EndTurnButton(GameButton):
     def __init__(self, rect, text, size=36):
         super().__init__(rect, text, size)
@@ -163,7 +167,7 @@ class EndTurnButton(GameButton):
         game_ui.game_engine.next_turn()
         print(f"It's now {game_ui.game_engine.current_player}'s turn")
 
-
+# Flip All Cards button
 class FlipAllCardsButton(GameButton):
     def __init__(self, rect, text, size=36):
         super().__init__(rect, text, size)
@@ -177,27 +181,18 @@ class FlipAllCardsButton(GameButton):
         ]:
             c.Card.flip_all_cards(player.hands)
 
-
+# Play For Me button
 class PlayForMeButton(GameButton):
     def __init__(self, rect, text, size=36):
         super().__init__(rect, text, size)
 
     def left_click_action(self, game_ui):
         self.clicked = True
-        # best_play_cards = game_ui.game_engine.current_player.make_first_move(game_ui)
-        # # game_ui.selected_card = game_ui.game_engine.current_player.selected_cards
-        # game_ui.selected_cards = best_play_cards
-        # # game_ui.game_engine.current_player.made_move = True
-        # # pygame.display.flip()
-        # for card in game_ui.selected_cards:
-        #     print(card in game_ui.game_engine.current_player.hands)
-        
-        # print(game_ui.selected_cards)
     
     def left_click_up_action(self, game_ui):
         game_ui.play_for_me()
 
-
+# Hint button
 class HintButton(GameButton):
     def __init__(self, rect, text, size=36):
         super().__init__(rect, text, size)

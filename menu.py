@@ -15,6 +15,7 @@ class Menu:
         self.game_paused = False
         # define fonts
         self.font = pygame.font.SysFont("arialblack", 40)
+        self.smallfont = pygame.font.SysFont("arialblack", 30)
         self.VPOS = SCREEN_WIDTH//2
         self.scale = 1.5
     
@@ -30,7 +31,6 @@ class Menu:
 
         # Load background and logo images
         background = pygame.image.load("image/background1.png").convert_alpha()
-        background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
         backgroundtwo = pygame.image.load("image/background2.png").convert_alpha()
         backgroundtwo = pygame.transform.smoothscale(backgroundtwo, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -52,6 +52,7 @@ class Menu:
         two_players_button = button.Button(THIRD_BUTTON_REGION, "2 Players")
         three_players_button = button.Button(FOURTH_BUTTON_REGION, "3 Players")
         four_players_button = button.Button(FIFTH_BUTTON_REGION, "4 Players")
+        continue_button = button.Button(FIFTH_BUTTON_REGION, "Continue")
         
 
         # Load music
@@ -132,7 +133,7 @@ class Menu:
                     self.game_ui.running = False
                     running = False
                     pygame.time.delay(DELAY_TIME)
-            # Check if themenu state is "options"
+            # Check if the menu state is "options"
             elif self.menu_state == "options":     
                 if audio_button.draw(self.screen):
                     self.menu_state = "music"
@@ -144,7 +145,7 @@ class Menu:
                     if self.game_paused == False:
                         self.menu_state = "main"
                         pygame.time.delay(DELAY_TIME)
-            # Check if themenu state is "music"
+            # Check if the menu state is "music"
             elif self.menu_state == "music":
                 if back_button.draw(self.screen):
                     self.menu_state = "options"
@@ -183,17 +184,16 @@ class Menu:
             elif self.menu_state == "Rummikub!":
                 self.screen.fill(BACKGROUND_COLOUR)
                 self.screen.blit(backgroundtwo, (0, 0))
-                text_surface = self.font.render(f'Rummikub! \nCongratulations!', True, (255, 255, 255))
+                text_surface = self.font.render(f'Rummikub! Congratulations!', True, (255, 255, 255))
                 self.screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2-BUTTON_GAP))
-                text_surface = self.font.render(f'{self.game_ui.game_engine.winners[0]} is a winner with a score of {self.game_ui.game_engine.winning_score}', True, (255, 255, 255))
+                text_surface = self.smallfont.render(f'{self.game_ui.game_engine.winners[0]} is a winner with a score of {self.game_ui.game_engine.winning_score}', True, (255, 255, 255))
                 self.screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2))
-                if quit_button1.draw(self.screen):
-                    self.game_ui.running = False
+                if continue_button.draw(self.screen):
+                    # self.game_ui.running = False
                     running = False
                     self.game_paused = True
                     pygame.time.delay(DELAY_TIME)
-                    pygame.quit()
-                    exit()
+                    return
             else:
                 pass
             
@@ -208,7 +208,7 @@ class Menu:
                     running = False
 
             pygame.display.update()
-            
+
         # Drawing a loading screen when the game loop ends
         self.game_ui.game_state = "game"
         self.screen.fill(BACKGROUND_COLOUR)

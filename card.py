@@ -3,7 +3,7 @@ import os.path
 
 from config import *
 
-
+# Class Card
 class Card(pygame.sprite.Sprite):
     def __init__(self, colour, number):
         super().__init__()

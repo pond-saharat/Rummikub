@@ -108,7 +108,7 @@ class GameEngine:
             # If there is a winner
             self.endgame_score_calculation()
             self.game_ui.game_state = "Rummikub!"
-            print(f"{self.winners} are a winner with a score of {-self.winning_score}")
+            print(f"{self.winners} are a winner with a score of {self.winning_score}")
             # Whole game round
             self.game_round += 1
             
@@ -197,7 +197,6 @@ class GameEngine:
 
             self.winning_score = max(list(score_to_players.keys()))
             self.winners = score_to_players[self.winning_score]
-
         else:
             for player in self.players:
                 player.score += c.Card.get_penalty(player.hands)
