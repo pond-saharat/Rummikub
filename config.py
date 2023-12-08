@@ -11,6 +11,8 @@ MAX_TIME = 120
 
 NUM_OF_AI_PLAYERS = 0
 NUM_OF_HUMAN_PLAYERS = 4
+# openning move points
+OPEN_MOVE_LIMIT = 10
 
 # Variables for GameEngine
 REGENERATE_IMAGE = False

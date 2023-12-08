@@ -611,7 +611,7 @@ class GameUI:
                 return
             
             # first move need to be over 30, now take as over 10
-            if sum < 10:
+            if sum < OPEN_MOVE_LIMIT:
                 self.notification = "First move must be over 30"
                 self.game_engine.current_player.draw_one_card(game_ui=self)
                 # self.notification = "No combos"
@@ -694,7 +694,9 @@ class GameUI:
         hand_cards = self.game_engine.current_player.hands
         cards_for_combos = []
         for pos, cell_cards in self.grid_cards.items():
-            all_combos = self.find_combos_to_group_cell(hand_cards, cell_cards)
+            all_group_combos = self.find_combos_to_group_cell(hand_cards, cell_cards)
+            all_run_combos = self.find_combos_to_run_cell(hand_cards, cell_cards)
+            all_combos = all_group_combos + all_run_combos
             cards_in_combos = [card for combo in all_combos for card in combo]
             # longest_combo = max(all_combos, key=lambda combo: sum([card.number for card in combo if card.number is not None]))
             if cards_in_combos == [] or c.JokerCard() in cards_in_combos:
@@ -793,11 +795,13 @@ class GameUI:
             
             cards4run = []
             for card in cards_list:
-                if cardset.CardSet.is_run(cell_cards + [card]) and card.number not in [c.number for c in cards4run]:
+                if cardset.CardSet.is_run(cell_cards + [card] + [cards4run]) and card.number not in [c.number for c in cards4run]:
                     cards4run.append(card)
-                all_combos.extend([cards4run[i:j] for i in range(len(cards4run)) for j in range(i+1, len(cards4run)+1)])
-
-                
+            
+            
+            
+            # all_combos = [[_] for _ in cards4run] + list([cards4run])
+            all_combos.append(cards4run)
             
             
         # now all_combos still []
