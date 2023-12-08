@@ -30,14 +30,17 @@ class Card(pygame.sprite.Sprite):
     # Update a sprite
     # Pygame Display object, Tuple(position_x, position_y) -> None
     def draw(self, screen):
+        # Create a shadow surface
         shadow = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
         shadow_rect = shadow.get_rect()
         shadow.fill((16, 38, 59, 100)) 
 
+        # Add an offset to the Rect object of the shadow surface
         offset = 3
         shadow_rect.x = self.rect.x + offset
         shadow_rect.y = self.rect.y + offset
 
+        # Draw a card based on the card's parameters such as visible, or flipped
         if self.visible:
             if self.flipped:
                 screen.blit(shadow, (shadow_rect.x, shadow_rect.y))
