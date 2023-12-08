@@ -5,7 +5,7 @@ from config import *
 
 import numpy as np
 
-# Wrapping ndarray 
+# Class CardsTensor
 class CardsTensor():
     def __init__(self, tensor=None, cards=None):
         self.colorText2Num_dict = {'Red': 0, 'Green': 1, 'Blue': 2, 'Yellow': 3, 'Pink': 4, 'Joker': 5}

@@ -14,7 +14,7 @@ import time
 
 
 class GameUI:
-    def __init__(self):
+    def __init__(self,num_of_game=0,num_of_ais=0,num_of_humans = 4):
         self.running = True
         # Initialize an empty group of game objects
         self.sprites = pygame.sprite.Group()
@@ -28,20 +28,16 @@ class GameUI:
         # Refer ui engine location to ui game location and refer game engine location to ui engine location
         self.game_state = "main_menu"
         self.pause_state= False
-        self.num_of_ais = 0
-        self.num_of_humans = 4
-        if self.game_state == "main_menu":
+        self.num_of_ais = num_of_ais
+        self.num_of_humans = num_of_humans
+        if self.game_state == "main_menu" and num_of_game == 0:
             menu.Menu(self).run()
-        print(self.num_of_ais,self.num_of_humans)
+        elif num_of_game != 0:
+            self.game_state = "game"
+        print("Number of AI players: ", self.num_of_ais)
+        print("Number of human players: ", self.num_of_humans)
         self.game_engine = game_engine.GameEngine(self)
         self.game_engine.screen = self.screen
-
-        # clock = pygame.time.Clock()
-
-
-        # Passing screen to game_engine
-        
-
 
         # button settings
         self.ui_objects = []
@@ -78,7 +74,8 @@ class GameUI:
         while self.running:
             # Check the game state   
             if self.game_state == "Rummikub!":
-                menu.Menu(self).run()
+                menu.Menu(self).run(finish=True)
+                return {self.game_engine.winning_score:list(map(str,self.game_engine.winners))}, self.num_of_ais, self.num_of_humans
             elif self.game_state == "game":
                 # Fill backgroud colour
                 self.screen.fill(BACKGROUND_COLOUR)
