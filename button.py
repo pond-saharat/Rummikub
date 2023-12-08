@@ -113,12 +113,21 @@ class DrawButton(GameButton):
         self.clicked = True
         deck = game_ui.game_engine.deck.deck
         region = game_ui.draw_region
-        card1, card2 = tuple(deck[:2])
-        card1.visible = True
-        card2.visible = True
-        self.cards = [card1, card2]
-        card1.rect.x, card1.rect.y = region.x + GAP, region.y + GAP
-        card2.rect.x, card2.rect.y = region.x + GAP + CARD_WIDTH + GAP, region.y + GAP
+        if len(deck) >= 2:
+            card1, card2 = tuple(deck[:2])
+            card1.visible = True
+            card2.visible = True
+            self.cards = [card1, card2]
+            card1.rect.x, card1.rect.y = region.x + GAP, region.y + GAP
+            card2.rect.x, card2.rect.y = region.x + GAP + CARD_WIDTH + GAP, region.y + GAP
+        elif len(deck) == 1:
+            card1 = deck[0]
+            card1.visible = True
+            self.cards = [card1]
+            card1.rect.x, card1.rect.y = region.x + GAP, region.y + GAP
+        else:
+            game_ui.notification = "No more cards in the deck"
+            return
 
     def reset(self):
         for card in self.cards:

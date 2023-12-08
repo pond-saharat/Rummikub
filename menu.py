@@ -211,7 +211,7 @@ class Menu:
             elif self.menu_state == "Rummikub!":
                 self.screen.fill(BACKGROUND_COLOUR)
                 self.screen.blit(backgroundtwo, (0, 0))
-                text_surface = self.font.render(f'Congratulations!', True, (255, 255, 255))
+                text_surface = self.font.render(f'Rummikub! \nCongratulations!', True, (255, 255, 255))
                 self.screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2-BUTTON_GAP))
                 text_surface = self.font.render(f'{self.game_ui.game_engine.winners[0]} is a winner with a score of {self.game_ui.game_engine.winning_score}', True, (255, 255, 255))
                 self.screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2))
