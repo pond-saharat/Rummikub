@@ -364,7 +364,7 @@ class GameUI:
             
         elif int(player.name[-1]) == 2:
             offset_x = WIDTH_2_COLUMNS + GAP + (CARD_WIDTH + GAP) * len(player.hands) + CARD_WIDTH // 2 + GAP
-            offset_y = CARD_HEIGHT // 2 + GAP + CARD_HEIGHT // 2 
+            offset_y = CARD_HEIGHT // 2 + GAP 
             for i in range(len(card_list)):                
                 card_x = offset_x + CARD_WIDTH * i + GAP * i
                 dest_xy.append((card_x, offset_y))
