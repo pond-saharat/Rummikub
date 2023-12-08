@@ -27,7 +27,6 @@ true_winning_score = winner_and_scores[true_winner]
 pygame.init()
 quit_button = button.Button(FIFTH_BUTTON_REGION, "Quit")
 background = pygame.image.load("image/background1.png").convert_alpha()
-# background = pygame.transform.smoothscale(backgroundtwo, (SCREEN_WIDTH, SCREEN_HEIGHT))
 background = pygame.transform.smoothscale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 font = pygame.font.SysFont("arialblack", 40)
 smallfont = pygame.font.SysFont("arialblack", 30)
@@ -39,6 +38,9 @@ running = True
 while running:
     screen.fill(BACKGROUND_COLOUR)
     screen.blit(background, (0, 0))
+    logo = pygame.image.load("image/logo.png").convert_alpha()
+    logo = pygame.transform.smoothscale(logo, (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+    screen.blit(logo, (SCREEN_WIDTH//2 - logo.get_rect().width //2, SCREEN_HEIGHT//2 - logo.get_rect().height//2 - 3 * BUTTON_GAP))
     # text_surface = font.render(f'Rummikub! Congratulations!', True, (255, 255, 255))
     # screen.blit(text_surface, (SCREEN_WIDTH//2-text_surface.get_rect().width//2,SCREEN_HEIGHT//2-text_surface.get_rect().height//2-BUTTON_GAP))
     text_surface = smallfont.render(f'{true_winner} is a winner with a score of {true_winning_score}', True, (255, 255, 255))
