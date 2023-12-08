@@ -2,6 +2,7 @@ from card import *
 
 from config import *
 
+
 class CardSet:
     def __init__(self, cards):
         self.cards = cards
@@ -9,7 +10,7 @@ class CardSet:
 
     def highlight(self):
         self.is_selected = not self.is_selected
-    
+
     def is_first_move_valid(self):
         if self.is_valid():
             total_points = sum(card.number for card in self.cards)
@@ -17,7 +18,7 @@ class CardSet:
                 return True
         else:
             return False
-    
+
     # Create a new set of cards
     # List[Card] -> Group() or Run() or None (If they are not either Group or Run)
     @classmethod
@@ -28,7 +29,7 @@ class CardSet:
             return Run(cards)
         else:
             return None
-    
+
     # Staticmethod: Check if the cards are valid for being classified as Group
     # List[Card] -> bool
     @staticmethod
@@ -36,10 +37,10 @@ class CardSet:
         # a valid group needs at least 3 cards and there are only 4 different colours
         if len(cards) < 3 or len(cards) > NUM_OF_COLOURS:
             return False
-        
+
         # Get the colour cards (regular cards) from a pack of cards
-        colour_cards = Card.get_colour_cards(cards)   
-        # a group is cards with the same number but different colours, 
+        colour_cards = Card.get_colour_cards(cards)
+        # a group is cards with the same number but different colours,
         # Joker is wildcard, so only consider colour cards here
         same_num_in_hand = len(set([card.number for card in colour_cards]))
         same_clr_in_hand = len(set([card.colour for card in colour_cards]))
@@ -55,7 +56,7 @@ class CardSet:
         # a valid run needs at least 3 cards and there are only 13 different numbers each colour
         if len(cards) < 3 or len(cards) > NUM_OF_CARDS_EACH_COLOUR // 2:
             return False
-        
+
         # Get the colour cards (regular cards) from a pack of cards
         colour_cards = sorted(Card.get_colour_cards(cards), key=lambda x: x.number)
         # Get the count of Joker cards from a pack of cards
@@ -99,19 +100,18 @@ class CardSet:
             else:
                 pass
         return True
-    
+
     # Classmethod: Check if the CardSet is either a valid Group or a valid Run
     # None -> bool
     @classmethod
-    def is_valid(cls,cards):
-        return cls.is_group(cards) or cls.is_run(cards)              
-    
+    def is_valid(cls, cards):
+        return cls.is_group(cards) or cls.is_run(cards)
+
     # Sort a group of cards or a set of cards
     @classmethod
-    def sort_list(cls,cards):
+    def sort_list(cls, cards):
         # Sort like a run
         if cls.is_run(cards):
-            
             # Get the colour cards (regular cards) from a pack of cards
             colour_cards = sorted(Card.get_colour_cards(cards), key=lambda x: x.number)
             # Get the count of Joker cards from a pack of cards
@@ -147,34 +147,40 @@ class CardSet:
                             pass
                 else:
                     continue
-            '''already append the joker cards to the run, so no need to append again?'''
+            """already append the joker cards to the run, so no need to append again?"""
             # if len(joker_cards) > 0:
             #     run += joker_cards
             # print('run:', run)
             return run
-        
+
         # Sort like a group
         elif cls.is_group(cards):
             # Get the colour cards (regular cards) from a pack of cards
             colour_cards = Card.get_colour_cards(cards)
             joker_cards = Card.get_joker_cards(cards)
-            group = sorted(colour_cards,key=lambda crd: (crd.colour,crd.number)) + joker_cards
+            group = (
+                sorted(colour_cards, key=lambda crd: (crd.colour, crd.number))
+                + joker_cards
+            )
             # print('group:', group)
             return group
         else:
             return []
 
+
 class Group(CardSet):
-    def __init__(self,cards):
+    def __init__(self, cards):
         super().__init__(cards)
         self.group = True
         self.run = False
 
+
 class Run(CardSet):
-    def __init__(self,cards):
+    def __init__(self, cards):
         super().__init__(cards)
         self.group = False
         self.run = True
+
 
 # For testing
 # is_run
@@ -185,4 +191,3 @@ class Run(CardSet):
 # # False
 # cards = [ColourCard("blue",1),ColourCard("green",3),ColourCard("green",9)] + [JokerCard(),JokerCard()]
 # print(CardSet.is_run(cards))
-

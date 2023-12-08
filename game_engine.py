@@ -67,11 +67,15 @@ class GameEngine:
             # print(pos,cardset.CardSet.is_valid(card_list))
             if not cardset.CardSet.is_valid(card_list):
                 # return to player's hand
+                dest_xy = self.game_ui.find_hands_destination(card_list, self.current_player)
+                self.game_ui.move_cards_animation(card_list, dest_xy)
+
                 for card in card_list:
                     card.owner = self.current_player
+                    
                 self.current_player.hands.extend(card_list)
                 self.game_ui.grid_cards[pos] = []
-                
+                # self.game_ui.grid_cards.pop(pos)
             else:
                 pass
         
@@ -89,7 +93,7 @@ class GameEngine:
             self.round += 1
         
         # Check if the current player is a winner
-        if not self.check_win() and not self.game_round > MAX_ROUND:
+        if not self.check_win() and not self.game_round > MAX_ROUND and not len(self.deck.deck) < 1:
             # If not -> Go to the next turn
             self.current_player = next(self._player_iterator)
             self.game_ui.timer = t.Timer()
@@ -102,7 +106,7 @@ class GameEngine:
             # If there is a winner
             self.endgame_score_calculation()
             self.game_ui.game_state = "Rummikub!"
-            print(f"{self.winners} are a winner with a score of {self.winning_score}")
+            print(f"{self.winners} are a winner with a score of {-self.winning_score}")
             # Whole game round
             self.game_round += 1
             
@@ -164,31 +168,72 @@ class GameEngine:
     # Calculate the final score of each player and set the max score and the list of winners 
     # None -> None
     def endgame_score_calculation(self):
-        winners = [player for player in self.players if player.winner == True]
-        winner_exists = len(winners) != 0
-        if winner_exists:
-            penalised_players = [player for player in self.players if player.winner == False]
-            for player in penalised_players:
-                penalty = c.Card.get_penalty(player.hands)
-                player.score += penalty
-                for winner in winners:
-                    winner.score -= penalty
-        else:
+        if self.game_round < MAX_ROUND and len(self.deck.deck) > 0:
             # for player in self.players:
             #     player.score += c.Card.get_penalty(player.hands)
-            pass
-        
-        # Get the list of winners and their scores
-        score_to_players = {}
-        for player in self.players:
-            if player.score not in score_to_players:
-                score_to_players[player.score] = [player]
+            winners = [player for player in self.players if player.winner == True]
+            winner_exists = len(winners) != 0
+            if winner_exists:
+                penalised_players = [player for player in self.players if player.winner == False]
+                for player in penalised_players:
+                    penalty = c.Card.get_penalty(player.hands)
+                    player.score += penalty
+                    for winner in winners:
+                        winner.score -= penalty
             else:
-                score_to_players[player.score].append(player)
+                # for player in self.players:
+                #     player.score += c.Card.get_penalty(player.hands)
+                pass
+            
+            # Get the list of winners and their scores
+            score_to_players = {}
+            for player in self.players:
+                if player.score not in score_to_players:
+                    score_to_players[player.score] = [player]
+                else:
+                    score_to_players[player.score].append(player)
 
-        self.winning_score = max(list(score_to_players.keys()))
-        self.winners = score_to_players[self.winning_score]
-        
+            self.winning_score = max(list(score_to_players.keys()))
+            self.winners = score_to_players[self.winning_score]
+
+        else:
+            for player in self.players:
+                player.score += c.Card.get_penalty(player.hands)
+
+            self.winning_score = max([player.score for player in self.players])
+            for player in self.players:
+                player.winner = player.score == self.winning_score
+                
+            winners = [player for player in self.players if player.winner == True]
+            self.winners = winners
+            
+            # winner_exists = len(winners) != 0
+            # if winner_exists:
+            #     penalised_players = [player for player in self.players if player.winner == False]
+            #     for player in penalised_players:
+            #         penalty = c.Card.get_penalty(player.hands)
+            #         player.score += penalty
+            #         for winner in winners:
+            #             winner.score -= penalty
+            # else:
+            #     # for player in self.players:
+            #     #     player.score += c.Card.get_penalty(player.hands)
+            #     pass
+            
+            # Get the list of winners and their scores
+            score_to_players = {}
+            for player in self.players:
+                if player.score not in score_to_players:
+                    score_to_players[player.score] = [player]
+                else:
+                    score_to_players[player.score].append(player)
+
+            # self.winning_score = max(list(score_to_players.keys()))
+            # self.winners = score_to_players[self.winning_score]
+    
+    
+    
+    
     # def get_num_of_cards_in_valid_cardset(self):
     #     number_of_valid_cardsets = 0
     #     if self.game_ui.grid_cards != {}:

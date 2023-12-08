@@ -31,7 +31,8 @@ CAPTION = "Rummikub"
 #  you can change the SCALE to make the cards bigger or smaller
 SCALE = 32
 CARD_WIDTH = SCREEN_WIDTH // SCALE
-CARD_HEIGHT = CARD_WIDTH * 955 // 684
+# CARD_HEIGHT = CARD_WIDTH * 955 // 684
+CARD_HEIGHT = CARD_WIDTH * 1039 // 744
 
 GAP = CARD_WIDTH//5
 
